@@ -24,7 +24,7 @@ class CsvImportLimitsTest extends TestCase
         $csvContent = "name,phone,email,source,notes\n";
         $csvContent .= ",9876543210,test@example.com,csv,\n"; // Missing name
         $csvContent .= "Test User,,test@example.com,csv,\n"; // Missing phone
-        $csvContent .= "Valid User,8888888888,valid@example.com,csv,\n"; // Valid
+        $csvContent .= "Valid User,9876543211,valid@example.com,csv,\n"; // Valid
         
         $file = UploadedFile::fake()->createWithContent('leads.csv', $csvContent);
 
