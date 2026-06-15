@@ -321,8 +321,10 @@ class StageTransitionTest extends TestCase
         // Verify audit log for backward move has forward: false
         $backwardAudit = AuditLog::where('engagement_id', $this->engagement->id)
             ->where('action', 'stage_changed')
-            ->latest()
+            ->latest('id')
             ->first();
+        $this->assertNotNull($backwardAudit);
+        $this->assertEquals('New', $backwardAudit->after['stage']); // backward move lands on "New"
         $this->assertFalse($backwardAudit->after['forward']);
 
         // Move forward again: New → Interested (should clear breached)
