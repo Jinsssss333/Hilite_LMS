@@ -3,6 +3,10 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\ImportController;
 use App\Http\Controllers\Api\WebhookController;
+use App\Http\Controllers\Api\PipelineStageController;
+use App\Http\Controllers\Api\DispositionController;
+use App\Http\Controllers\Api\EngagementController;
+use App\Http\Controllers\Api\ActivityController;
 use Illuminate\Support\Facades\Route;
 
 // Public — auth itself is throttled to slow down credential stuffing
@@ -26,8 +30,13 @@ Route::middleware(['auth:sanctum', 'company.scope'])->group(function () {
     Route::post('/leads/import', [ImportController::class, 'upload'])->middleware('throttle:5,1');
     Route::get('/leads/import/{uuid}/status', [ImportController::class, 'status']);
 
-    // These routes are owned by Dev B and Dev C — do not implement, just leave stubs
-    // Route::patch('/engagements/{id}/stage', ...)
+    // Dev B routes — Pipeline Stages, Dispositions, Engagement Stage, Activities
+    Route::get('/pipeline-stages', [PipelineStageController::class, 'index']);
+    Route::get('/dispositions', [DispositionController::class, 'index']);
+    Route::patch('/engagements/{id}/stage', [EngagementController::class, 'updateStage']);
+    Route::post('/engagements/{id}/activities', [ActivityController::class, 'store']);
+    Route::get('/activities/upcoming', [ActivityController::class, 'upcoming']);
+
+    // Dev C routes — Assignment (stubs)
     // Route::patch('/engagements/{id}/assign', ...)
-    // Route::post('/engagements/{id}/activities', ...)
 });

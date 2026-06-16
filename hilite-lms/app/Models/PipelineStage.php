@@ -10,6 +10,12 @@ class PipelineStage extends Model
 
     protected $casts = ['is_closed' => 'boolean'];
 
+    // Scope to current company — note: no global scope here, company_id passed explicitly
+    public function scopeForCompany($query, int $companyId)
+    {
+        return $query->where('company_id', $companyId)->orderBy('order');
+    }
+
     public function company()      { return $this->belongsTo(Company::class); }
     public function engagements()  { return $this->hasMany(LeadEngagement::class, 'stage_id'); }
     public function dispositions() { return $this->hasMany(Disposition::class, 'stage_id'); }
