@@ -8,7 +8,8 @@ class AuditLogService
 {
     /**
      * Log an audit event.
-     * Dev C will expand this with event broadcasting, notification logic, etc.
+     * Called by LeadIntakeService, StageTransitionService, AssignmentService, ActivityController.
+     * Never throws — audit failure must NEVER crash a request.
      */
     public function log(
         int $companyId,
@@ -17,14 +18,21 @@ class AuditLogService
         string $action,
         ?array $before = null,
         ?array $after = null
-    ): AuditLog {
-        return AuditLog::create([
-            'company_id'     => $companyId,
-            'engagement_id'  => $engagementId,
-            'actor_user_id'  => $actorUserId,
-            'action'         => $action,
-            'before'         => $before,
-            'after'          => $after,
-        ]);
+    ): void {
+        try {
+            AuditLog::create([
+                'company_id'    => $companyId,
+                'engagement_id' => $engagementId,
+                'actor_user_id' => $actorUserId,
+                'action'        => $action,
+                'before'        => $before,
+                'after'         => $after,
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('AuditLog write failed: ' . $e->getMessage(), [
+                'action'        => $action,
+                'engagement_id' => $engagementId,
+            ]);
+        }
     }
 }

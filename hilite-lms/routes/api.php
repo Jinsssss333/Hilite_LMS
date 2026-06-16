@@ -7,6 +7,10 @@ use App\Http\Controllers\Api\PipelineStageController;
 use App\Http\Controllers\Api\DispositionController;
 use App\Http\Controllers\Api\EngagementController;
 use App\Http\Controllers\Api\ActivityController;
+use App\Http\Controllers\Api\AssignmentController;
+use App\Http\Controllers\Api\AuditLogController;
+use App\Http\Controllers\Api\Admin\SlaPolicyController;
+use App\Http\Controllers\Api\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Public — auth itself is throttled to slow down credential stuffing
@@ -37,6 +41,15 @@ Route::middleware(['auth:sanctum', 'company.scope'])->group(function () {
     Route::post('/engagements/{id}/activities', [ActivityController::class, 'store']);
     Route::get('/activities/upcoming', [ActivityController::class, 'upcoming']);
 
-    // Dev C routes — Assignment (stubs)
-    // Route::patch('/engagements/{id}/assign', ...)
+    // Dev C routes — Assignment Engine
+    Route::patch('/engagements/{id}/assign', [AssignmentController::class, 'assign']);
+    Route::get('/users/assignable', [AssignmentController::class, 'assignable']);
+
+    // Dev C routes — Audit Logs (admin/manager only, enforced by Gate inside controller)
+    Route::get('/audit-logs', [AuditLogController::class, 'index']);
+
+    // Dev C routes — Admin: SLA Policies + Users
+    Route::get('/admin/sla-policies', [SlaPolicyController::class, 'index']);
+    Route::patch('/admin/sla-policies/{id}', [SlaPolicyController::class, 'update']);
+    Route::get('/admin/users', [UserController::class, 'index']);
 });
