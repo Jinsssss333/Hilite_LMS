@@ -6,17 +6,17 @@ use App\Models\Company;
 use App\Models\LeadEngagement;
 use App\Models\OwnershipAssignment;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class AssignmentTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('db:seed');
+        $this->setUpFreshDatabase();
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────

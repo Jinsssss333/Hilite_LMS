@@ -6,7 +6,7 @@ use App\Jobs\CheckSlaBreachJob;
 use App\Models\LeadEngagement;
 use App\Models\PipelineStage;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
@@ -26,12 +26,12 @@ use Tests\TestCase;
  */
 class FullDemoFlowTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('db:seed');
+        $this->setUpFreshDatabase();
     }
 
     public function test_full_demo_flow()

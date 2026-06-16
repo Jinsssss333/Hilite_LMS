@@ -5,17 +5,17 @@ namespace Tests\Feature;
 use App\Models\AuditLog;
 use App\Models\LeadEngagement;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class AuditLogTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('db:seed');
+        $this->setUpFreshDatabase();
     }
 
     // ── Access control ────────────────────────────────────────────────────────

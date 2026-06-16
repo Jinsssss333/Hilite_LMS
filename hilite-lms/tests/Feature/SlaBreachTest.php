@@ -6,18 +6,18 @@ use App\Jobs\CheckSlaBreachJob;
 use App\Jobs\MarkDormantLeadsJob;
 use App\Models\LeadEngagement;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class SlaBreachTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('db:seed');
+        $this->setUpFreshDatabase();
     }
 
     // ── CheckSlaBreachJob ─────────────────────────────────────────────────────
