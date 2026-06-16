@@ -89,7 +89,7 @@ class ActivityController extends Controller
     public function upcoming(Request $request)
     {
         $request->validate(['days' => 'nullable|integer|min:1|max:30']);
-        $days      = $request->days ?? 7;
+        $days      = (int) ($request->days ?? 7);
         $userId    = $request->user()->id;
         $companyId = app('current_company_id');
 
