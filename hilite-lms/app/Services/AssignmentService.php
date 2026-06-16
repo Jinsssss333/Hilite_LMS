@@ -77,7 +77,7 @@ class AssignmentService
         }
 
         // salesperson — cannot assign
-        return collect();
+        return User::whereRaw('1 = 0')->get(); // empty Eloquent Collection
     }
 
     /**
