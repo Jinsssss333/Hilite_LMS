@@ -25,13 +25,15 @@ class AssignmentService
     public function assign(
         LeadEngagement $engagement,
         int $assignToUserId,
-        int $actorUserId,
+        ?int $actorUserId = null,
         ?string $reason = null
     ): OwnershipAssignment {
-        $actor    = User::findOrFail($actorUserId);
         $assignTo = User::findOrFail($assignToUserId);
 
-        $this->validateAssignmentPermission($actor, $assignTo, $engagement);
+        if ($actorUserId) {
+            $actor = User::findOrFail($actorUserId);
+            $this->validateAssignmentPermission($actor, $assignTo, $engagement);
+        }
 
         $previousOwnerId = $engagement->assigned_user_id;
 

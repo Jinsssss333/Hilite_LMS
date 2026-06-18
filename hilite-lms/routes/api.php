@@ -23,6 +23,7 @@ Route::post('/webhooks/leads', [WebhookController::class, 'intake'])->middleware
 Route::middleware(['auth:sanctum', 'company.scope'])->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::patch('/auth/availability', [AuthController::class, 'updateAvailability']);
 
     // Leads — reads are not throttled beyond Sanctum defaults; writes are
     Route::get('/leads/check-duplicate', [LeadController::class, 'checkDuplicate']);

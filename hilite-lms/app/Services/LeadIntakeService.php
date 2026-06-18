@@ -7,12 +7,14 @@ use App\Models\LeadEngagement;
 use App\Models\PipelineStage;
 use App\Services\PhoneNormalizationService;
 use App\Services\AuditLogService;
+use App\Services\Routing\AssignmentEngine;
 
 class LeadIntakeService
 {
     public function __construct(
         protected PhoneNormalizationService $phoneService,
         protected AuditLogService $auditService,
+        protected AssignmentEngine $assignmentEngine,
     ) {}
 
     /**
@@ -98,8 +100,11 @@ class LeadIntakeService
             after: ['phone' => $phone, 'name' => $lead->name, 'source' => $engagement->source]
         );
 
+        // Attempt automated assignment
+        $this->assignmentEngine->autoAssign($engagement, $actorUserId);
+
         return [
-            'engagement'   => $engagement->load(['lead','stage','assignedTo']),
+            'engagement'   => $engagement->fresh(['lead','stage','assignedTo']),
             'is_duplicate' => false,
             'conflict'     => false,
         ];

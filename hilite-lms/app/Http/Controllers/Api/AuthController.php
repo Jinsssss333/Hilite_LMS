@@ -38,6 +38,7 @@ class AuthController extends Controller
                     'company_name' => $user->company->name,
                     'branch_id'    => $user->branch_id,
                     'team_id'      => $user->team_id,
+                    'is_available' => $user->is_available,
                 ]
             ],
             'message' => 'Login successful'
@@ -62,6 +63,20 @@ class AuthController extends Controller
             'company_name' => $user->company->name,
             'branch_id'    => $user->branch_id,
             'team_id'      => $user->team_id,
+            'is_available' => $user->is_available,
         ]]);
+    }
+
+    public function updateAvailability(Request $request)
+    {
+        $request->validate(['is_available' => 'required|boolean']);
+        $user = $request->user();
+        $user->update(['is_available' => $request->is_available]);
+
+        return response()->json([
+            'success' => true,
+            'data' => ['is_available' => $user->is_available],
+            'message' => 'Availability updated'
+        ]);
     }
 }

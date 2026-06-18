@@ -24,7 +24,16 @@
             {{-- Populated by JS based on role --}}
         </div>
 
-        <div class="topbar__user" id="topbar-user">
+        <div class="topbar__user" id="topbar-user" style="display:flex;align-items:center;gap:16px;">
+            {{-- Availability Toggle --}}
+            <div id="availability-wrapper" style="display:none;align-items:center;gap:8px;font-size:12px;color:var(--text-muted);font-weight:500;">
+                <label class="switch">
+                    <input type="checkbox" id="availability-toggle" onchange="toggleAvailability(this.checked)">
+                    <span class="slider"></span>
+                </label>
+                <span id="availability-label">Available</span>
+            </div>
+
             <div class="topbar__user-info" id="topbar-user-info" style="display:none">
                 <div class="topbar__avatar" id="topbar-avatar">?</div>
                 <span id="topbar-username"></span>
@@ -150,6 +159,33 @@
         window.location.href = '/test/login';
     }
 
+    async function toggleAvailability(isAvailable) {
+        const lbl = document.getElementById('availability-label');
+        lbl.textContent = 'Updating…';
+        
+        const res = await api('/auth/availability', {
+            method: 'PATCH',
+            body: JSON.stringify({ is_available: isAvailable })
+        });
+        
+        if (res && res.ok) {
+            const data = await res.json();
+            const user = getUser();
+            if (user) {
+                user.is_available = data.data.is_available;
+                setUser(user);
+            }
+            lbl.textContent = data.data.is_available ? 'Available' : 'On Break';
+            lbl.style.color = data.data.is_available ? '#059669' : 'var(--text-muted)';
+            toast(data.data.is_available ? 'You are now marked as Available.' : 'You are now marked as On Break. You will not receive new leads.', 'success');
+        } else {
+            // Revert on failure
+            document.getElementById('availability-toggle').checked = !isAvailable;
+            lbl.textContent = !isAvailable ? 'Available' : 'On Break';
+            toast('Failed to update availability', 'error');
+        }
+    }
+
     /* ══════════════════════════════════════════════════════════════
        TOAST NOTIFICATIONS
        ══════════════════════════════════════════════════════════════ */
@@ -188,6 +224,19 @@
 
         // Apply role class to body for CSS-based visibility
         document.body.classList.add(`role-${role}`);
+
+        // Availability Toggle
+        const availWrapper = document.getElementById('availability-wrapper');
+        const availToggle  = document.getElementById('availability-toggle');
+        const availLabel   = document.getElementById('availability-label');
+        
+        if (availWrapper && user) {
+            availWrapper.style.display = 'flex';
+            const isAvailable = user.is_available ?? true; // fallback to true
+            availToggle.checked = isAvailable;
+            availLabel.textContent = isAvailable ? 'Available' : 'On Break';
+            availLabel.style.color = isAvailable ? '#059669' : 'var(--text-muted)';
+        }
 
         // Show user info in topbar
         const userInfoEl = document.getElementById('topbar-user-info');

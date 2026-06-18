@@ -2,6 +2,7 @@
 
 use App\Jobs\CheckSlaBreachJob;
 use App\Jobs\MarkDormantLeadsJob;
+use App\Jobs\ProcessAssignmentQueueJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -13,3 +14,4 @@ Artisan::command('inspire', function () {
 // Dev C scheduled jobs
 Schedule::job(new CheckSlaBreachJob)->hourly();
 Schedule::job(new MarkDormantLeadsJob)->weekly();
+Schedule::job(new ProcessAssignmentQueueJob)->everyMinute();
