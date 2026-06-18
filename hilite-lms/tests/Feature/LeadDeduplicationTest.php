@@ -1,7 +1,7 @@
 <?php
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use App\Models\Company;
 use App\Models\User;
@@ -13,12 +13,12 @@ use App\Services\PhoneNormalizationService;
 
 class LeadDeduplicationTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('db:seed'); // Seed the DB with base data
+        $this->setUpFreshDatabase(); // Seed the DB with base data
     }
 
     public function test_creating_two_leads_with_same_phone_returns_is_duplicate()

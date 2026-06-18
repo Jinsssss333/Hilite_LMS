@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HiLITE LMS - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#191c20",
+                        "tertiary-container": "#1a1c19",
+                        "stage-site-visit": "#3B82F6",
+                        "tertiary": "#000000",
+                        "primary-fixed": "#e1e2e8",
+                        "inverse-primary": "#c5c6cc",
+                        "stage-new": "#6366F1",
+                        "text-muted": "#8A8D85",
+                        "on-tertiary-container": "#838480",
+                        "stage-not-interested": "#6B7280",
+                        "secondary": "#5a6055",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1c",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e5e2e2",
+                        "primary-fixed-dim": "#c5c6cc",
+                        "on-primary-container": "#818489",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "stage-contacted": "#F59E0B",
+                        "inverse-on-surface": "#f3f0f0",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#45474a",
+                        "on-primary-fixed-variant": "#44474b",
+                        "on-background": "#1c1b1c",
+                        "on-primary-fixed": "#191c20",
+                        "on-tertiary-fixed": "#1a1c19",
+                        "on-secondary-container": "#60665b",
+                        "surface-dim": "#dcd9d9",
+                        "surface-tint": "#5c5e63",
+                        "surface-container-highest": "#e5e2e2",
+                        "stage-interested": "#10B981",
+                        "tertiary-fixed-dim": "#c6c7c2",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#e2e3de",
+                        "inverse-surface": "#313030",
+                        "surface": "#fcf8f8",
+                        "stage-negotiation": "#8B5CF6",
+                        "secondary-fixed-dim": "#c2c9bb",
+                        "surface-container": "#f1eded",
+                        "stage-lost": "#EF4444",
+                        "outline": "#75777b",
+                        "primary": "#000000",
+                        "on-tertiary-fixed-variant": "#454744",
+                        "on-secondary-fixed": "#171d15",
+                        "surface-bright": "#fcf8f8",
+                        "surface-container-low": "#f6f3f3",
+                        "surface-container-high": "#ebe7e7",
+                        "stage-booked": "#22C55E",
+                        "outline-variant": "#c5c6ca",
+                        "background": "#fcf8f8",
+                        "border-subtle": "#E6E6DF",
+                        "on-secondary-fixed-variant": "#42493f",
+                        "secondary-fixed": "#dfe5d7",
+                        "secondary-container": "#dfe5d7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "240px",
+                        "margin-page": "2rem",
+                        "hero-height": "180px",
+                        "gutter": "1.5rem",
+                        "card-padding": "1.25rem"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-sm": ["18px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "label-sm": ["11px", { "lineHeight": "1", "fontWeight": "500" }],
+                        "body-sm": ["13px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #F8F8F3; }
+        .hero-panel-bg { background-color: #E9EFE1; }
+        
+        /* Hide scrollbar for kanban board but allow scrolling */
+        .kanban-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+        .kanban-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .kanban-scroll::-webkit-scrollbar-thumb {
+            background-color: #E6E6DF;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md text-on-surface antialiased overflow-hidden flex h-screen">
+<!-- SideNavBar Component -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-full w-[240px] bg-surface dark:bg-primary-container border-r border-border-subtle dark:border-outline-variant p-4 gap-2 z-20">
+<div class="mb-8 px-2 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary font-bold">
+                HL
+            </div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-on-primary-container">HiLITE LMS</h1>
+<p class="font-label-sm text-label-sm text-text-muted">Lead Management</p>
+</div>
+</div>
+<div class="flex flex-col gap-1 flex-1">
+<a class="flex items-center gap-3 px-3 py-2 bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">person_search</span>
+                My Leads
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out" href="#"><span class="material-symbols-outlined">view_kanban</span> Pipeline</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">groups</span>
+                Team
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+                Reports
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Admin
+            </a>
+</div>
+<button class="w-full bg-primary text-on-primary py-2.5 rounded-full font-label-md hover:bg-tertiary transition-colors mb-4 shadow-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+            Add Lead
+        </button>
+<div class="mt-auto border-t border-border-subtle pt-4">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Sign Out
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-[240px] flex flex-col h-full overflow-hidden pt-16 relative">
+<!-- TopNavBar Component -->
+<header class="fixed top-0 right-0 h-16 w-full md:w-[calc(100%-240px)] bg-surface dark:bg-primary-container border-b border-border-subtle dark:border-outline-variant flex justify-between items-center px-6 z-10">
+<div class="flex items-center gap-4 flex-1">
+<!-- Search on left -->
+<div class="relative w-64 focus-within:ring-2 focus-within:ring-primary rounded-lg">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-border-subtle rounded-lg font-body-sm focus:outline-none focus:border-primary" placeholder="Search leads, phone..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors hidden sm:block">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-6 w-px bg-border-subtle mx-2 hidden sm:block"></div>
+<button class="px-4 py-1.5 border border-border-subtle rounded-full font-label-md text-on-surface hover:bg-surface-container-low transition-colors hidden sm:flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+                    Filters
+                </button>
+<img alt="User Avatar" class="w-8 h-8 rounded-full border border-border-subtle ml-2" data-alt="A professional headshot of a young business executive, soft natural lighting, light mode aesthetic, crisp focus, neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1YIW5vEVBxLDvlqoW7bWp1HLwBEwIqtH6obPsdgZBnu-U2_2ogadfw-5QCwQWH7Wude0tE8EVoSMWlidktDs3EwqyoD2F9M5E37J1_zVxzjcAu0QwJ-lm9UhpMUQLrE0DFg2HR1mwlfP56NXv9VEIoADTrg3njnDiclByt6TpFU_QxIFXFzuURAqM4DlCfkwHmktqmIn8vNwNfyALJFN0GyeMkxVekP2xwaq1HG_exJLBaOh3CxUYK-Iz45H4mPCs8AiIhQxIJV4"/>
+</div>
+</header>
+<!-- Scrollable Content Canvas -->
+<div class="flex-1 overflow-y-auto overflow-x-hidden p-6 flex flex-col gap-6">
+<!-- Hero Stats Panel -->
+<div class="hero-panel-bg rounded-2xl p-6 flex flex-col md:flex-row gap-8 items-center border border-border-subtle shrink-0">
+<!-- Lead Trend Chart Widget -->
+<div class="flex-1 w-full bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/50 flex flex-col justify-between h-32">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-md text-on-surface-variant uppercase tracking-wider">New Leads (5 Days)</span>
+<span class="font-label-sm text-stage-booked flex items-center"><span class="material-symbols-outlined text-[14px]">trending_up</span> +12%</span>
+</div>
+<div class="flex items-end justify-between h-16 gap-2 px-1">
+<div class="w-full bg-primary/10 rounded-t-sm h-[40%] relative group cursor-pointer hover:bg-primary/20 transition-colors"></div>
+<div class="w-full bg-primary/10 rounded-t-sm h-[60%] relative group cursor-pointer hover:bg-primary/20 transition-colors"></div>
+<div class="w-full bg-primary/10 rounded-t-sm h-[30%] relative group cursor-pointer hover:bg-primary/20 transition-colors"></div>
+<div class="w-full bg-primary/10 rounded-t-sm h-[80%] relative group cursor-pointer hover:bg-primary/20 transition-colors"></div>
+<div class="w-full bg-primary rounded-t-sm h-[100%] relative group cursor-pointer shadow-[0_0_10px_rgba(0,0,0,0.1)]"></div>
+</div>
+<div class="flex justify-between text-[10px] text-text-muted mt-1 px-1">
+<span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>
+</div>
+</div>
+<!-- Conversion Gauge Widget -->
+<div class="flex-1 w-full bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/50 flex items-center gap-6 h-32">
+<div class="relative w-20 h-20 flex shrink-0 items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<!-- Background Circle -->
+<path class="text-white/50" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<!-- Progress Circle -->
+<path class="text-stage-booked" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="68, 100" stroke-width="3"></path>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-headline-sm font-bold">68%</span>
+</div>
+</div>
+<div>
+<div class="font-label-md text-on-surface-variant uppercase tracking-wider mb-1">Conversion Rate</div>
+<div class="font-body-sm text-text-muted">Target: 65% this quarter.</div>
+</div>
+</div>
+<!-- Open Follow-ups KPI -->
+<div class="flex-1 w-full bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/50 flex flex-col justify-center h-32 cursor-pointer hover:bg-white/80 transition-colors group">
+<div class="font-label-md text-on-surface-variant uppercase tracking-wider mb-2 flex items-center justify-between">
+                        Open Follow-ups
+                        <span class="material-symbols-outlined text-[16px] text-text-muted group-hover:text-primary transition-colors">arrow_forward</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg font-bold text-primary">24</span>
+<span class="font-label-sm text-error bg-error-container px-2 py-0.5 rounded-full">5 Overdue</span>
+</div>
+</div>
+<!-- Closed This Month KPI -->
+<div class="flex-1 w-full bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/50 flex flex-col justify-center h-32">
+<div class="font-label-md text-on-surface-variant uppercase tracking-wider mb-2">Closed This Month</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg font-bold text-primary">12</span>
+<span class="font-body-sm text-text-muted">/ 15 Goal</span>
+</div>
+<div class="w-full bg-white/50 h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-stage-booked h-full rounded-full" style="width: 80%"></div>
+</div>
+</div>
+</div>
+<!-- Pipeline Header & Tools -->
+<div class="flex justify-between items-center mt-2">
+<h2 class="font-headline-sm font-bold">Pipeline Overview</h2>
+<div class="flex gap-2">
+<button class="p-1.5 border border-border-subtle rounded text-text-muted hover:bg-surface-container hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">view_list</span>
+</button>
+<button class="p-1.5 border border-border-subtle rounded bg-surface-variant text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">view_kanban</span>
+</button>
+</div>
+</div>
+<!-- Kanban Board Area -->
+<div class="flex-1 overflow-x-auto kanban-scroll pb-4 -mx-6 px-6 flex gap-6 min-h-[500px]">
+<!-- Column 1: New -->
+<div class="flex-shrink-0 w-[300px] flex flex-col gap-3">
+<div class="flex justify-between items-center pb-2 border-b-2" style="border-color: rgba(99, 102, 241, 0.3)">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-stage-new"></div>
+<h3 class="font-label-md uppercase tracking-wider text-on-surface">New</h3>
+</div>
+<span class="text-stage-new bg-stage-new/10 font-label-sm px-2 py-0.5 rounded-full border border-stage-new/20">3</span>
+</div>
+<div class="flex flex-col gap-3 overflow-y-auto pr-1">
+<!-- Standard Card -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-card-padding shadow-sm hover:shadow-md transition-shadow cursor-grab">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-sm text-stage-new bg-stage-new/10 border border-stage-new/20 px-2 py-0.5 rounded-md">Website</span>
+<span class="material-symbols-outlined text-text-muted text-[16px]">more_horiz</span>
+</div>
+<h4 class="font-headline-sm text-[16px] mb-1">Sarah Jenkins</h4>
+<p class="font-body-sm text-text-muted mb-4">+1 (555) ***-8921</p>
+<div class="flex justify-between items-center border-t border-border-subtle pt-3">
+<div class="flex items-center gap-1.5">
+<div class="w-5 h-5 rounded-full bg-primary-fixed flex items-center justify-center text-[9px] font-bold">JD</div>
+<span class="font-label-sm text-text-muted">John D.</span>
+</div>
+<span class="font-label-sm text-text-muted flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">schedule</span> 2h left</span>
+</div>
+</div>
+<!-- More cards can go here -->
+</div>
+</div>
+<!-- Column 2: Contacted -->
+<div class="flex-shrink-0 w-[300px] flex flex-col gap-3">
+<div class="flex justify-between items-center pb-2 border-b-2" style="border-color: rgba(245, 158, 11, 0.3)">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-stage-contacted"></div>
+<h3 class="font-label-md uppercase tracking-wider text-on-surface">Contacted</h3>
+</div>
+<span class="text-stage-contacted bg-stage-contacted/10 font-label-sm px-2 py-0.5 rounded-full border border-stage-contacted/20">1</span>
+</div>
+<div class="flex flex-col gap-3 overflow-y-auto pr-1">
+<!-- Focused / Dark Card -->
+<div class="bg-[#16191D] border border-transparent rounded-xl p-card-padding shadow-lg cursor-grab relative overflow-hidden text-white">
+<div class="absolute top-0 left-0 w-1 h-full bg-stage-contacted"></div>
+<div class="flex justify-between items-start mb-3">
+<span class="font-label-sm text-stage-contacted bg-stage-contacted/20 border border-stage-contacted/30 px-2 py-0.5 rounded-md">Referral</span>
+<span class="material-symbols-outlined text-text-muted text-[16px] hover:text-white cursor-pointer">more_horiz</span>
+</div>
+<h4 class="font-headline-sm text-[16px] mb-1">Michael Chen</h4>
+<!-- Expanded Contact Details in Dark State -->
+<div class="bg-white/5 rounded-lg p-2.5 mb-4 border border-white/10 space-y-2 mt-3">
+<div class="flex items-center gap-2 font-body-sm text-inverse-primary">
+<span class="material-symbols-outlined text-[14px]">phone</span>
+                                    +1 (555) 483-9210
+                                </div>
+<div class="flex items-center gap-2 font-body-sm text-inverse-primary">
+<span class="material-symbols-outlined text-[14px]">mail</span>
+                                    m.chen@example.com
+                                </div>
+</div>
+<div class="flex justify-between items-center pt-2">
+<div class="flex items-center gap-1.5">
+<img alt="Rep Avatar" class="w-5 h-5 rounded-full border border-white/20" data-alt="Small circular avatar of a sales representative, neutral background, sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAR5kHd-eaSlqnqpv-QogrX1-VH6wrQxKCVWqSKNM9bpYA3gGmGd15zOO_vxxJxrdq5SZZzcaPAedzUAZwMJJ09663VCcTYub5AkkLeynwWKeJrVWHqQtWNjvkDHLj9DyJfB-MO3PzY3daYS5lFqd5HeJizC6vDCVKwdJwIUYY6YjgXx7ZaAIBM4_KVMR_WYzhSvKupCtO7_kg5UESILSt6LuPYFoiHdoJ6I1MzFhnC3w_dXwEoN5xse2cxWqI2xBb9f6zNo4KoW5I"/>
+<span class="font-label-sm text-inverse-primary">Alex M.</span>
+</div>
+<span class="font-label-sm text-error flex items-center gap-1 bg-error/20 px-1.5 py-0.5 rounded"><span class="material-symbols-outlined text-[12px]">warning</span> Overdue</span>
+</div>
+<!-- Action Buttons for Focused State -->
+<div class="flex gap-2 mt-4 pt-4 border-t border-white/10">
+<button class="flex-1 bg-white/10 hover:bg-white/20 text-white font-label-sm py-1.5 rounded transition-colors flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[14px]">call</span> Call
+                                </button>
+<button class="flex-1 bg-white/10 hover:bg-white/20 text-white font-label-sm py-1.5 rounded transition-colors flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[14px]">edit_note</span> Note
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 3: Interested -->
+<div class="flex-shrink-0 w-[300px] flex flex-col gap-3">
+<div class="flex justify-between items-center pb-2 border-b-2" style="border-color: rgba(16, 185, 129, 0.3)">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-stage-interested"></div>
+<h3 class="font-label-md uppercase tracking-wider text-on-surface">Interested</h3>
+</div>
+<span class="text-stage-interested bg-stage-interested/10 font-label-sm px-2 py-0.5 rounded-full border border-stage-interested/20">2</span>
+</div>
+<div class="flex flex-col gap-3 overflow-y-auto pr-1">
+<!-- Standard Card -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-card-padding shadow-sm hover:shadow-md transition-shadow cursor-grab">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-sm text-stage-interested bg-stage-interested/10 border border-stage-interested/20 px-2 py-0.5 rounded-md">Zillow</span>
+<span class="material-symbols-outlined text-text-muted text-[16px]">more_horiz</span>
+</div>
+<h4 class="font-headline-sm text-[16px] mb-1">Emily Rodriguez</h4>
+<p class="font-body-sm text-text-muted mb-4">+1 (555) ***-1124</p>
+<div class="flex justify-between items-center border-t border-border-subtle pt-3">
+<div class="flex items-center gap-1.5">
+<div class="w-5 h-5 rounded-full bg-primary-fixed flex items-center justify-center text-[9px] font-bold">JD</div>
+<span class="font-label-sm text-text-muted">John D.</span>
+</div>
+<span class="font-label-sm text-text-muted flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">schedule</span> Tomorrow</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 4: Site Visit Scheduled -->
+<div class="flex-shrink-0 w-[300px] flex flex-col gap-3">
+<div class="flex justify-between items-center pb-2 border-b-2" style="border-color: rgba(59, 130, 246, 0.3)">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-stage-site-visit"></div>
+<h3 class="font-label-md uppercase tracking-wider text-on-surface">Site Visit</h3>
+</div>
+<span class="text-stage-site-visit bg-stage-site-visit/10 font-label-sm px-2 py-0.5 rounded-full border border-stage-site-visit/20">0</span>
+</div>
+<div class="flex flex-col gap-3 overflow-y-auto pr-1">
+<div class="h-24 border-2 border-dashed border-border-subtle rounded-xl flex items-center justify-center text-text-muted font-body-sm bg-surface/50">
+                            Drop leads here
+                        </div>
+</div>
+</div>
+<!-- Remaining Columns (Negotiation, Booked, Lost, Not Interested) represented structurally -->
+<div class="flex-shrink-0 w-[300px] flex flex-col gap-3 opacity-75">
+<div class="flex justify-between items-center pb-2 border-b-2" style="border-color: rgba(139, 92, 246, 0.3)">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-stage-negotiation"></div>
+<h3 class="font-label-md uppercase tracking-wider text-on-surface">Negotiation</h3>
+</div>
+<span class="text-stage-negotiation bg-stage-negotiation/10 font-label-sm px-2 py-0.5 rounded-full border border-stage-negotiation/20">1</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

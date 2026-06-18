@@ -1,7 +1,7 @@
 <?php
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\ImportJob;
@@ -9,12 +9,12 @@ use Illuminate\Http\UploadedFile;
 
 class CsvImportLimitsTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('db:seed');
+        $this->setUpFreshDatabase();
     }
 
     public function test_csv_missing_name_or_phone_are_recorded_as_failed()

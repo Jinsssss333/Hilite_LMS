@@ -1,7 +1,7 @@
 <?php
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use App\Models\Company;
 use App\Models\StagingLead;
@@ -9,12 +9,12 @@ use Illuminate\Support\Facades\Config;
 
 class WebhookIntakeTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('db:seed');
+        $this->setUpFreshDatabase();
         Config::set('app.webhook_secret_key', 'test_secret_key');
     }
 

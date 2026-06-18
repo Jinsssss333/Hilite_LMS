@@ -1,0 +1,467 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Bulk Lead Assignment - HiLITE LMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#ffffff",
+                      "surface-dim": "#dcd9d9",
+                      "border-subtle": "#E6E6DF",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed-dim": "#c6c7c2",
+                      "tertiary-container": "#1a1c19",
+                      "stage-site-visit": "#3B82F6",
+                      "inverse-surface": "#313030",
+                      "on-secondary-fixed": "#171d15",
+                      "surface-container-low": "#f6f3f3",
+                      "surface-container-highest": "#e5e2e2",
+                      "surface-tint": "#5c5e63",
+                      "on-primary-fixed-variant": "#44474b",
+                      "on-primary-container": "#818489",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#e2e3de",
+                      "stage-booked": "#22C55E",
+                      "background": "#fcf8f8",
+                      "stage-contacted": "#F59E0B",
+                      "surface-variant": "#e5e2e2",
+                      "on-secondary-fixed-variant": "#42493f",
+                      "primary-container": "#191c20",
+                      "on-primary-fixed": "#191c20",
+                      "surface": "#fcf8f8",
+                      "text-muted": "#8A8D85",
+                      "secondary-fixed": "#dfe5d7",
+                      "stage-interested": "#10B981",
+                      "on-error": "#ffffff",
+                      "primary-fixed": "#e1e2e8",
+                      "primary-fixed-dim": "#c5c6cc",
+                      "outline": "#75777b",
+                      "primary": "#000000",
+                      "stage-not-interested": "#6B7280",
+                      "on-background": "#1c1b1c",
+                      "on-tertiary-container": "#838480",
+                      "stage-negotiation": "#8B5CF6",
+                      "outline-variant": "#c5c6ca",
+                      "on-tertiary-fixed-variant": "#454744",
+                      "on-secondary-container": "#60665b",
+                      "stage-new": "#6366F1",
+                      "on-surface": "#1c1b1c",
+                      "surface-bright": "#fcf8f8",
+                      "on-tertiary-fixed": "#1a1c19",
+                      "inverse-primary": "#c5c6cc",
+                      "surface-container-high": "#ebe7e7",
+                      "error": "#ba1a1a",
+                      "secondary-fixed-dim": "#c2c9bb",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-container": "#dfe5d7",
+                      "stage-lost": "#EF4444",
+                      "on-surface-variant": "#45474a",
+                      "inverse-on-surface": "#f3f0f0",
+                      "error-container": "#ffdad6",
+                      "secondary": "#5a6055",
+                      "on-error-container": "#93000a",
+                      "surface-container": "#f1eded",
+                      "tertiary": "#000000"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-page": "2rem",
+                      "hero-height": "180px",
+                      "gutter": "1.5rem",
+                      "sidebar-width": "240px",
+                      "card-padding": "1.25rem"
+              },
+              "fontFamily": {
+                      "body-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "body-sm": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "label-sm": ["11px", {"lineHeight": "1", "fontWeight": "500"}],
+                      "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "headline-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: #fcf8f8; /* background */
+            color: #1c1b1c; /* on-background */
+        }
+        
+        /* Custom scrollbar for high-density tables */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E6E6DF;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c5c6ca;
+        }
+        
+        /* Soft Paper Checkbox */
+        .soft-checkbox {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 1px solid #c5c6ca;
+            border-radius: 4px;
+            background-color: #ffffff;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        .soft-checkbox:checked {
+            background-color: #1a1c19;
+            border-color: #1a1c19;
+        }
+        .soft-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        
+        /* Floating Action Bar Animation */
+        #bulk-action-bar {
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #bulk-action-bar.visible {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- TopNavBar Container -->
+<nav class="fixed top-0 right-0 w-full md:w-[calc(100%-240px)] h-16 bg-background dark:bg-background z-40">
+<div class="flex justify-between items-center px-gutter h-full w-full">
+<div class="flex items-center gap-4">
+<!-- Mobile Menu Button (hidden on desktop) -->
+<button class="md:hidden text-primary p-2 focus:ring-2 focus:ring-primary/20 outline-none rounded-DEFAULT hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="font-headline-sm text-headline-sm font-bold text-primary md:hidden">HiLITE LMS</div>
+<!-- Page Title Anchor (Desktop) -->
+<h1 class="hidden md:block font-headline-sm text-headline-sm font-bold text-primary tracking-tight">Bulk Leads</h1>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors focus:ring-2 focus:ring-primary/20 outline-none rounded-full p-2">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors focus:ring-2 focus:ring-primary/20 outline-none rounded-full p-2">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-subtle shrink-0">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a team lead in a bright, modern office setting, soft lighting, sharp focus, high accountability SaaS user persona." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCV2gKkl2kdv0Qf9eHxr3Mg6n98dCsG4vCbroiUulHwXXXVNLmCeFx6OYSm_JSoRA4NumAblQST57I_1iGFEVSUGo-FSsF0X5dAtkDs5GCyA30OIosxohHT6fkmxEwc9_bao3JFt469ouk9MKfIjeMDpErt05S4F_1zPHr-zUIyVN-Uzrr2PP0-uYaJo5nU5JPcU3KwA9lkmISgpkheHwKk6mcOHEvfi_3Sz0IKPgO1T2352EXG536__eKowPo2KV6ZyF9VooXeXVc">
+</div>
+</div>
+</div>
+</nav>
+<!-- SideNavBar Container -->
+<aside class="hidden md:flex fixed left-0 top-0 h-full w-[240px] bg-surface flex-col py-6 border-r border-border-subtle z-50"><!-- Brand Header -->
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 rounded-DEFAULT bg-primary flex items-center justify-center text-on-primary shrink-0">
+<span class="material-symbols-outlined text-sm">corporate_fare</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm font-bold text-primary">HiLITE LMS</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Lead Management</div>
+</div>
+</div>
+
+<!-- Navigation Links -->
+<nav class="flex-1 flex flex-col gap-1 overflow-y-auto px-2">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary font-bold border-l-4 border-primary bg-surface-container-low font-body-md text-body-md rounded-r-lg" href="#">
+<span class="material-symbols-outlined">person_search</span>
+                Leads
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">view_kanban</span>
+                Pipeline
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+                Teams
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</nav>
+
+<!-- Footer Links & CTA -->
+<div class="mt-auto px-2 pt-4 border-t border-border-subtle flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+                Help Center
+            </a>
+<div class="px-2 py-4">
+<button class="w-full bg-primary text-on-primary rounded-lg py-2.5 px-4 font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-opacity focus:ring-2 focus:ring-primary/20 outline-none">
+<span class="material-symbols-outlined text-sm">add</span>
+                Add Lead
+            </button>
+</div>
+</div></aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-[240px] pt-16 min-h-screen px-4 md:px-margin-page pb-32">
+<!-- Header & Filters Area -->
+<div class="py-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Unassigned Engagements</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 max-w-2xl">Select leads below to assign them in bulk to your team representatives. Ensure workload balance before assignment.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" data-icon="search">search</span>
+<input class="pl-9 pr-4 py-2 bg-surface-container-lowest border border-border-subtle rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none font-body-md text-body-md w-full md:w-64 transition-all" placeholder="Search leads..." type="text">
+</div>
+<button class="bg-surface-container-lowest border border-border-subtle p-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-primary/20 outline-none">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+</button>
+</div>
+</div>
+<!-- High-Density Lead List -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden shadow-sm">
+<!-- Table Header -->
+<div class="grid grid-cols-[40px_minmax(200px,_1fr)_minmax(120px,_1fr)_minmax(150px,_1fr)_minmax(120px,_1fr)_100px] gap-4 p-4 border-b border-border-subtle bg-surface-container-low/50">
+<div class="flex items-center justify-center">
+<input class="soft-checkbox" id="selectAll" type="checkbox">
+</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lead Details</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Source</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Interest Level</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Time in Queue</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-right">Action</div>
+</div>
+<!-- List Body -->
+<div class="divide-y divide-border-subtle">
+<!-- Item 1 -->
+<div class="lead-row grid grid-cols-[40px_minmax(200px,_1fr)_minmax(120px,_1fr)_minmax(150px,_1fr)_minmax(120px,_1fr)_100px] gap-4 p-4 items-center hover:bg-surface-container-low/30 transition-colors">
+<div class="flex items-center justify-center">
+<input class="soft-checkbox lead-checkbox" type="checkbox">
+</div>
+<div>
+<div class="font-label-md text-label-md text-primary mb-1">Arjun Patel</div>
+<div class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="call">call</span> +91 98765 43210
+                        </div>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Website organic</div>
+<div>
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-stage-new/10 text-stage-new border border-stage-new/20 font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-stage-new mr-1.5"></span> New Inquiry
+                        </span>
+</div>
+<div class="font-body-sm text-body-sm text-error font-medium">4 hrs ago</div>
+<div class="text-right">
+<button class="text-primary hover:bg-surface-container-low p-1.5 rounded-md transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="lead-row grid grid-cols-[40px_minmax(200px,_1fr)_minmax(120px,_1fr)_minmax(150px,_1fr)_minmax(120px,_1fr)_100px] gap-4 p-4 items-center hover:bg-surface-container-low/30 transition-colors">
+<div class="flex items-center justify-center">
+<input class="soft-checkbox lead-checkbox" type="checkbox">
+</div>
+<div>
+<div class="font-label-md text-label-md text-primary mb-1">Meera Sharma</div>
+<div class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="mail">mail</span> m.sharma@example.com
+                        </div>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Facebook Ad</div>
+<div>
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-stage-interested/10 text-stage-interested border border-stage-interested/20 font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-stage-interested mr-1.5"></span> High Intent
+                        </span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">2 hrs ago</div>
+<div class="text-right">
+<button class="text-primary hover:bg-surface-container-low p-1.5 rounded-md transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="lead-row grid grid-cols-[40px_minmax(200px,_1fr)_minmax(120px,_1fr)_minmax(150px,_1fr)_minmax(120px,_1fr)_100px] gap-4 p-4 items-center hover:bg-surface-container-low/30 transition-colors">
+<div class="flex items-center justify-center">
+<input class="soft-checkbox lead-checkbox" type="checkbox">
+</div>
+<div>
+<div class="font-label-md text-label-md text-primary mb-1">Rohan Desai</div>
+<div class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="call">call</span> +91 91234 56789
+                        </div>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Referral</div>
+<div>
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-stage-contacted/10 text-stage-contacted border border-stage-contacted/20 font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-stage-contacted mr-1.5"></span> Follow-up req.
+                        </span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">1 hr ago</div>
+<div class="text-right">
+<button class="text-primary hover:bg-surface-container-low p-1.5 rounded-md transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Pagination Footer -->
+<div class="p-4 border-t border-border-subtle flex items-center justify-between bg-surface-container-low/30">
+<div class="font-body-sm text-body-sm text-text-muted">Showing 1-3 of 24 unassigned leads</div>
+<div class="flex items-center gap-2">
+<button class="p-1 text-on-surface-variant opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="p-1 text-primary hover:bg-surface-container-low rounded">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Bulk Action Bar -->
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] md:w-auto md:min-w-[600px] bg-primary-container text-on-primary-container rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-primary-fixed/20 p-4 z-50 flex flex-col md:flex-row items-center gap-6" id="bulk-action-bar">
+<!-- Selection Info -->
+<div class="flex items-center gap-3 shrink-0">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-primary-fixed-dim flex items-center justify-center font-headline-sm text-headline-sm">
+<span id="selected-count" class="">0</span>
+</div>
+<div>
+<div class="font-label-md text-label-md text-on-primary">Leads Selected</div>
+<button class="font-label-sm text-label-sm text-inverse-primary hover:text-on-primary underline decoration-dotted mt-0.5" id="clear-selection">Clear all</button>
+</div>
+</div>
+<!-- Assignment Controls -->
+<div class="flex-1 flex flex-col md:flex-row items-center gap-4 w-full border-t md:border-t-0 md:border-l border-primary-fixed/20 pt-4 md:pt-0 md:pl-6">
+<div class="w-full flex-1">
+<label class="font-label-sm text-label-sm text-inverse-primary block mb-1.5">Assign To Representative</label>
+<div class="relative w-full">
+<select class="w-full appearance-none bg-inverse-surface border border-outline/50 rounded-lg py-2 pl-3 pr-8 font-body-sm text-body-sm text-on-primary focus:ring-2 focus:ring-primary-fixed focus:border-primary-fixed outline-none">
+<option disabled="" selected="" value="">Select Rep...</option>
+<option value="priya">Priya S. (12 active leads)</option>
+<option value="kiran">Kiran M. (8 active leads)</option>
+<option value="ajay">Ajay R. (42 active leads - High Load)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-sm" data-icon="arrow_drop_down">arrow_drop_down</span>
+</div>
+</div>
+<div class="w-full flex-1">
+<label class="font-label-sm text-label-sm text-inverse-primary block mb-1.5">Assignment Reason (Optional)</label>
+<input class="w-full bg-inverse-surface border border-outline/50 rounded-lg py-2 px-3 font-body-sm text-body-sm text-on-primary focus:ring-2 focus:ring-primary-fixed focus:border-primary-fixed outline-none placeholder:text-outline" placeholder="e.g. Territory match" type="text">
+</div>
+<button class="w-full md:w-auto mt-4 md:mt-0 shrink-0 bg-primary-fixed text-on-primary-fixed font-label-md text-label-md py-2.5 px-6 rounded-lg hover:bg-primary-fixed-dim transition-colors focus:ring-2 focus:ring-primary-fixed/50 outline-none">
+                Assign Leads
+            </button>
+</div>
+</div>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.lead-checkbox');
+            const actionBar = document.getElementById('bulk-action-bar');
+            const countDisplay = document.getElementById('selected-count');
+            const clearBtn = document.getElementById('clear-selection');
+            const rows = document.querySelectorAll('.lead-row');
+
+            function updateActionBar() {
+                const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+                countDisplay.textContent = selectedCount;
+                
+                if (selectedCount > 0) {
+                    actionBar.classList.add('visible');
+                } else {
+                    actionBar.classList.remove('visible');
+                    selectAll.checked = false;
+                }
+
+                // Update row styles based on selection
+                checkboxes.forEach((cb, index) => {
+                    if (cb.checked) {
+                        rows[index].classList.add('bg-surface-container-low', 'border-l-2', 'border-primary');
+                    } else {
+                        rows[index].classList.remove('bg-surface-container-low', 'border-l-2', 'border-primary');
+                    }
+                });
+            }
+
+            selectAll.addEventListener('change', (e) => {
+                checkboxes.forEach(cb => cb.checked = e.target.checked);
+                updateActionBar();
+            });
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const allChecked = Array.from(checkboxes).every(c => c.checked);
+                    const someChecked = Array.from(checkboxes).some(c => c.checked);
+                    
+                    selectAll.checked = allChecked;
+                    updateActionBar();
+                });
+            });
+
+            clearBtn.addEventListener('click', () => {
+                checkboxes.forEach(cb => cb.checked = false);
+                selectAll.checked = false;
+                updateActionBar();
+            });
+            
+            // Allow clicking the row to toggle checkbox
+            rows.forEach((row, index) => {
+                row.addEventListener('click', (e) => {
+                    if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'SPAN') {
+                        checkboxes[index].checked = !checkboxes[index].checked;
+                        updateActionBar();
+                    }
+                });
+            });
+        });
+    </script>
+
+
+</body></html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>HiLITE LMS - Admin Settings</title>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "on-tertiary-container": "#838480",
+                            "border-subtle": "#E6E6DF",
+                            "secondary-fixed-dim": "#c2c9bb",
+                            "surface-container-high": "#ebe7e7",
+                            "stage-site-visit": "#3B82F6",
+                            "on-error-container": "#93000a",
+                            "secondary-fixed": "#dfe5d7",
+                            "error": "#ba1a1a",
+                            "surface-bright": "#fcf8f8",
+                            "primary-fixed-dim": "#c5c6cc",
+                            "on-error": "#ffffff",
+                            "on-tertiary-fixed": "#1a1c19",
+                            "on-primary-fixed": "#191c20",
+                            "text-muted": "#8A8D85",
+                            "on-tertiary-fixed-variant": "#454744",
+                            "error-container": "#ffdad6",
+                            "background": "#fcf8f8",
+                            "surface-tint": "#5c5e63",
+                            "stage-lost": "#EF4444",
+                            "tertiary-container": "#1a1c19",
+                            "on-secondary": "#ffffff",
+                            "primary-fixed": "#e1e2e8",
+                            "surface-container-highest": "#e5e2e2",
+                            "surface-container-low": "#f6f3f3",
+                            "surface-container": "#f1eded",
+                            "on-secondary-fixed-variant": "#42493f",
+                            "on-background": "#1c1b1c",
+                            "primary": "#000000",
+                            "outline": "#75777b",
+                            "stage-new": "#6366F1",
+                            "outline-variant": "#c5c6ca",
+                            "tertiary-fixed-dim": "#c6c7c2",
+                            "on-surface-variant": "#45474a",
+                            "stage-negotiation": "#8B5CF6",
+                            "stage-not-interested": "#6B7280",
+                            "on-secondary-container": "#60665b",
+                            "on-primary-container": "#818489",
+                            "on-primary": "#ffffff",
+                            "tertiary": "#000000",
+                            "surface-variant": "#e5e2e2",
+                            "on-tertiary": "#ffffff",
+                            "secondary": "#5a6055",
+                            "inverse-primary": "#c5c6cc",
+                            "inverse-on-surface": "#f3f0f0",
+                            "on-surface": "#1c1b1c",
+                            "stage-booked": "#22C55E",
+                            "surface-container-lowest": "#ffffff",
+                            "on-secondary-fixed": "#171d15",
+                            "surface": "#fcf8f8",
+                            "stage-contacted": "#F59E0B",
+                            "on-primary-fixed-variant": "#44474b",
+                            "surface-dim": "#dcd9d9",
+                            "secondary-container": "#dfe5d7",
+                            "tertiary-fixed": "#e2e3de",
+                            "stage-interested": "#10B981",
+                            "inverse-surface": "#313030",
+                            "primary-container": "#191c20"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.25rem",
+                            "lg": "0.5rem",
+                            "xl": "0.75rem",
+                            "full": "9999px"
+                    },
+                    "spacing": {
+                            "margin-page": "2rem",
+                            "sidebar-width": "240px",
+                            "card-padding": "1.25rem",
+                            "hero-height": "180px",
+                            "gutter": "1.5rem"
+                    },
+                    "fontFamily": {
+                            "label-md": ["Inter"],
+                            "headline-md": ["Inter"],
+                            "headline-lg-mobile": ["Inter"],
+                            "body-md": ["Inter"],
+                            "headline-sm": ["Inter"],
+                            "headline-lg": ["Inter"],
+                            "label-sm": ["Inter"],
+                            "body-sm": ["Inter"],
+                            "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                            "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                            "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                            "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                            "body-md": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                            "headline-sm": ["18px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                            "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                            "label-sm": ["11px", { "lineHeight": "1", "fontWeight": "500" }],
+                            "body-sm": ["13px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                            "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Soft Paper specific overrides that don't fit perfectly in tailwind config */
+        body {
+            background-color: #F8F8F3; /* Ensure Soft Paper background is applied globally */
+        }
+        
+        /* Custom scrollbar for horizontal kanban/tables if needed */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E6E6DF;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c5c6ca;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md text-on-surface antialiased min-h-screen h-screen overflow-hidden">
+<!-- TopNavBar -->
+<nav class="fixed top-0 right-0 w-full md:w-[calc(100%-240px)] h-16 bg-surface dark:bg-surface-dim border-b border-border-subtle dark:border-outline-variant z-40 transition-all duration-300">
+<div class="flex justify-between items-center px-margin-page h-full">
+<!-- Mobile Menu Trigger -->
+<button class="md:hidden text-primary p-2 -ml-2 rounded-lg hover:bg-surface-container-high transition-colors" onclick="document.getElementById('mobile-sidebar').classList.toggle('-translate-x-full'); document.getElementById('mobile-overlay').classList.toggle('hidden');">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<!-- Search Area (on_left) -->
+<div class="hidden md:flex flex-1 max-w-md items-center">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-border-subtle rounded-full font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder:text-on-surface-variant/70 shadow-sm shadow-primary/5" placeholder="Search users, leads, or branches..." type="text">
+</div>
+</div>
+<!-- Mobile Logo (Shows only when sidebar is hidden) -->
+<div class="md:hidden font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed truncate px-4">
+                HiLITE LMS
+            </div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 relative group">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-stage-new rounded-full border border-surface"></span>
+<!-- Tooltip -->
+<span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-surface-tint text-surface text-label-sm font-label-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-md">Notifications</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 relative group">
+<span class="material-symbols-outlined">help_outline</span>
+<!-- Tooltip -->
+<span class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-surface-tint text-surface text-label-sm font-label-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-md">Help</span>
+</button>
+<div class="h-8 w-[1px] bg-border-subtle mx-2 hidden sm:block"></div>
+<button class="flex items-center gap-2 pl-2 pr-1 py-1 rounded-full hover:bg-surface-container-high transition-colors border border-transparent hover:border-border-subtle">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-border-subtle overflow-hidden shrink-0 flex items-center justify-center text-primary font-label-md">
+                        A
+                    </div>
+</button>
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Desktop) -->
+<aside class="hidden md:flex flex-col gap-2 p-4 fixed left-0 top-0 h-full w-[240px] bg-surface dark:bg-surface-dim border-r border-border-subtle dark:border-outline-variant z-50">
+<!-- Header -->
+<div class="px-2 mb-6 mt-2">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">HiLITE LMS</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Real Estate Lead Mgmt</p>
+</div>
+<!-- CTA -->
+
+<!-- Navigation Tabs -->
+<nav class="flex-1 overflow-y-auto space-y-1 pr-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">person_search</span>
+<span class="font-label-md text-label-md">My Leads</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">view_kanban</span>
+<span class="font-label-md text-label-md">Pipeline</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">groups</span>
+<span class="font-label-md text-label-md">Team</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">analytics</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center gap-3 px-4 py-3 bg-primary text-on-primary rounded-xl active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined fill">admin_panel_settings</span>
+<span class="font-label-md text-label-md">Admin</span>
+</a>
+</nav>
+<!-- User Footer Mini -->
+<div class="mt-auto pt-4 border-t border-border-subtle"><button class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-2.5 px-4 rounded-[16px] hover:bg-surface-tint transition-all duration-200 shadow-sm hover:shadow-md mb-4 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span class="font-label-md text-label-md">Add New Lead</span>
+</button>
+<button class="w-full flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-surface-container-high transition-colors text-left">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-border-subtle flex items-center justify-center text-primary font-label-md shrink-0">
+                     A
+                 </div>
+<div class="flex-1 min-w-0">
+<p class="font-label-sm text-label-sm text-primary truncate">Admin User</p>
+<p class="text-[10px] text-on-surface-variant truncate">System Administrator</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span>
+</button>
+</div>
+</aside>
+<!-- Mobile Sidebar & Overlay (Hidden by default) -->
+<div class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-40 hidden md:hidden transition-opacity" id="mobile-overlay" onclick="document.getElementById('mobile-sidebar').classList.add('-translate-x-full'); this.classList.add('hidden');"></div>
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface border-r border-border-subtle z-50 transform -translate-x-full transition-transform duration-300 md:hidden flex flex-col p-4 shadow-2xl shadow-primary/10" id="mobile-sidebar">
+<!-- Header -->
+<div class="flex items-center justify-between px-2 mb-6 mt-2">
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">HiLITE LMS</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Real Estate Lead Mgmt</p>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full" onclick="document.getElementById('mobile-sidebar').classList.add('-translate-x-full'); document.getElementById('mobile-overlay').classList.add('hidden');">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<nav class="flex-1 overflow-y-auto space-y-1">
+<!-- Mobile Links (Same structure, active on Admin) -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Active Mobile -->
+<a class="flex items-center gap-3 px-4 py-3 bg-primary text-on-primary rounded-xl" href="#">
+<span class="material-symbols-outlined fill">admin_panel_settings</span>
+<span class="font-label-md text-label-md">Admin</span>
+</a>
+</nav>
+</aside>
+<!-- Main Canvas -->
+<main class="md:ml-[240px] pt-16 min-h-screen flex flex-col h-full overflow-y-auto">
+<!-- Page Header -->
+<header class="px-margin-page py-8 pb-6">
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-surface-container-high text-on-surface-variant border border-border-subtle">System Settings</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">Administration</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-2xl">Manage system users, define Service Level Agreement policies, and monitor global audit logs.</p>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface border border-border-subtle rounded-full hover:bg-surface-container-high transition-colors font-label-md text-label-md text-primary shadow-sm">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Export Data
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-full hover:bg-surface-tint transition-colors font-label-md text-label-md shadow-sm active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+                        New User
+                    </button>
+</div>
+</div>
+<!-- In-Page Navigation (Tabs) -->
+<div class="mt-8 border-b border-border-subtle flex overflow-x-auto no-scrollbar">
+<button class="px-4 py-3 font-label-md text-label-md text-primary border-b-2 border-primary whitespace-nowrap">User Management</button>
+<button class="px-4 py-3 font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">SLA Policies</button>
+<button class="px-4 py-3 font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">Audit Log</button>
+<button class="px-4 py-3 font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">Branch Setup</button>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="px-margin-page pb-12 flex-1 space-y-6">
+<!-- Tab 1 Content: User Management -->
+<section class="space-y-6">
+<!-- Filters / Actions Bar -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface rounded-[20px] p-4 border border-border-subtle shadow-sm shadow-primary/5">
+<div class="flex flex-wrap gap-2 w-full sm:w-auto">
+<div class="relative w-full sm:w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full pl-9 pr-3 py-1.5 bg-surface-container-low border border-border-subtle rounded-lg font-body-sm text-body-sm focus:outline-none focus:border-outline focus:ring-1 focus:ring-outline transition-colors" placeholder="Search users by name or email" type="text">
+</div>
+<div class="flex gap-2">
+<select class="py-1.5 pl-3 pr-8 bg-surface-container-low border border-border-subtle rounded-lg font-body-sm text-body-sm focus:outline-none focus:border-outline appearance-none">
+<option value="">All Roles</option>
+<option value="admin">Admin</option>
+<option value="manager">Manager</option>
+<option value="agent">Sales Agent</option>
+</select>
+<select class="py-1.5 pl-3 pr-8 bg-surface-container-low border border-border-subtle rounded-lg font-body-sm text-body-sm focus:outline-none focus:border-outline appearance-none">
+<option value="">All Branches</option>
+<option value="hq">Calicut HQ</option>
+<option value="kochi">Kochi Branch</option>
+</select>
+</div>
+</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-stage-booked inline-block"></span>
+                        Showing 42 active users
+                    </div>
+</div>
+<!-- Bento-style Data Grid -->
+<div class="bg-surface rounded-[24px] border border-border-subtle overflow-hidden shadow-sm shadow-primary/5">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-border-subtle bg-surface-container-low/50">
+<th class="py-4 px-6 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">User</th>
+<th class="py-4 px-6 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Role &amp; Branch</th>
+<th class="py-4 px-6 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Team</th>
+<th class="py-4 px-6 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold text-right">Active Leads</th>
+<th class="py-4 px-6 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold text-center">Status</th>
+<th class="py-4 px-4 w-12"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle font-body-sm">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-border-subtle flex items-center justify-center text-primary font-label-md font-bold shrink-0">
+                                                RA
+                                            </div>
+<div>
+<div class="font-label-md text-primary">Ravi Kumar</div>
+<div class="text-on-surface-variant text-[12px]">ravi.k@hilite.com</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-tertiary-fixed text-on-tertiary-fixed w-fit">Admin</span>
+<span class="text-on-surface-variant text-[12px]">Calicut HQ</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="text-primary font-medium">Global Ops</div>
+<div class="text-on-surface-variant text-[12px]">N/A</div>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="font-headline-sm text-primary">12</div>
+<div class="text-on-surface-variant text-[11px]">System assigned</div>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#E8F5E9] text-[#2E7D32] border border-[#C8E6C9]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#2E7D32]"></span>
+                                            Active
+                                        </span>
+</td>
+<td class="py-4 px-4 text-right">
+<button class="text-on-surface-variant hover:text-primary p-1 rounded hover:bg-surface-container-high opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-border-subtle flex items-center justify-center text-primary font-label-md font-bold shrink-0">
+                                                DM
+                                            </div>
+<div>
+<div class="font-label-md text-primary">Deepa Menon</div>
+<div class="text-on-surface-variant text-[12px]">deepa.m@hilite.com</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-secondary-container text-on-secondary-container w-fit">Manager</span>
+<span class="text-on-surface-variant text-[12px]">Kochi Branch</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="text-primary font-medium">Team Alpha</div>
+<div class="text-on-surface-variant text-[12px]">5 Agents</div>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="font-headline-sm text-primary">84</div>
+<div class="text-stage-new text-[11px] font-medium">+12 this week</div>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#E8F5E9] text-[#2E7D32] border border-[#C8E6C9]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#2E7D32]"></span>
+                                            Active
+                                        </span>
+</td>
+<td class="py-4 px-4 text-right">
+<button class="text-on-surface-variant hover:text-primary p-1 rounded hover:bg-surface-container-high opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-border-subtle flex items-center justify-center text-primary font-label-md font-bold shrink-0">
+                                                AJ
+                                            </div>
+<div>
+<div class="font-label-md text-primary">Arjun Jose</div>
+<div class="text-on-surface-variant text-[12px]">arjun.j@hilite.com</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-surface-container-highest text-on-surface-variant border border-border-subtle w-fit">Sales Agent</span>
+<span class="text-on-surface-variant text-[12px]">Calicut HQ</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="text-primary font-medium">Team Bravo</div>
+<div class="text-on-surface-variant text-[12px]">Manager: S. Nair</div>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="font-headline-sm text-primary">142</div>
+<div class="text-stage-contacted text-[11px] font-medium">High load</div>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#FFF8E1] text-[#F57F17] border border-[#FFECB3]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#F57F17]"></span>
+                                            On Leave
+                                        </span>
+</td>
+<td class="py-4 px-4 text-right">
+<button class="text-on-surface-variant hover:text-primary p-1 rounded hover:bg-surface-container-high opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="px-6 py-4 border-t border-border-subtle bg-surface-container-low/30 flex items-center justify-between">
+<div class="text-[12px] text-on-surface-variant">
+                            Showing 1-3 of 42
+                        </div>
+<div class="flex gap-1">
+<button class="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-on-surface-variant hover:bg-surface disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded bg-primary text-on-primary flex items-center justify-center font-label-sm">1</button>
+<button class="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-primary hover:bg-surface font-label-sm">2</button>
+<button class="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-primary hover:bg-surface font-label-sm">3</button>
+<button class="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-on-surface-variant hover:bg-surface">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+
+
+</body></html>

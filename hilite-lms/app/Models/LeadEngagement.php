@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 class LeadEngagement extends Model
 {
     protected $fillable = [
-        'company_id','lead_id','assigned_user_id','stage_id',
+        'company_id','lead_id','assigned_branch_id','assigned_team_id','assigned_user_id','stage_id',
         'source','status','last_activity_at','sla_due_at','sla_breached'
     ];
 

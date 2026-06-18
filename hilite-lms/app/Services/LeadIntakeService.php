@@ -80,14 +80,48 @@ class LeadIntakeService
             ->orderBy('order')
             ->first();
 
+        $assignment = $this->autoAssign($companyId, clone $lead);
+        $assignedUserId = $data['assigned_user_id'] ?? $assignment['user_id'] ?? null;
+        $assignedTeamId = $data['assigned_team_id'] ?? $assignment['team_id'] ?? null;
+        $assignedBranchId = $data['assigned_branch_id'] ?? $assignment['branch_id'] ?? null;
+
+        // If a user is given but no team/branch, try to backfill
+        if ($assignedUserId && (!$assignedTeamId || !$assignedBranchId)) {
+            $userObj = \App\Models\User::find($assignedUserId);
+            if ($userObj) {
+                $assignedTeamId = $assignedTeamId ?? $userObj->team_id;
+                $assignedBranchId = $assignedBranchId ?? $userObj->branch_id;
+            }
+        }
+
         $engagement = LeadEngagement::create([
-            'company_id'       => $companyId,
-            'lead_id'          => $lead->id,
-            'assigned_user_id' => null,
-            'stage_id'         => $defaultStage->id,
-            'source'           => $data['source'] ?? 'manual',
-            'status'           => 'active',
+            'company_id'         => $companyId,
+            'lead_id'            => $lead->id,
+            'assigned_branch_id' => $assignedBranchId,
+            'assigned_team_id'   => $assignedTeamId,
+            'assigned_user_id'   => $assignedUserId,
+            'stage_id'           => $defaultStage->id,
+            'source'             => $data['source'] ?? 'manual',
+            'status'             => 'active',
         ]);
+
+        // Create SCD2 Ownership Assignment record
+        $level = $assignedUserId ? 'sp' : ($assignedTeamId ? 'team' : ($assignedBranchId ? 'branch' : null));
+        $targetId = $assignedUserId ?? $assignedTeamId ?? $assignedBranchId;
+
+        if ($level && $targetId) {
+            \App\Models\OwnershipAssignment::create([
+                'engagement_id'       => $engagement->id,
+                'level'               => $level,
+                'target_id'           => $targetId,
+                'assigned_to_user_id' => $assignedUserId, // Optional, for backward compat
+                'assigned_by_user_id' => $actorUserId,
+                'reason'              => 'Auto-assignment on intake',
+                'assigned_at'         => now(),
+                'valid_from'          => now(),
+                'valid_to'            => null,
+            ]);
+        }
 
         $this->auditService->log(
             companyId: $companyId,
@@ -103,5 +137,84 @@ class LeadIntakeService
             'is_duplicate' => false,
             'conflict'     => false,
         ];
+    }
+
+    private const fallbackMaxLeads = 10;
+
+    /**
+     * Auto-assign lead using routing policies, falling back to basic capacity check.
+     */
+    private function autoAssign(int $companyId, Lead $lead): array
+    {
+        $policy = \App\Models\RoutingPolicy::where('company_id', $companyId)->first();
+
+        // If no dynamic policy, use the old capacity fallback
+        if (!$policy) {
+            $spId = $this->fallbackCapacityAssignment($companyId);
+            return ['user_id' => $spId, 'team_id' => null, 'branch_id' => null];
+        }
+
+        $targets = $policy->targets ?? [];
+        if (empty($targets)) {
+            return ['user_id' => null, 'team_id' => null, 'branch_id' => null];
+        }
+
+        if ($policy->mode === 'round_robin') {
+            $cursor = $policy->round_robin_cursor;
+            if (!isset($targets[$cursor])) {
+                $cursor = 0;
+            }
+            $selected = $targets[$cursor];
+            
+            // Advance cursor
+            $policy->update(['round_robin_cursor' => ($cursor + 1) % count($targets)]);
+
+            return $this->buildAssignmentArray($selected['target_type'], $selected['target_id']);
+        }
+
+        return ['user_id' => null, 'team_id' => null, 'branch_id' => null];
+    }
+
+    private function buildAssignmentArray(string $type, int $id): array
+    {
+        if ($type === 'user') return ['user_id' => $id, 'team_id' => null, 'branch_id' => null];
+        if ($type === 'team') return ['user_id' => null, 'team_id' => $id, 'branch_id' => null];
+        if ($type === 'branch') return ['user_id' => null, 'team_id' => null, 'branch_id' => $id];
+        return ['user_id' => null, 'team_id' => null, 'branch_id' => null];
+    }
+
+    private function fallbackCapacityAssignment(int $companyId): ?int
+    {
+        $salespersons = \App\Models\User::where('company_id', $companyId)
+            ->where('role', 'salesperson')
+            ->where('is_active', true)
+            ->pluck('id');
+
+        if ($salespersons->isEmpty()) return null;
+
+        $loadCounts = LeadEngagement::where('company_id', $companyId)
+            ->whereIn('assigned_user_id', $salespersons)
+            ->where('status', 'active')
+            ->select('assigned_user_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('assigned_user_id')
+            ->pluck('total', 'assigned_user_id')
+            ->toArray();
+
+        $leastLoadedId = null;
+        $minLoad = PHP_INT_MAX;
+
+        foreach ($salespersons as $spId) {
+            $load = $loadCounts[$spId] ?? 0;
+            if ($load < $minLoad) {
+                $minLoad = $load;
+                $leastLoadedId = $spId;
+            }
+        }
+
+        if ($minLoad < self::fallbackMaxLeads) {
+            return $leastLoadedId;
+        }
+
+        return null;
     }
 }
