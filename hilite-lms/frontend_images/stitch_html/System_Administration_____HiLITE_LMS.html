@@ -1,0 +1,447 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Admin Dashboard - System Governance</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#dfe5d7",
+                        "on-error": "#ffffff",
+                        "text-muted": "#8A8D85",
+                        "tertiary-fixed-dim": "#c6c7c2",
+                        "inverse-surface": "#313030",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#1a1c19",
+                        "stage-booked": "#22C55E",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#45474a",
+                        "on-tertiary-fixed-variant": "#454744",
+                        "inverse-on-surface": "#f3f0f0",
+                        "primary-fixed": "#e1e2e8",
+                        "on-primary": "#ffffff",
+                        "stage-interested": "#10B981",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#191c20",
+                        "primary-fixed-dim": "#c5c6cc",
+                        "on-surface": "#1c1b1c",
+                        "stage-site-visit": "#3B82F6",
+                        "stage-negotiation": "#8B5CF6",
+                        "surface-container": "#f1eded",
+                        "on-primary-container": "#818489",
+                        "surface-container-high": "#ebe7e7",
+                        "primary": "#000000",
+                        "surface-container-low": "#f6f3f3",
+                        "surface-tint": "#5c5e63",
+                        "stage-new": "#6366F1",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#191c20",
+                        "on-primary-fixed-variant": "#44474b",
+                        "surface": "#fcf8f8",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e5e2e2",
+                        "secondary-fixed-dim": "#c2c9bb",
+                        "surface-dim": "#dcd9d9",
+                        "on-secondary-fixed": "#171d15",
+                        "surface-variant": "#e5e2e2",
+                        "on-background": "#1c1b1c",
+                        "inverse-primary": "#c5c6cc",
+                        "outline": "#75777b",
+                        "tertiary-container": "#1a1c19",
+                        "surface-bright": "#fcf8f8",
+                        "secondary": "#5a6055",
+                        "secondary-fixed": "#dfe5d7",
+                        "error": "#ba1a1a",
+                        "stage-not-interested": "#6B7280",
+                        "background": "#fcf8f8",
+                        "on-secondary-fixed-variant": "#42493f",
+                        "tertiary": "#000000",
+                        "tertiary-fixed": "#e2e3de",
+                        "stage-contacted": "#F59E0B",
+                        "outline-variant": "#c5c6ca",
+                        "on-secondary-container": "#60665b",
+                        "on-tertiary-container": "#838480",
+                        "border-subtle": "#E6E6DF",
+                        "stage-lost": "#EF4444"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "240px",
+                        "margin-page": "2rem",
+                        "gutter": "1.5rem",
+                        "card-padding": "1.25rem",
+                        "hero-height": "180px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-sm": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-sm": ["11px", {"lineHeight": "1", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Custom scrollbar for soft paper feel */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E6E6DF; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #c5c6ca; }
+    </style>
+</head>
+<body class="bg-surface-bright text-on-surface font-body-md text-body-md antialiased min-h-screen flex selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- Shared Component: SideNavBar -->
+<nav class="bg-surface dark:bg-primary-container text-primary dark:text-inverse-primary font-body-md text-body-md fixed left-0 top-0 h-full w-[240px] border-r border-border-subtle dark:border-outline-variant flex flex-col p-4 gap-2 z-20">
+<!-- Header -->
+<div class="flex items-center gap-3 px-2 py-4 mb-4">
+<div class="w-10 h-10 rounded-lg bg-primary text-on-primary flex items-center justify-center font-headline-sm text-headline-sm">
+                HL
+            </div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-on-primary-container">HiLITE LMS</h1>
+<p class="font-label-sm text-label-sm text-text-muted">Lead Management</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-1 flex-1">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="person_search">person_search</span>
+<span class="">My Leads</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#"><span class="material-symbols-outlined" data-icon="view_kanban">view_kanban</span><span class="">Pipeline</span></a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="">Team</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="">Reports</span>
+</a>
+<!-- Active Tab: Admin -->
+<a class="flex items-center gap-3 px-3 py-2 bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings" data-weight="fill" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="">Admin</span>
+</a>
+</div>
+<!-- Footer Actions -->
+<div class="flex flex-col gap-2 mt-auto pt-4 border-t border-border-subtle"><button class="w-full bg-primary text-on-primary py-2.5 rounded-lg font-label-md text-label-md hover:bg-inverse-surface transition-colors mb-2">Add Lead</button><a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-error-container hover:text-on-error-container rounded-lg transition-colors duration-200 ease-in-out" href="#"><span class="material-symbols-outlined" data-icon="logout">logout</span><span class="">Sign Out</span></a></div>
+</nav>
+<!-- Shared Component: TopNavBar -->
+<header class="bg-surface dark:bg-primary-container text-primary dark:text-inverse-primary font-body-md text-body-md fixed top-0 right-0 h-16 w-[calc(100%-240px)] border-b border-border-subtle dark:border-outline-variant flex justify-between items-center px-6 z-10">
+<!-- Search Bar -->
+<div class="flex items-center w-96 bg-surface-container rounded-full px-4 py-2 border border-border-subtle focus-within:ring-2 focus-within:ring-primary transition-shadow">
+<span class="material-symbols-outlined text-text-muted mr-2 text-[20px]" data-icon="search">search</span>
+<input class="bg-transparent border-none outline-none w-full font-body-sm text-body-sm text-on-surface placeholder:text-text-muted focus:ring-0 p-0" placeholder="Search system logs, users, IP addresses..." type="text">
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-3 py-1.5 border border-border-subtle rounded-lg text-on-surface hover:bg-surface-container-low transition-colors font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+                Filters
+            </button>
+<div class="h-6 w-[1px] bg-border-subtle mx-2"></div>
+<button class="relative p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<img alt="User Avatar" class="w-8 h-8 rounded-full ml-2 border border-border-subtle" data-alt="A small, professional headshot photograph of a corporate administrator looking forward, softly lit in a modern office setting. The image is cropped in a perfect circle, displaying a clear, focused expression suitable for an enterprise software profile picture. The color grading leans warm and low-contrast, matching the soft paper aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9tTDKY7NM1rMIF4Ns94eMj0LbJOlUJn5uWI98BqelI2d4M_TaeWTPTWFKOkDt3CUQ_Z1K_mB99hmyo6I0O-nKrrWLOxOWHHdmI4FMeAZuTeDcQP85TqaqDBkIF5GF7FaiO6_H7YjAujtcZD-0j4Kibq_4ZdP_Hpw8Bf4_p2EclnEHrJy-PSF25v5s5eFYpTr4g5ErPySUeLigUK7GlGRhXyBmulefd40zle_6sW0vOtI5jzwOg61QsP2ttx5OxBRRfvyu4OJmd-0">
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[240px] p-8 w-[calc(100%-240px)] flex flex-col gap-6 overflow-y-auto h-screen pt-24">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-2">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">System Governance</h2>
+<p class="font-body-md text-body-md text-text-muted mt-1">Monitor infrastructure health, user access, and security compliance.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-surface-container-lowest border border-border-subtle rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors">
+                    Export Logs
+                </button>
+<button class="px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-inverse-surface transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="tune">tune</span>
+                    Global Settings
+                </button>
+</div>
+</div>
+<!-- Hero Strip: KPI Widgets (Soft Paper Style) -->
+<div class="bg-surface-container-low rounded-xl p-6 border border-border-subtle flex gap-6">
+<!-- Widget 1: API Health -->
+<div class="flex-1 flex flex-col gap-3 pr-6 border-r border-border-subtle border-dashed">
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-text-muted uppercase tracking-wider">API Integration Health</span>
+<span class="material-symbols-outlined text-stage-booked" data-icon="cloud_done">cloud_done</span>
+</div>
+<div class="flex items-end gap-2 mt-auto">
+<span class="font-headline-lg text-headline-lg text-primary leading-none">99.9%</span>
+<span class="font-label-sm text-label-sm text-stage-booked bg-stage-booked/10 px-2 py-0.5 rounded-full border border-stage-booked/20 mb-1">Operational</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted">Last downtime: 43 days ago</p>
+</div>
+<!-- Widget 2: Seat Utilization Gauge -->
+<div class="flex-1 flex flex-col gap-3 pr-6 border-r border-border-subtle border-dashed">
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-text-muted uppercase tracking-wider">User Seat Utilization</span>
+<span class="material-symbols-outlined text-text-muted" data-icon="group">group</span>
+</div>
+<div class="mt-auto flex flex-col gap-2">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-primary font-bold">850 Active</span>
+<span class="text-text-muted">1000 Total</span>
+</div>
+<!-- Minimalist bar representing a gauge -->
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-stage-contacted rounded-full" style="width: 85%;"></div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted">85% allocated across 12 branches</p>
+</div>
+<!-- Widget 3: Security Logs -->
+<div class="flex-1 flex flex-col gap-3">
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-text-muted uppercase tracking-wider">Security Logs Vol. (24h)</span>
+<span class="material-symbols-outlined text-text-muted" data-icon="shield_lock">shield_lock</span>
+</div>
+<div class="mt-auto flex items-end gap-1 h-12">
+<!-- Minimalist 5-bar chart -->
+<div class="w-full bg-surface-variant rounded-t-sm h-[30%]"></div>
+<div class="w-full bg-surface-variant rounded-t-sm h-[45%]"></div>
+<div class="w-full bg-surface-variant rounded-t-sm h-[20%]"></div>
+<div class="w-full bg-surface-variant rounded-t-sm h-[60%]"></div>
+<div class="w-full bg-stage-new rounded-t-sm h-[85%] relative group">
+<!-- Tooltip structural logic implied -->
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 font-label-sm text-label-sm opacity-0 group-hover:opacity-100 transition-opacity text-primary">1.2k</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-stage-new text-[16px]" data-icon="trending_up">trending_up</span>
+<p class="font-body-sm text-body-sm text-text-muted"><span class="text-stage-new font-medium">+14%</span> vs yesterday</p>
+</div>
+</div>
+</div>
+<!-- Bento Grid Configuration Area -->
+<div class="grid grid-cols-3 gap-6">
+<!-- Active Sessions View (Span 2) -->
+<div class="col-span-2 bg-surface-container-lowest border border-border-subtle rounded-xl flex flex-col">
+<div class="p-5 border-b border-border-subtle flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-primary">Active User Sessions</h3>
+<button class="text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<div class="p-0 overflow-hidden rounded-b-xl">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-border-subtle font-label-sm text-label-sm text-text-muted uppercase">
+<th class="p-4 font-semibold">User</th>
+<th class="p-4 font-semibold">IP Address</th>
+<th class="p-4 font-semibold">Role</th>
+<th class="p-4 font-semibold text-right">Action</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface">
+<tr class="border-b border-border-subtle hover:bg-surface transition-colors">
+<td class="p-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-md">JD</div>
+<div>
+<div class="font-medium">Jane Doe</div>
+<div class="text-text-muted text-xs">Branch Manager</div>
+</div>
+</td>
+<td class="p-4 text-text-muted font-mono text-xs">192.168.1.45</td>
+<td class="p-4">
+<span class="bg-surface-variant px-2 py-1 rounded-md text-on-surface-variant border border-border-subtle">Admin</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-error hover:bg-error-container p-1.5 rounded transition-colors" title="Terminate Session">
+<span class="material-symbols-outlined text-[18px]" data-icon="block">block</span>
+</button>
+</td>
+</tr>
+<tr class="border-b border-border-subtle hover:bg-surface transition-colors">
+<td class="p-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed-dim text-on-primary-fixed flex items-center justify-center font-label-md">MW</div>
+<div>
+<div class="font-medium">Mark Wilson</div>
+<div class="text-text-muted text-xs">Sales Rep</div>
+</div>
+</td>
+<td class="p-4 text-text-muted font-mono text-xs">10.0.0.212</td>
+<td class="p-4">
+<span class="bg-surface-variant px-2 py-1 rounded-md text-on-surface-variant border border-border-subtle">Standard</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-error hover:bg-error-container p-1.5 rounded transition-colors" title="Terminate Session">
+<span class="material-symbols-outlined text-[18px]" data-icon="block">block</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface transition-colors">
+<td class="p-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed-dim text-on-primary-fixed flex items-center justify-center font-label-md">SL</div>
+<div>
+<div class="font-medium">Sarah Lee</div>
+<div class="text-text-muted text-xs">Sales Rep</div>
+</div>
+</td>
+<td class="p-4 text-text-muted font-mono text-xs">10.0.0.18</td>
+<td class="p-4">
+<span class="bg-surface-variant px-2 py-1 rounded-md text-on-surface-variant border border-border-subtle">Standard</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-error hover:bg-error-container p-1.5 rounded transition-colors" title="Terminate Session">
+<span class="material-symbols-outlined text-[18px]" data-icon="block">block</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- SLA Breach Alerts (Span 1) -->
+<div class="col-span-1 bg-surface-container-lowest border border-border-subtle rounded-xl flex flex-col relative overflow-hidden">
+<!-- Subtle red accent line at top for alert context -->
+<div class="absolute top-0 left-0 w-full h-1 bg-stage-lost"></div>
+<div class="p-5 border-b border-border-subtle flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-stage-lost" data-icon="warning">warning</span>
+                        SLA Breaches
+                    </h3>
+</div>
+<div class="p-5 flex flex-col gap-4 flex-1 overflow-y-auto">
+<!-- Alert Item -->
+<div class="p-3 border border-error-container bg-error-container/30 rounded-lg flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm font-bold text-stage-lost">Response Time &gt; 24h</span>
+<span class="font-label-sm text-label-sm text-text-muted">12m ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">Lead <span class="font-medium underline decoration-border-subtle underline-offset-2">#8492</span> unassigned in Downtown branch.</p>
+</div>
+<!-- Alert Item -->
+<div class="p-3 border border-border-subtle bg-surface rounded-lg flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm font-bold text-stage-contacted">Follow-up Missed</span>
+<span class="font-label-sm text-label-sm text-text-muted">1h ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">3 high-value leads breached secondary contact SLA.</p>
+</div>
+<button class="mt-auto w-full py-2 border border-border-subtle rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors text-text-muted">
+                        View All Alerts
+                    </button>
+</div>
+</div>
+<!-- Audit Trail Highlights (Span 3) -->
+<div class="col-span-3 bg-surface-container-lowest border border-border-subtle rounded-xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-sm text-headline-sm text-primary">Audit Trail Highlights</h3>
+<div class="flex gap-2">
+<span class="bg-surface-variant px-2 py-1 rounded text-label-sm font-label-sm text-text-muted">Last 7 Days</span>
+</div>
+</div>
+<!-- Minimalist Timeline Activity Component -->
+<div class="flex flex-col gap-0">
+<!-- Event 1 -->
+<div class="flex gap-4 relative">
+<div class="w-px bg-border-subtle absolute left-[15px] top-6 bottom-[-24px] z-0"></div>
+<div class="w-8 h-8 rounded-full bg-surface-container border border-border-subtle flex items-center justify-center z-10 text-text-muted mt-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="policy">policy</span>
+</div>
+<div class="pb-6 pt-2">
+<div class="flex gap-2 items-baseline">
+<span class="font-label-md text-label-md text-primary">Global Permission Changed</span>
+<span class="font-body-sm text-body-sm text-text-muted">by System Admin</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Role 'Sales Rep' granted access to 'Export Basic Reports'.</p>
+<span class="font-label-sm text-label-sm text-text-muted mt-2 block">Today, 09:41 AM</span>
+</div>
+</div>
+<!-- Event 2 -->
+<div class="flex gap-4 relative">
+<div class="w-px bg-border-subtle absolute left-[15px] top-6 bottom-[-24px] z-0"></div>
+<div class="w-8 h-8 rounded-full bg-stage-site-visit/10 border border-stage-site-visit/30 flex items-center justify-center z-10 text-stage-site-visit mt-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="api">api</span>
+</div>
+<div class="pb-6 pt-2">
+<div class="flex gap-2 items-baseline">
+<span class="font-label-md text-label-md text-primary">API Key Rotated</span>
+<span class="font-body-sm text-body-sm text-text-muted">by Automated Service</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Primary production key rotated successfully. No downtime detected.</p>
+<span class="font-label-sm text-label-sm text-text-muted mt-2 block">Yesterday, 11:00 PM</span>
+</div>
+</div>
+<!-- Event 3 (Last, no line) -->
+<div class="flex gap-4 relative">
+<div class="w-8 h-8 rounded-full bg-surface-container border border-border-subtle flex items-center justify-center z-10 text-text-muted mt-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="account_tree">account_tree</span>
+</div>
+<div class="pb-2 pt-2">
+<div class="flex gap-2 items-baseline">
+<span class="font-label-md text-label-md text-primary">New Branch Created</span>
+<span class="font-body-sm text-body-sm text-text-muted">by Jane Doe</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Branch 'Uptown West' initialized with 5 seat allocations.</p>
+<span class="font-label-sm text-label-sm text-text-muted mt-2 block">Oct 24, 02:15 PM</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+
+</body></html>

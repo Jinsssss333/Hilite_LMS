@@ -1,0 +1,515 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>HiLITE LMS - Sales Head Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "secondary-container": "#dfe5d7",
+                "on-error": "#ffffff",
+                "text-muted": "#8A8D85",
+                "tertiary-fixed-dim": "#c6c7c2",
+                "inverse-surface": "#313030",
+                "on-error-container": "#93000a",
+                "on-tertiary-fixed": "#1a1c19",
+                "stage-booked": "#22C55E",
+                "on-tertiary": "#ffffff",
+                "on-surface-variant": "#45474a",
+                "on-tertiary-fixed-variant": "#454744",
+                "inverse-on-surface": "#f3f0f0",
+                "primary-fixed": "#e1e2e8",
+                "on-primary": "#ffffff",
+                "stage-interested": "#10B981",
+                "error-container": "#ffdad6",
+                "primary-container": "#191c20",
+                "primary-fixed-dim": "#c5c6cc",
+                "on-surface": "#1c1b1c",
+                "stage-site-visit": "#3B82F6",
+                "stage-negotiation": "#8B5CF6",
+                "surface-container": "#f1eded",
+                "on-primary-container": "#818489",
+                "surface-container-high": "#ebe7e7",
+                "primary": "#000000",
+                "surface-container-low": "#f6f3f3",
+                "surface-tint": "#5c5e63",
+                "stage-new": "#6366F1",
+                "on-secondary": "#ffffff",
+                "on-primary-fixed": "#191c20",
+                "on-primary-fixed-variant": "#44474b",
+                "surface": "#fcf8f8",
+                "surface-container-lowest": "#ffffff",
+                "surface-container-highest": "#e5e2e2",
+                "secondary-fixed-dim": "#c2c9bb",
+                "surface-dim": "#dcd9d9",
+                "on-secondary-fixed": "#171d15",
+                "surface-variant": "#e5e2e2",
+                "on-background": "#1c1b1c",
+                "inverse-primary": "#c5c6cc",
+                "outline": "#75777b",
+                "tertiary-container": "#1a1c19",
+                "surface-bright": "#fcf8f8",
+                "secondary": "#5a6055",
+                "secondary-fixed": "#dfe5d7",
+                "error": "#ba1a1a",
+                "stage-not-interested": "#6B7280",
+                "background": "#fcf8f8",
+                "on-secondary-fixed-variant": "#42493f",
+                "tertiary": "#000000",
+                "tertiary-fixed": "#e2e3de",
+                "stage-contacted": "#F59E0B",
+                "outline-variant": "#c5c6ca",
+                "on-secondary-container": "#60665b",
+                "on-tertiary-container": "#838480",
+                "border-subtle": "#E6E6DF",
+                "stage-lost": "#EF4444"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "sidebar-width": "240px",
+                "margin-page": "2rem",
+                "gutter": "1.5rem",
+                "card-padding": "1.25rem",
+                "hero-height": "180px"
+        },
+        "fontFamily": {
+                "headline-sm": [
+                        "Inter"
+                ],
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "body-sm": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "label-md": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "label-sm": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "headline-sm": [
+                        "18px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-lg": [
+                        "16px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-sm": [
+                        "13px",
+                        {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "28px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.3",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-md": [
+                        "12px",
+                        {
+                                "lineHeight": "1",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "14px",
+                        {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-sm": [
+                        "11px",
+                        {
+                                "lineHeight": "1",
+                                "fontWeight": "500"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+  body {
+    background-color: #F8F8F3;
+    color: #1c1b1c;
+  }
+  .bg-panel-accent {
+    background-color: #E9EFE1;
+  }
+  /* Kanban Scrollbar hiding for clean look */
+  .kanban-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .kanban-scroll {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+</style>
+</head>
+<body class="font-sans antialiased overflow-x-hidden h-screen">
+<!-- SideNavBar -->
+<aside class="bg-surface dark:bg-primary-container text-primary dark:text-inverse-primary font-body-md text-body-md fixed left-0 top-0 h-full w-[240px] border-r border-border-subtle dark:border-outline-variant flat no shadows flex flex-col h-full p-4 gap-2 z-50 md:flex hidden">
+<div class="mb-8 px-2 mt-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold">
+<span class="material-symbols-outlined text-[20px]">real_estate_agent</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-on-primary-container">HiLITE LMS</h1>
+<p class="font-label-sm text-label-sm text-text-muted">Lead Management</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold rounded-lg px-4 py-3 flex items-center gap-3 transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="">Dashboard</span>
+</a>
+<a class="text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg px-4 py-3 flex items-center gap-3 transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="person_search">person_search</span>
+<span class="">My Leads</span>
+</a>
+<a class="text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg px-4 py-3 flex items-center gap-3 transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#"><span class="material-symbols-outlined text-[20px]" data-icon="view_kanban">view_kanban</span>
+<span class="">Pipeline</span></a>
+<a class="text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg px-4 py-3 flex items-center gap-3 transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="groups">groups</span>
+<span class="">Team</span>
+</a>
+<a class="text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg px-4 py-3 flex items-center gap-3 transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="bar_chart">bar_chart</span>
+<span class="">Reports</span>
+</a>
+<a class="text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg px-4 py-3 flex items-center gap-3 transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="">Admin</span>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded-lg mb-4 hover:bg-on-surface-variant transition-colors">
+        Add Lead
+      </button>
+<a class="text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg px-4 py-3 flex items-center gap-3 transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
+<span class="">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-primary-container text-primary dark:text-inverse-primary font-body-md text-body-md fixed top-0 right-0 h-16 w-full md:w-[calc(100%-240px)] border-b border-border-subtle dark:border-outline-variant flat no shadows flex justify-between items-center px-6 z-40 transition-all duration-300">
+<div class="flex items-center gap-4">
+<div class="md:hidden font-headline-sm text-headline-sm font-bold text-primary dark:text-on-primary-container">HiLITE LMS</div>
+<div class="hidden md:flex relative focus-within:ring-2 focus-within:ring-primary rounded-full transition-all">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[20px]">search</span>
+<input class="bg-surface-container-low border border-border-subtle rounded-full pl-10 pr-4 py-2 font-body-sm text-body-sm w-64 focus:outline-none focus:border-primary" placeholder="Search globally..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-low dark:hover:bg-on-primary-fixed-variant p-2 rounded-full transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:bg-surface-container-low dark:hover:bg-on-primary-fixed-variant p-2 rounded-full transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="hidden md:flex bg-surface-container-low border border-border-subtle text-primary font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors">
+        Filters
+      </button>
+<button class="hidden md:flex bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-on-surface-variant transition-colors">
+        Add Lead
+      </button>
+<img alt="User Avatar" class="w-8 h-8 rounded-full border border-border-subtle ml-2 cursor-pointer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJSKIkHnXvHKvgeB5-6F9vbgIiDu7rQ_As3Klbxbwn2bcTaNFE-11756XXWhBJksWEJgLKOaHS895EWvcUoGGXMpl4ox7xIpJ0Rvw9Gp7zaG8Xr7bAUnpiL4SrdkeBNc4KVR43xyfl32uOXB1obGN6nRu0H8zZx42Ny0V1DSNFdZt6ZSDt_OVwvkuVWWFtqTh2khwWdiEoBdGiVAGK5C3OKpmDywzlKHAG_fFdqPyv0qxCmPCAkERZNMBnN1WGbZHvBvsMzYuUdvQ">
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-16 md:ml-[240px] min-h-screen pb-12 h-full overflow-y-auto">
+<!-- Hero Stats Area -->
+<div class="bg-panel-accent w-full p-8 md:p-10 mb-8 rounded-b-[32px] md:rounded-b-[48px] shadow-sm">
+<div class="max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2">Q3 Performance Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Global pipeline health and revenue projection.</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface border border-border-subtle text-primary font-label-md text-label-md px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+               Q3 2024
+             </button>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[16px]">download</span>
+               Export
+             </button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Regional Revenue Forecast -->
+<div class="bg-surface rounded-xl p-6 border border-border-subtle relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider mb-1">Projected Revenue</p>
+<h3 class="font-headline-md text-headline-md text-primary">$42.5M</h3>
+</div>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-[20px]">trending_up</span>
+</div>
+</div>
+<div class="h-16 flex items-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+<div class="w-full bg-surface-container-high h-[30%] rounded-t-sm relative"><div class="absolute -top-6 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">Jul</div></div>
+<div class="w-full bg-surface-container-high h-[45%] rounded-t-sm relative"><div class="absolute -top-6 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">Aug</div></div>
+<div class="w-full bg-surface-container-high h-[60%] rounded-t-sm relative"><div class="absolute -top-6 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">Sep</div></div>
+<div class="w-full bg-primary h-[85%] rounded-t-sm relative"><div class="absolute -top-6 left-1/2 -translate-x-1/2 font-label-sm text-[10px] text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity">Oct</div></div>
+<div class="w-full bg-surface-container-high h-[50%] rounded-t-sm relative border border-dashed border-border-subtle bg-transparent"></div>
+</div>
+<div class="mt-4 flex items-center gap-2 text-stage-booked font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+<span class="">12% vs last quarter</span>
+</div>
+</div>
+<!-- Global Conversion -->
+<div class="bg-surface rounded-xl p-6 border border-border-subtle flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider mb-1">Global Conversion</p>
+<h3 class="font-headline-md text-headline-md text-primary">8.4%</h3>
+</div>
+<div class="relative w-12 h-12">
+<svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+<path class="text-surface-container-high" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="84, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+<div class="mt-6 flex justify-between items-center pt-4 border-t border-border-subtle">
+<div class="text-center">
+<div class="font-body-sm text-body-sm text-text-muted">Avg Cycle</div>
+<div class="font-label-md text-label-md text-primary mt-1">42 Days</div>
+</div>
+<div class="w-px h-8 bg-border-subtle"></div>
+<div class="text-center">
+<div class="font-body-sm text-body-sm text-text-muted">Velocity</div>
+<div class="font-label-md text-label-md text-stage-booked mt-1">+1.2x</div>
+</div>
+</div>
+</div>
+<!-- Top Performing Branch -->
+<div class="bg-surface rounded-xl p-6 border border-border-subtle relative overflow-hidden">
+<div class="absolute right-0 top-0 w-32 h-32 bg-secondary-container opacity-20 rounded-bl-full -z-0"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider mb-1">Top Branch</p>
+<h3 class="font-headline-md text-headline-md text-primary">Dubai Central</h3>
+</div>
+<div class="w-10 h-10 rounded-full border border-border-subtle bg-surface flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">emoji_events</span>
+</div>
+</div>
+<div class="space-y-3 mt-6">
+<div class="flex justify-between items-center font-body-sm text-body-sm">
+<span class="text-text-muted">Target Attainment</span>
+<span class="font-semibold text-primary">118%</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pipeline Macro View -->
+<div class="max-w-7xl mx-auto px-6 md:px-10 mb-12">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-sm text-headline-sm text-primary">Macro Pipeline Volume</h3>
+<button class="text-primary font-label-md text-label-md flex items-center gap-1 hover:text-on-surface-variant transition-colors">
+          View Detail <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<div class="kanban-scroll overflow-x-auto pb-4">
+<div class="flex gap-4 min-w-max">
+<!-- Stage: New -->
+<div class="w-[200px] bg-surface border border-border-subtle rounded-xl p-4 flex flex-col hover:border-outline-variant transition-colors cursor-pointer group">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-3 h-3 rounded-full bg-stage-new"></div>
+<span class="font-label-md text-label-md text-primary uppercase tracking-wider">New</span>
+</div>
+<div class="mt-auto">
+<div class="font-headline-md text-headline-md text-primary group-hover:text-stage-new transition-colors">1,240</div>
+<div class="font-body-sm text-body-sm text-text-muted mt-1">Vol: $4.2M</div>
+</div>
+</div>
+<!-- Stage: Contacted -->
+<div class="w-[200px] bg-surface border border-border-subtle rounded-xl p-4 flex flex-col hover:border-outline-variant transition-colors cursor-pointer group">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-3 h-3 rounded-full bg-stage-contacted"></div>
+<span class="font-label-md text-label-md text-primary uppercase tracking-wider">Contacted</span>
+</div>
+<div class="mt-auto">
+<div class="font-headline-md text-headline-md text-primary group-hover:text-stage-contacted transition-colors">856</div>
+<div class="font-body-sm text-body-sm text-text-muted mt-1">Vol: $3.1M</div>
+</div>
+</div>
+<!-- Stage: Interested -->
+<div class="w-[200px] bg-surface border border-border-subtle rounded-xl p-4 flex flex-col hover:border-outline-variant transition-colors cursor-pointer group">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-3 h-3 rounded-full bg-stage-interested"></div>
+<span class="font-label-md text-label-md text-primary uppercase tracking-wider">Interested</span>
+</div>
+<div class="mt-auto">
+<div class="font-headline-md text-headline-md text-primary group-hover:text-stage-interested transition-colors">412</div>
+<div class="font-body-sm text-body-sm text-text-muted mt-1">Vol: $8.5M</div>
+</div>
+</div>
+<!-- Stage: Site Visit -->
+<div class="w-[200px] bg-surface border border-border-subtle rounded-xl p-4 flex flex-col hover:border-outline-variant transition-colors cursor-pointer group">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-3 h-3 rounded-full bg-stage-site-visit"></div>
+<span class="font-label-md text-label-md text-primary uppercase tracking-wider">Site Visit</span>
+</div>
+<div class="mt-auto">
+<div class="font-headline-md text-headline-md text-primary group-hover:text-stage-site-visit transition-colors">128</div>
+<div class="font-body-sm text-body-sm text-text-muted mt-1">Vol: $12.4M</div>
+</div>
+</div>
+<!-- Stage: Negotiation -->
+<div class="w-[200px] bg-surface border border-border-subtle rounded-xl p-4 flex flex-col hover:border-outline-variant transition-colors cursor-pointer group">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-3 h-3 rounded-full bg-stage-negotiation"></div>
+<span class="font-label-md text-label-md text-primary uppercase tracking-wider">Negotiation</span>
+</div>
+<div class="mt-auto">
+<div class="font-headline-md text-headline-md text-primary group-hover:text-stage-negotiation transition-colors">45</div>
+<div class="font-body-sm text-body-sm text-text-muted mt-1">Vol: $9.2M</div>
+</div>
+</div>
+<!-- Stage: Booked -->
+<div class="w-[200px] bg-inverse-surface text-on-primary rounded-xl p-4 flex flex-col shadow-md transform -translate-y-1 transition-transform cursor-pointer">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-3 h-3 rounded-full bg-stage-booked shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+<span class="font-label-md text-label-md uppercase tracking-wider">Booked (Won)</span>
+</div>
+<div class="mt-auto">
+<div class="font-headline-md text-headline-md">112</div>
+<div class="font-body-sm text-body-sm text-tertiary-fixed-dim mt-1">Vol: $18.5M</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Departmental Rankings Grid -->
+<div class="max-w-7xl mx-auto px-6 md:px-10">
+<div class="bg-surface border border-border-subtle rounded-2xl overflow-hidden">
+<div class="p-6 border-b border-border-subtle flex justify-between items-center bg-surface-container-low">
+<h3 class="font-headline-sm text-headline-sm text-primary">Departmental Rankings</h3>
+<div class="flex gap-2">
+<span class="font-label-sm text-label-sm px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container">By Revenue</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-border-subtle font-label-md text-label-md text-text-muted uppercase tracking-wider">
+<th class="p-4 pl-6 font-medium">Department</th>
+<th class="p-4 font-medium">Manager</th>
+<th class="p-4 font-medium text-right">Active Leads</th>
+<th class="p-4 font-medium text-right">Win Rate</th>
+<th class="p-4 pr-6 font-medium text-right">YTD Revenue</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md text-primary divide-y divide-border-subtle">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-4 pl-6 font-semibold flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-fixed-dim flex items-center justify-center text-on-primary-fixed font-bold text-xs">DC</div>
+                  Dubai Central
+                </td>
+<td class="p-4 text-on-surface-variant">Sarah Jenkins</td>
+<td class="p-4 text-right">450</td>
+<td class="p-4 text-right text-stage-booked">12.4%</td>
+<td class="p-4 pr-6 text-right font-medium">$18.2M</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-4 pl-6 font-semibold flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-xs">AD</div>
+                  Abu Dhabi Prime
+                </td>
+<td class="p-4 text-on-surface-variant">Michael Chen</td>
+<td class="p-4 text-right">380</td>
+<td class="p-4 text-right text-stage-booked">11.1%</td>
+<td class="p-4 pr-6 text-right font-medium">$14.5M</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-4 pl-6 font-semibold flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-on-surface font-bold text-xs">DM</div>
+                  Dubai Marina
+                </td>
+<td class="p-4 text-on-surface-variant">Elena Rostova</td>
+<td class="p-4 text-right">512</td>
+<td class="p-4 text-right text-text-muted">8.2%</td>
+<td class="p-4 pr-6 text-right font-medium">$9.8M</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+
+
+
+
+</body></html>

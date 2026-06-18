@@ -1,0 +1,456 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Profile Settings - HiLITE LMS</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "stage-negotiation": "#8B5CF6",
+                        "stage-contacted": "#F59E0B",
+                        "tertiary": "#000000",
+                        "stage-booked": "#22C55E",
+                        "stage-site-visit": "#3B82F6",
+                        "surface-container": "#f1eded",
+                        "primary-fixed-dim": "#c5c6cc",
+                        "primary-container": "#191c20",
+                        "surface-dim": "#dcd9d9",
+                        "stage-new": "#6366F1",
+                        "on-primary-fixed": "#191c20",
+                        "on-primary-container": "#818489",
+                        "tertiary-fixed": "#e2e3de",
+                        "surface-bright": "#fcf8f8",
+                        "surface": "#fcf8f8",
+                        "secondary-container": "#dfe5d7",
+                        "inverse-primary": "#c5c6cc",
+                        "stage-lost": "#EF4444",
+                        "on-primary-fixed-variant": "#44474b",
+                        "outline-variant": "#c5c6ca",
+                        "secondary": "#5a6055",
+                        "on-tertiary-container": "#838480",
+                        "inverse-surface": "#313030",
+                        "on-secondary-fixed-variant": "#42493f",
+                        "border-subtle": "#E6E6DF",
+                        "on-error": "#ffffff",
+                        "stage-interested": "#10B981",
+                        "outline": "#75777b",
+                        "tertiary-container": "#1a1c19",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#1a1c19",
+                        "surface-container-low": "#f6f3f3",
+                        "on-secondary-fixed": "#171d15",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1c",
+                        "error": "#ba1a1a",
+                        "on-background": "#1c1b1c",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#000000",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#c2c9bb",
+                        "stage-not-interested": "#6B7280",
+                        "on-surface-variant": "#45474a",
+                        "text-muted": "#8A8D85",
+                        "tertiary-fixed-dim": "#c6c7c2",
+                        "background": "#fcf8f8",
+                        "on-tertiary-fixed-variant": "#454744",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#60665b",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#ebe7e7",
+                        "primary-fixed": "#e1e2e8",
+                        "inverse-on-surface": "#f3f0f0",
+                        "surface-variant": "#e5e2e2",
+                        "surface-tint": "#5c5e63",
+                        "secondary-fixed": "#dfe5d7",
+                        "surface-container-highest": "#e5e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "card-padding": "1.25rem",
+                        "sidebar-width": "240px",
+                        "gutter": "1.5rem",
+                        "hero-height": "180px",
+                        "margin-page": "2rem"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-sm": ["11px", {"lineHeight": "1", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Soft Paper specific utilities */
+        .input-soft {
+            background-color: theme('colors.surface-container-lowest');
+            border: 1px solid theme('colors.border-subtle');
+            border-radius: 16px;
+            color: theme('colors.on-surface');
+            transition: all 0.2s ease;
+        }
+        .input-soft:focus {
+            outline: none;
+            border-color: theme('colors.primary');
+            box-shadow: 0 0 0 1px theme('colors.primary');
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- SideNavBar (from JSON) -->
+<nav class="fixed left-0 top-0 h-full w-[240px] bg-surface dark:bg-primary-container border-r border-border-subtle dark:border-outline-variant flex flex-col p-4 gap-2 z-40 hidden md:flex">
+<!-- Header -->
+<div class="mb-8 px-4 py-2">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-bold">H</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-on-primary-container tracking-tight">HiLITE LMS</h1>
+<p class="font-label-sm text-label-sm text-text-muted">Lead Management</p>
+</div>
+</div>
+</div>
+<!-- Main Navigation -->
+<div class="flex-1 flex flex-col gap-1">
+<!-- Inactive Tab -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<!-- Inactive Tab -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person_search</span>
+<span class="font-body-md text-body-md">My Leads</span>
+</a>
+<!-- Inactive Tab -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#"><span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">view_kanban</span><span class="font-body-md text-body-md">Pipeline</span></a>
+<!-- Inactive Tab -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">groups</span>
+<span class="font-body-md text-body-md">Team</span>
+</a>
+<!-- Inactive Tab -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">bar_chart</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+<!-- Active Tab (Settings/Profile maps best to Admin context in this list) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold rounded-lg transition-colors duration-200 ease-in-out scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-body-md text-body-md">Admin</span>
+</a>
+</div>
+<!-- Footer Actions -->
+<div class="mt-auto flex flex-col gap-2 border-t border-border-subtle dark:border-outline-variant pt-4">
+<button class="w-full bg-primary text-on-primary py-3 rounded-full font-label-md text-label-md transition-transform hover:scale-[0.98] active:scale-95 shadow-sm">Add Lead</button>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-on-primary-fixed-variant rounded-lg transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">logout</span>
+<span class="font-body-md text-body-md">Sign Out</span>
+</a>
+</div>
+</nav>
+<!-- TopNavBar (from JSON) -->
+<header class="fixed top-0 right-0 h-16 w-full md:w-[calc(100%-240px)] bg-surface dark:bg-primary-container border-b border-border-subtle dark:border-outline-variant flex justify-between items-center px-6 z-30 hidden md:flex">
+<!-- Left Side (Empty or Breadcrumbs usually, but component spec says product name here if no search on left, wait, search_bar: "on_left") -->
+<div class="flex items-center w-96 relative focus-within:ring-2 focus-within:ring-primary rounded-full bg-surface-container-low px-4 py-2 border border-border-subtle">
+<span class="material-symbols-outlined text-text-muted mr-2 text-[20px]" style="font-variation-settings: 'FILL' 0;">search</span>
+<input class="bg-transparent border-none focus:outline-none focus:ring-0 text-on-surface w-full font-body-sm text-body-sm placeholder:text-text-muted" placeholder="Search leads, contacts..." type="text">
+</div>
+<!-- Right Side Actions -->
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors relative group" id="notification-btn">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+<!-- Badge -->
+<span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-stage-lost rounded-full border-2 border-surface"></span>
+<!-- Notification Dropdown -->
+<div class="absolute right-0 top-full mt-2 w-80 bg-surface-container-lowest border border-border-subtle rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 origin-top-right overflow-hidden flex flex-col text-left z-50">
+<div class="px-4 py-3 border-b border-border-subtle bg-surface-container-low flex justify-between items-center">
+<span class="font-label-md text-label-md text-on-surface">Notifications</span>
+<span class="text-[10px] text-primary cursor-pointer hover:underline">Mark all read</span>
+</div>
+<div class="max-h-64 overflow-y-auto">
+<!-- Item 1 -->
+<div class="px-4 py-3 border-b border-border-subtle hover:bg-surface transition-colors cursor-pointer flex gap-3 items-start">
+<div class="w-8 h-8 rounded-full bg-stage-new/10 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] text-stage-new" style="font-variation-settings: 'FILL' 1;">person_add</span>
+</div>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface font-medium">New Lead Assigned</p>
+<p class="font-body-sm text-body-sm text-text-muted">Arjun Nair</p>
+<p class="text-[10px] text-text-muted mt-1">2 mins ago</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="px-4 py-3 border-b border-border-subtle hover:bg-surface transition-colors cursor-pointer flex gap-3 items-start">
+<div class="w-8 h-8 rounded-full bg-stage-lost/10 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] text-stage-lost" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface font-medium">SLA Breach Warning</p>
+<p class="font-body-sm text-body-sm text-text-muted">Meena Krishnan</p>
+<p class="text-[10px] text-text-muted mt-1">1 hour ago</p>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="px-4 py-3 hover:bg-surface transition-colors cursor-pointer flex gap-3 items-start">
+<div class="w-8 h-8 rounded-full bg-stage-site-visit/10 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px] text-stage-site-visit" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface font-medium">Site Visit Reminder</p>
+<p class="font-body-sm text-body-sm text-text-muted">Suresh Kumar</p>
+<p class="text-[10px] text-text-muted mt-1">Tomorrow, 10:00 AM</p>
+</div>
+</div>
+</div>
+</div>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">help</span>
+</button>
+<div class="h-6 w-px bg-border-subtle mx-2"></div>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-full font-label-md text-label-md transition-transform hover:scale-95 active:scale-90">
+                Add Lead
+            </button>
+<button class="border border-border-subtle text-on-surface px-4 py-2 rounded-full font-label-md text-label-md transition-colors hover:bg-surface-container-low">
+                Filters
+            </button>
+<!-- Clickable Profile Avatar -->
+<button class="ml-2 relative rounded-full overflow-hidden border border-border-subtle hover:border-primary transition-colors ring-2 ring-transparent focus:ring-primary outline-none cursor-pointer">
+<img alt="User Avatar" class="w-9 h-9 object-cover" data-alt="A close-up, brightly lit corporate headshot of a professional young man of South Asian descent. He is wearing a crisp white shirt and a dark blazer. The lighting is soft and high-key, complementing the modern, clean 'light mode' software aesthetic. The background is a subtle, out-of-focus light gray." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRNplCWCy9qqBhgfhYszvdbTpn0dZeFWSM6aRrrkaiuzA1NoRQF9RtGWqKZRmmr5ZI5rfhr6Ld1Dg8oDtU9kOOsl4I0JLXqIVbpXlppsVppiyitF26LJqDiPhjth_2fbFaJDN1aznxJv6Bs3SRFAlHVovH9mqnKdiK4C7f2Jyz_jAtamUUx9E8ZQXbxiPQgDKc88BOBFswV1WaVum3x_Hh935kx4H9CJp9oCHse2w1hfxKiFUBx1jxujOim0zdMVPbDO8G5dfSS-A">
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-[240px] pt-[64px] min-h-screen overflow-y-auto h-screen">
+<div class="p-8 max-w-5xl mx-auto">
+<!-- Page Header -->
+<div class="mb-8">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Profile Settings</h1>
+<p class="font-body-md text-body-md text-text-muted mt-1">Manage your account details and preferences.</p>
+</div>
+<!-- Main Card Container -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-[20px] p-8 md:p-10 shadow-sm relative overflow-hidden">
+<!-- Decorative background element for 'Soft Paper' feel -->
+<div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-surface-container to-transparent rounded-bl-full opacity-50 pointer-events-none -z-10"></div>
+<!-- Section 1: Personal Information -->
+<section>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-text-muted" style="font-variation-settings: 'FILL' 0;">person</span>
+                        Personal Information
+                    </h2>
+<div class="flex flex-col md:flex-row gap-8">
+<!-- Avatar Upload Area -->
+<div class="flex flex-col items-center gap-4 w-full md:w-auto shrink-0">
+<div class="relative group cursor-pointer">
+<img alt="Profile Picture" class="w-32 h-32 rounded-full object-cover border-4 border-surface shadow-sm" data-alt="A high-quality, professional headshot of a young South Asian male executive, used as a user avatar profile picture. The man is smiling confidently, dressed in modern business casual attire. The image is brightly lit with soft shadows, perfectly fitting a clean, minimalist software interface aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsg3TjH5jlCVLVWk091B3osTzQEtkyKXEXNLJhT1bzgB69n9m4J8i26edgocTHEMQkSE5rGw1BtDqJtM2VXXV-xmHn1QS8XSlSxiosD3QoltbJHZhI8WfeXHI6bpmj_-5P8VYQFOI_9wfMCJgf6ZkO4LfBjIrO413kR1bN2JmR-_nCDBgHcCQ0vWp1DIpsmp6r9t9zjkjDQV-HPPekLuuMNdBSB5O3gTNSqAkToY7NihyOPnfBjl0xGhaSC4hh4K_AWvSCJpDVMes">
+<div class="absolute inset-0 bg-tertiary/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[2px]">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+</div>
+</div>
+<button class="text-primary font-label-md text-label-md hover:underline bg-surface-container-low px-4 py-2 rounded-full border border-border-subtle">Change Photo</button>
+</div>
+<!-- Form Fields -->
+<div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block font-label-sm text-label-sm text-text-muted mb-2 uppercase tracking-wider">Full Name</label>
+<input class="w-full input-soft px-4 py-3 font-body-md text-body-md" type="text" value="Ravi Admin">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-text-muted mb-2 uppercase tracking-wider">Email Address</label>
+<input class="w-full input-soft px-4 py-3 font-body-md text-body-md text-text-muted bg-surface cursor-not-allowed" disabled="" type="email" value="admin@hilitebuilders.com">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-text-muted mb-2 uppercase tracking-wider">Phone Number</label>
+<input class="w-full input-soft px-4 py-3 font-body-md text-body-md" type="tel" value="+91 98765 43210">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-text-muted mb-2 uppercase tracking-wider">Role</label>
+<div class="w-full input-soft px-4 py-3 font-body-md text-body-md bg-surface border-border-subtle text-text-muted flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-stage-new"></span> Admin
+                                </div>
+</div>
+<div class="md:col-span-2">
+<label class="block font-label-sm text-label-sm text-text-muted mb-2 uppercase tracking-wider">Team / Branch</label>
+<select class="w-full input-soft px-4 py-3 font-body-md text-body-md appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238A8D85%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-no-repeat bg-[position:right_1rem_center]">
+<option>Headquarters - Calicut</option>
+<option>Kochi Branch</option>
+<option>Trivandrum Branch</option>
+</select>
+</div>
+</div>
+</div>
+<div class="mt-6 flex justify-end">
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label-md text-label-md transition-transform hover:scale-95 active:scale-90 shadow-sm">Save Changes</button>
+</div>
+</section>
+<hr class="border-border-subtle my-10">
+<!-- Section 2: Notification Preferences -->
+<section>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-text-muted" style="font-variation-settings: 'FILL' 0;">notifications_active</span>
+                        Notification Preferences
+                    </h2>
+<p class="font-body-md text-body-md text-text-muted mb-8">Control how and when you receive alerts from the LMS.</p>
+<div class="space-y-6">
+<!-- Sub-category: Lead Assignments -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border border-border-subtle bg-surface-bright">
+<div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-medium">Lead Assignments</h3>
+<p class="font-body-sm text-body-sm text-text-muted">When a new lead is assigned to you or your team.</p>
+</div>
+<div class="flex items-center gap-6">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-10 h-5.5 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all peer-checked:bg-primary relative"></div>
+<span class="font-body-sm text-body-sm text-on-surface">Email</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-10 h-5.5 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all peer-checked:bg-primary relative"></div>
+<span class="font-body-sm text-body-sm text-on-surface">Desktop</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="sr-only peer" type="checkbox">
+<div class="w-10 h-5.5 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all peer-checked:bg-primary relative"></div>
+<span class="font-body-sm text-body-sm text-text-muted">SMS</span>
+</label>
+</div>
+</div>
+<!-- Sub-category: SLA Breaches -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border border-border-subtle bg-surface-bright">
+<div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-medium flex items-center gap-2">
+                                    SLA Breaches
+                                    <span class="bg-stage-lost/10 text-stage-lost px-2 py-0.5 rounded-full font-label-sm text-[10px]">Critical</span>
+</h3>
+<p class="font-body-sm text-body-sm text-text-muted">Alerts when lead response times exceed thresholds.</p>
+</div>
+<div class="flex items-center gap-6">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-10 h-5.5 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all peer-checked:bg-stage-lost relative"></div>
+<span class="font-body-sm text-body-sm text-on-surface">Email</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-10 h-5.5 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all peer-checked:bg-stage-lost relative"></div>
+<span class="font-body-sm text-body-sm text-on-surface">Desktop</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-10 h-5.5 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all peer-checked:bg-stage-lost relative"></div>
+<span class="font-body-sm text-body-sm text-on-surface">SMS</span>
+</label>
+</div>
+</div>
+<!-- Sub-category: Activity Reminders -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border border-border-subtle bg-surface-bright">
+<div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-medium">Activity Reminders</h3>
+<p class="font-body-sm text-body-sm text-text-muted">Upcoming calls, follow-ups, and site visits.</p>
+</div>
+<div class="flex items-center gap-6">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-10 h-5.5 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all peer-checked:bg-primary relative"></div>
+<span class="font-body-sm text-body-sm text-on-surface">Email</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-10 h-5.5 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all peer-checked:bg-primary relative"></div>
+<span class="font-body-sm text-body-sm text-on-surface">Desktop</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="sr-only peer" type="checkbox">
+<div class="w-10 h-5.5 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all peer-checked:bg-primary relative"></div>
+<span class="font-body-sm text-body-sm text-text-muted">SMS</span>
+</label>
+</div>
+</div>
+</div>
+</section>
+<hr class="border-border-subtle my-10">
+<!-- Section 3: Security -->
+<section>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-text-muted" style="font-variation-settings: 'FILL' 0;">shield_lock</span>
+                        Security Settings
+                    </h2>
+<p class="font-body-md text-body-md text-text-muted mb-8">Manage your password and secure your account.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+<!-- Password Change -->
+<div class="space-y-5">
+<h3 class="font-body-lg text-body-lg text-on-surface font-medium border-b border-border-subtle pb-2">Change Password</h3>
+<div>
+<label class="block font-label-sm text-label-sm text-text-muted mb-2 uppercase tracking-wider">Current Password</label>
+<input class="w-full input-soft px-4 py-3 font-body-md text-body-md" placeholder="••••••••" type="password">
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-text-muted mb-2 uppercase tracking-wider">New Password</label>
+<input class="w-full input-soft px-4 py-3 font-body-md text-body-md" placeholder="Enter new password" type="password">
+<p class="font-body-sm text-[12px] text-text-muted mt-2">Must be at least 8 characters long and include a symbol.</p>
+</div>
+<button class="border border-border-subtle text-on-surface px-6 py-2.5 rounded-full font-label-md text-label-md transition-colors hover:bg-surface-container-low w-full md:w-auto mt-2">Update Password</button>
+</div>
+<!-- 2FA -->
+<div class="space-y-5">
+<h3 class="font-body-lg text-body-lg text-on-surface font-medium border-b border-border-subtle pb-2">Two-Factor Authentication</h3>
+<div class="bg-surface-bright border border-border-subtle p-5 rounded-xl">
+<div class="flex items-start justify-between gap-4 mb-4">
+<div>
+<p class="font-body-md text-body-md text-on-surface font-medium mb-1">Authenticator App</p>
+<p class="font-body-sm text-body-sm text-text-muted">Use an app like Google Authenticator or Authy to generate verification codes.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
+<input class="sr-only peer" type="checkbox">
+<div class="w-12 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-stage-booked"></div>
+</label>
+</div>
+<div class="bg-surface-container border border-border-subtle rounded-lg p-3 flex items-center justify-center border-dashed">
+<p class="font-body-sm text-body-sm text-text-muted italic text-center">Enable toggle to setup 2FA via QR code.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+
+
+</body></html>

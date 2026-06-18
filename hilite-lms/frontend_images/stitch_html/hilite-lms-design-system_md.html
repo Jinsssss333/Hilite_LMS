@@ -1,0 +1,141 @@
+# HiLITE LMS — Frontend Design System Brief
+
+This document exists so a generative UI tool (Google Stitch) treats the
+attached moodboard screenshot as a **structural and stylistic reference
+only** — never as content to literally reproduce. Do not copy its brand
+name, its labels ("customer," "deal," "prepayments"), its sample numbers,
+or its specific industry icons. Extract the *patterns* below and apply them
+to the HiLITE LMS data model described in Section 2.
+
+---
+
+## 1. App Context (do not invent data — use this)
+
+**Product**: HiLITE LMS — a real-estate lead management system. Salespeople
+work leads through a pipeline; team leads/managers assign and monitor;
+admins configure SLA and review audit trails.
+
+**Roles**: `super_admin` · `admin` · `manager` · `branch_head` · `team_lead` · `salesperson`
+
+**Core entity**: an **Engagement** (a lead tied to a company/branch/team),
+not a generic "customer." Fields: name, phone (E.164), email, source
+(`manual` · `csv` · `webhook` · `callsync_auto`), assigned rep, stage,
+SLA due date, last activity timestamp.
+
+**Pipeline stages (use these exact colors as stage tokens):**
+
+| Stage | Color |
+|---|---|
+| New | `#6366f1` |
+| Contacted | `#f59e0b` |
+| Interested | `#10b981` |
+| Site Visit Scheduled | `#3b82f6` |
+| Negotiation | `#8b5cf6` |
+| Booked | `#22c55e` |
+| Lost | `#ef4444` |
+| Not Interested | `#6b7280` |
+
+**Activity types**: `note` · `followup` · `call` · `visit`
+**Disposition examples**: No Answer, Callback Requested, Site Visit Confirmed, Price Negotiation, Deal Closed, Lost — Budget, Lost — Competitor
+
+---
+
+## 2. Visual Language Extracted From the Reference Image
+
+The reference shows a left-nav SaaS dashboard with a soft, paper-like
+aesthetic. Pull out these patterns — not its text.
+
+### Layout skeleton
+- Fixed left sidebar (~240px): logo mark, primary nav (icon + label, one
+  item shown active with a soft rounded highlight), a secondary grouped
+  nav section with a small numeric badge on one item, a "team members"
+  list (avatar + name + role caption), and a pinned user/profile row at
+  the very bottom with a sign-out affordance.
+- Top bar: search input (left), a cluster of secondary controls (sort,
+  filter, current-user avatar) and one solid dark primary action button
+  (right).
+- A "hero" stats strip directly under the top bar, rendered as a single
+  rounded panel with a distinct tinted background (separate from the page
+  background) containing 3-4 small data widgets side by side: one bar
+  chart, one radial/gauge chart with a big percentage in the center, and
+  one or two plain KPI numbers each paired with a label and a trailing
+  arrow affordance (implying "view more").
+- Below the hero: a multi-column board (kanban-style). Each column has a
+  header row (title + a count chip + a small sort/reorder icon) and a
+  vertical stack of cards.
+
+### Cards
+- Large corner radius (~16-20px), white fill, subtle 1px border, no heavy
+  shadow.
+- Compact state: title row with a 3-dot overflow menu, a 1-2 line muted
+  description (truncated), and a metadata footer row with small pill/icon
+  pairs (e.g. a due-date pill with a calendar glyph, a note-count icon, an
+  attachment-count icon).
+- One "expanded/focused" card state exists per board: inverted to a dark
+  near-black fill with white text, revealing extra detail rows (contact
+  info with icon prefixes, an assigned-person row with avatar + name +
+  role caption) that are hidden in the compact state. Use this pattern for
+  whichever card is open/selected/focused.
+
+### Color tokens
+```
+--bg-app:            #F8F8F3   (warm off-white page background)
+--bg-panel-accent:   #E9EFE1   (pale sage tint — hero/stats panel only)
+--bg-surface:        #FFFFFF   (cards, inputs)
+--bg-inverted:        #16191D  (sidebar text block / focused card / primary buttons)
+--border-subtle:     #E6E6DF
+--text-primary:      #16191D
+--text-muted:        #8A8D85
+--text-on-inverted:  #FFFFFF
+```
+Stage/tag colors are NOT part of this neutral palette — use the exact
+stage hex values from Section 1 for any pipeline, badge, or chart element
+tied to a stage.
+
+### Typography
+Clean geometric/humanist sans-serif (e.g. Inter, General Sans). Headings
+semi-bold, body regular-to-medium, generous line height, no condensed
+faces, no decorative fonts.
+
+### Spacing & shape
+Generous whitespace, large border radii throughout (cards, buttons, pills,
+inputs ~12-20px), pill-shaped badges and buttons, small circular icon
+containers (muted tint background) used for the bar-chart axis ticks and
+metadata icons rather than bare icons.
+
+### Charts
+Minimal, label-light: a 5-bar weekly bar chart, a radial/donut gauge with
+a centered percentage, no gridlines, no legends — values are the
+decoration.
+
+---
+
+## 3. Explicit Do-Nots
+
+- Don't reuse "BizLink," "customer," "deal," "prepayments," or any sample
+  numbers (53, 68%, $15,890) from the reference — those belong to a
+  different product.
+- Don't assume a single-tenant view: every screen is scoped to the logged-
+  in user's `company_id`, and list/board content must visually imply
+  role-based scope (e.g. a salesperson sees only their leads; a manager
+  sees a team filter control).
+- Don't invent e-commerce/retail iconography (carts, products, invoices).
+  Use real-estate/sales-pipeline iconography instead (phone, site-visit/
+  pin, calendar follow-up, document/contract).
+- Don't hardcode 4 pipeline columns — there are 8 stages (Section 1); the
+  board should comfortably scroll or condense closed stages (Booked, Lost,
+  Not Interested) into a collapsed/summary view if space is tight.
+
+---
+
+## 4. Screens This System Should Support
+
+1. Login
+2. Dashboard (hero stats strip + 8-stage lead pipeline board)
+3. Lead detail drawer/panel (activity timeline, stage + disposition
+   control, assignment history)
+4. Add Lead modal (with live duplicate-check feedback on phone blur)
+5. CSV bulk import (upload → job status with processed/created/
+   duplicate/failed counts → error table)
+6. My follow-ups / activities (upcoming + overdue, grouped by date)
+7. Admin: Users table, SLA Policies table, Audit Log table

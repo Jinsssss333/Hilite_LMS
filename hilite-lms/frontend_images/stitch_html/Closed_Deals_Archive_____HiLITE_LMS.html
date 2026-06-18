@@ -1,0 +1,388 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Closed Deals Archive - HiLITE LMS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#dcd9d9",
+                    "border-subtle": "#E6E6DF",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#c6c7c2",
+                    "tertiary-container": "#1a1c19",
+                    "stage-site-visit": "#3B82F6",
+                    "inverse-surface": "#313030",
+                    "on-secondary-fixed": "#171d15",
+                    "surface-container-low": "#f6f3f3",
+                    "surface-container-highest": "#e5e2e2",
+                    "surface-tint": "#5c5e63",
+                    "on-primary-fixed-variant": "#44474b",
+                    "on-primary-container": "#818489",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed": "#e2e3de",
+                    "stage-booked": "#22C55E",
+                    "background": "#fcf8f8",
+                    "stage-contacted": "#F59E0B",
+                    "surface-variant": "#e5e2e2",
+                    "on-secondary-fixed-variant": "#42493f",
+                    "primary-container": "#191c20",
+                    "on-primary-fixed": "#191c20",
+                    "surface": "#fcf8f8",
+                    "text-muted": "#8A8D85",
+                    "secondary-fixed": "#dfe5d7",
+                    "stage-interested": "#10B981",
+                    "on-error": "#ffffff",
+                    "primary-fixed": "#e1e2e8",
+                    "primary-fixed-dim": "#c5c6cc",
+                    "outline": "#75777b",
+                    "primary": "#000000",
+                    "stage-not-interested": "#6B7280",
+                    "on-background": "#1c1b1c",
+                    "on-tertiary-container": "#838480",
+                    "stage-negotiation": "#8B5CF6",
+                    "outline-variant": "#c5c6ca",
+                    "on-tertiary-fixed-variant": "#454744",
+                    "on-secondary-container": "#60665b",
+                    "stage-new": "#6366F1",
+                    "on-surface": "#1c1b1c",
+                    "surface-bright": "#fcf8f8",
+                    "on-tertiary-fixed": "#1a1c19",
+                    "inverse-primary": "#c5c6cc",
+                    "surface-container-high": "#ebe7e7",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#c2c9bb",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#dfe5d7",
+                    "stage-lost": "#EF4444",
+                    "on-surface-variant": "#45474a",
+                    "inverse-on-surface": "#f3f0f0",
+                    "error-container": "#ffdad6",
+                    "secondary": "#5a6055",
+                    "on-error-container": "#93000a",
+                    "surface-container": "#f1eded",
+                    "tertiary": "#000000"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-page": "2rem",
+                    "hero-height": "180px",
+                    "gutter": "1.5rem",
+                    "sidebar-width": "240px",
+                    "card-padding": "1.25rem"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "body-sm": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "label-sm": ["11px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        /* Soft Paper Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E6E6DF;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c5c6ca;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen overflow-hidden flex font-['Inter'] selection:bg-surface-dim selection:text-on-surface">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-6 bg-surface border-r border-border-subtle fixed left-0 top-0 w-[240px] z-20">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined font-bold text-[20px]" data-icon="real_estate_agent">real_estate_agent</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">HiLITE LMS</h1>
+<p class="font-label-sm text-label-sm text-text-muted mt-0.5">Lead Management</p>
+</div>
+</div>
+
+<div class="flex-1 overflow-y-auto space-y-1 px-2">
+<!-- Active State Navigation Logic dictates 'Pipeline' is closest for 'Archive' -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-low rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-low rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors" data-icon="person_search">person_search</span>
+                Leads
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary font-bold border-r-4 border-primary bg-surface-container-low rounded-lg transition-colors group relative" href="#"><span class="material-symbols-outlined" data-icon="view_kanban" data-weight="fill" style="font-variation-settings: &quot;FILL&quot; 1;">view_kanban</span>Pipeline<span class="absolute right-4 text-[10px] bg-surface-dim text-on-surface px-1.5 py-0.5 rounded uppercase tracking-wider font-semibold">Archive</span></a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-low rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors" data-icon="group">group</span>
+                Teams
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-low rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors" data-icon="settings">settings</span>
+                Settings
+            </a>
+</div>
+<div class="mt-auto px-2 border-t border-border-subtle pt-4"><div class="px-2 mb-4"><button class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-2.5 rounded-full font-label-md text-label-md hover:bg-inverse-surface transition-colors shadow-sm"><span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>Add Lead</button></div>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-low rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors" data-icon="help_outline">help_outline</span>
+                Help Center
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-[240px] h-screen relative">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-gutter h-16 w-full bg-background z-10 sticky top-0 md:bg-opacity-90 backdrop-blur-sm">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface p-2 -ml-2 rounded-lg hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="relative hidden sm:block w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border border-border-subtle rounded-full py-1.5 pl-10 pr-4 font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Search archive..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-2 sm:gap-4">
+<button class="text-text-muted hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-text-muted hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-low hidden sm:block">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-surface-dim border border-border-subtle overflow-hidden ml-2 cursor-pointer ring-2 ring-transparent hover:ring-primary/20 transition-all">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_38BmXKDr5dW5JokdmEAmi2r3GOByKOeWzxAQNNuxWSPkoQfHydDuqXHBeQZdJ_dPz38NYvYqjN89-jC9TkS6Wted_0jBOGeaB_G88aTOWYNV5JCHLw2dD4A402VuN5Uh_e7eux54CK0P_6epef__IDwVWpmsSEDi49cEbEJRYsBAkrd97aIv_TBRfWzGIczPjxiLeZce0GVUX6E5SB9iX6Rac8tRHGij-4zSQefc0oXProLP0z_35fdJLbUpC5Jz5HG9XlL57j8">
+</div>
+</div>
+</header>
+<!-- Main Scrollable Canvas -->
+<main class="flex-1 overflow-y-auto px-4 md:px-margin-page pb-20 md:pb-8 pt-4">
+<!-- Page Header & Filters -->
+<div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">Closed Deals</h2>
+<p class="font-body-md text-body-md text-text-muted mt-1 max-w-xl">Archive of leads that have reached a terminal stage. Review booked successes and analyze lost opportunities.</p>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-low p-1 rounded-lg border border-border-subtle self-start sm:self-auto">
+<button class="px-4 py-1.5 rounded-md font-label-md text-label-md bg-surface border border-border-subtle shadow-sm text-primary flex items-center gap-2" id="toggle-booked">
+<span class="w-2 h-2 rounded-full bg-stage-booked"></span>
+                        Booked
+                    </button>
+<button class="px-4 py-1.5 rounded-md font-label-md text-label-md text-text-muted hover:text-primary transition-colors flex items-center gap-2" id="toggle-lost">
+<span class="w-2 h-2 rounded-full bg-stage-lost opacity-50"></span>
+                        Lost / Dropped
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Archive View -->
+<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-max" id="archive-grid">
+<!-- Booked Card 1 -->
+<article class="bg-surface-container-lowest border border-border-subtle rounded-xl p-card-padding hover:border-primary/20 hover:shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] transition-all duration-300 flex flex-col group archive-card booked-card">
+<div class="flex justify-between items-start mb-4">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-stage-booked/10 border border-stage-booked/20 text-stage-booked font-label-sm text-label-sm uppercase tracking-wide">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+                            Booked
+                        </div>
+<button class="text-text-muted opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="mb-6 flex-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate">The Zenith Penthouse - Unit 402</h3>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-body-sm mb-4">
+<span class="material-symbols-outlined text-[16px]" data-icon="person">person</span>
+                            Eleanor Vance
+                        </div>
+<div class="grid grid-cols-2 gap-4 bg-surface-container-low p-3 rounded-lg border border-border-subtle/50">
+<div>
+<p class="font-label-sm text-label-sm text-text-muted uppercase mb-0.5">Deal Value</p>
+<p class="font-headline-sm text-[16px] text-primary">$1,250,000</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-text-muted uppercase mb-0.5">Closed Date</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Oct 24, 2023</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-border-subtle/50 mt-auto">
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-body-sm">
+<div class="w-6 h-6 rounded-full bg-surface-dim overflow-hidden">
+<img alt="Agent Avatar" class="w-full h-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCh6Gj0j-QJM3achoTy8nqcHKPAacN4-2UoGOlvYvj1jdw9ybZS7jBmBTSkQ5N_SZcWq4mPdGKkgulHYJ6f5y0NvlBZB1hyY8VIr4QlV6wHWed50BZEgYwfdcmSWMX3fiK6IZ0HCEzsrGVYWl5xflEogYY1LHXl5Tcbmo-wPmo3p-A_EeCtjbZ_Q6EoEatBoFb4cyXmIMREBPqk5vCZbKaCunkGhP8risNKaSdqF6oH-e2jDPA-EkPRwoT9NB7Xr3ERbW1GMNzJsok">
+</div>
+<span class="">Closed by M. Smith</span>
+</div>
+<button class="font-label-md text-label-md text-primary hover:underline underline-offset-4">View Record</button>
+</div>
+</article>
+<!-- Booked Card 2 -->
+<article class="bg-surface-container-lowest border border-border-subtle rounded-xl p-card-padding hover:border-primary/20 hover:shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] transition-all duration-300 flex flex-col group archive-card booked-card">
+<div class="flex justify-between items-start mb-4">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-stage-booked/10 border border-stage-booked/20 text-stage-booked font-label-sm text-label-sm uppercase tracking-wide">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+                            Booked
+                        </div>
+<button class="text-text-muted opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="mb-6 flex-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate">Oakwood Townhomes - Plot B</h3>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-body-sm mb-4">
+<span class="material-symbols-outlined text-[16px]" data-icon="person">person</span>
+                            David &amp; Sarah Miller
+                        </div>
+<div class="grid grid-cols-2 gap-4 bg-surface-container-low p-3 rounded-lg border border-border-subtle/50">
+<div>
+<p class="font-label-sm text-label-sm text-text-muted uppercase mb-0.5">Deal Value</p>
+<p class="font-headline-sm text-[16px] text-primary">$485,000</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-text-muted uppercase mb-0.5">Closed Date</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Oct 18, 2023</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-border-subtle/50 mt-auto">
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-body-sm">
+<div class="w-6 h-6 rounded-full bg-surface-dim overflow-hidden">
+<img alt="Agent Avatar" class="w-full h-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAQqlXp0vDeNNxneE73ncQX5Xx6dMXIZFrM9yboIu_5yq1YiGcMK_eYT3fpjV0bEnVKKuBCsB_RaP8NLRE51xx19dNhXfRl12ggs_ks4XooTqfXW9ygqX0nZTIGeNKKQtFfLxbCkGCJnevvCDKYVQSIionBk-OQ5v2vgNl-1WI_mDjI1Pnwlyi_fG6bxPn4kzziNiIGYanp3etfp4HNdsIT3WjzevjGHFiNIjgI69IkvoUR--X7Pfcw8GdTf4jXLH9LSWZWgy26wM">
+</div>
+<span class="">Closed by J. Doe</span>
+</div>
+<button class="font-label-md text-label-md text-primary hover:underline underline-offset-4">View Record</button>
+</div>
+</article>
+<!-- Lost Card 1 (Hidden by default based on active toggle) -->
+<article class="bg-surface-container-lowest border border-border-subtle rounded-xl p-card-padding hover:border-error/20 hover:shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] transition-all duration-300 flex flex-col group archive-card lost-card hidden">
+<div class="flex justify-between items-start mb-4">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-stage-lost/10 border border-stage-lost/20 text-stage-lost font-label-sm text-label-sm uppercase tracking-wide">
+<span class="material-symbols-outlined text-[14px]" data-icon="cancel">cancel</span>
+                            Lost
+                        </div>
+<button class="text-text-muted opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="mb-6 flex-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate">Riverfront Villa 12</h3>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-body-sm mb-4">
+<span class="material-symbols-outlined text-[16px]" data-icon="person">person</span>
+                            Thomas Anderson
+                        </div>
+<div class="bg-surface-container-low p-3 rounded-lg border border-border-subtle/50">
+<p class="font-label-sm text-label-sm text-text-muted uppercase mb-1">Reason</p>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-stage-lost mt-0.5" data-icon="money_off">money_off</span>
+                                Financing fell through. Client could not secure mortgage approval within timeline.
+                            </p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-border-subtle/50 mt-auto">
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="event">event</span>
+<span class="">Final Act: Oct 20</span>
+</div>
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors">Re-engage</button>
+</div>
+</article>
+</div>
+</main>
+</div>
+<!-- Bottom Nav for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface border-t border-border-subtle px-4 py-2 flex justify-between items-center pb-safe z-20">
+<a class="flex flex-col items-center p-2 text-text-muted hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-[10px] mt-1">Dash</span>
+</a>
+<a class="flex flex-col items-center p-2 text-text-muted hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="person_search">person_search</span>
+<span class="font-label-sm text-[10px] mt-1">Leads</span>
+</a>
+<a class="flex flex-col items-center p-2 text-primary" href="#">
+<div class="bg-primary-container/20 px-4 py-1 rounded-full mb-1">
+<span class="material-symbols-outlined text-[24px]" data-icon="view_kanban" data-weight="fill" style="font-variation-settings: 'FILL' 1;">view_kanban</span>
+</div>
+<span class="font-label-sm text-[10px] font-bold">Archive</span>
+</a>
+<a class="flex flex-col items-center p-2 text-text-muted hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="settings">settings</span>
+<span class="font-label-sm text-[10px] mt-1">Settings</span>
+</a>
+</nav>
+<script>
+        // Simple toggle logic for the prototype
+        const btnBooked = document.getElementById('toggle-booked');
+        const btnLost = document.getElementById('toggle-lost');
+        const bookedCards = document.querySelectorAll('.booked-card');
+        const lostCards = document.querySelectorAll('.lost-card');
+
+        btnBooked.addEventListener('click', () => {
+            // Style active
+            btnBooked.className = "px-4 py-1.5 rounded-md font-label-md text-label-md bg-surface border border-border-subtle shadow-sm text-primary flex items-center gap-2";
+            btnBooked.querySelector('span').classList.remove('opacity-50');
+            
+            // Style inactive
+            btnLost.className = "px-4 py-1.5 rounded-md font-label-md text-label-md text-text-muted hover:text-primary transition-colors flex items-center gap-2";
+            btnLost.querySelector('span').classList.add('opacity-50');
+
+            // Show/Hide
+            bookedCards.forEach(c => c.classList.remove('hidden'));
+            lostCards.forEach(c => c.classList.add('hidden'));
+        });
+
+        btnLost.addEventListener('click', () => {
+            // Style active
+            btnLost.className = "px-4 py-1.5 rounded-md font-label-md text-label-md bg-surface border border-border-subtle shadow-sm text-primary flex items-center gap-2";
+            btnLost.querySelector('span').classList.remove('opacity-50');
+            
+            // Style inactive
+            btnBooked.className = "px-4 py-1.5 rounded-md font-label-md text-label-md text-text-muted hover:text-primary transition-colors flex items-center gap-2";
+            btnBooked.querySelector('span').classList.add('opacity-50');
+
+            // Show/Hide
+            lostCards.forEach(c => c.classList.remove('hidden'));
+            bookedCards.forEach(c => c.classList.add('hidden'));
+        });
+    </script>
+
+
+</body></html>
