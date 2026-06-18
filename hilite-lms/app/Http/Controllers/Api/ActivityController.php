@@ -90,19 +90,29 @@ class ActivityController extends Controller
     {
         $request->validate(['days' => 'nullable|integer|min:1|max:30']);
         $days      = (int) ($request->days ?? 7);
-        $userId    = $request->user()->id;
+        $actor     = $request->user();
         $companyId = app('current_company_id');
 
-        // Activities where follow_up_at is within N days
-        // Join through engagement to enforce company scope
+        // Activities where follow_up_at is within N days (including overdue)
+        // Join through engagement to enforce company and role scope
         $activities = Activity::with(['engagement.lead', 'engagement.stage'])
-            ->where('type', 'followup')
             ->whereNotNull('follow_up_at')
-            ->whereBetween('follow_up_at', [Carbon::now(), Carbon::now()->addDays($days)])
-            ->whereHas('engagement', fn($q) =>
-                $q->where('company_id', $companyId)
-                  ->where('assigned_user_id', $userId)
-            )
+            ->where('follow_up_at', '<=', Carbon::now()->addDays($days))
+            ->whereHas('engagement', function($q) use ($actor, $companyId) {
+                $q->where('company_id', $companyId);
+                
+                if ($actor->role === 'salesperson') {
+                    $q->where('assigned_user_id', $actor->id);
+                } elseif ($actor->role === 'team_lead') {
+                    $teamUserIds = \App\Models\User::where('company_id', $companyId)
+                        ->where('team_id', $actor->team_id)
+                        ->pluck('id');
+                    $q->where(function($subQ) use ($teamUserIds) {
+                        $subQ->whereIn('assigned_user_id', $teamUserIds)
+                             ->orWhereNull('assigned_user_id');
+                    });
+                }
+            })
             ->orderBy('follow_up_at')
             ->get()
             ->map(fn($a) => [

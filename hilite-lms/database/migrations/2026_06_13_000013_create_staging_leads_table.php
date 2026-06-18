@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->text('raw_notes')->nullable();
             $table->json('meta')->nullable();
             $table->enum('status', ['pending', 'processing', 'done', 'failed'])->default('pending');
-            $table->text('failure_reason')->nullable();
+            $table->string('failure_reason')->nullable();
             $table->string('idempotency_key', 64)->unique();
             $table->timestamps();
             $table->index(['status', 'company_id']);

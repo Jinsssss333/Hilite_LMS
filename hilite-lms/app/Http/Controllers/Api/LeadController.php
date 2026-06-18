@@ -46,10 +46,7 @@ class LeadController extends Controller
             ->when($request->status, fn($q) => $q->where('status', $request->status));
 
         if ($actor->role === 'salesperson') {
-            $query->where(fn($q) =>
-                $q->where('assigned_user_id', $actor->id)
-                  ->orWhereNull('assigned_user_id')
-            );
+            $query->where('assigned_user_id', $actor->id);
         } elseif ($actor->role === 'team_lead') {
             $teamUserIds = \App\Models\User::where('company_id', $companyId)
                 ->where('team_id', $actor->team_id)
@@ -135,11 +132,10 @@ class LeadController extends Controller
 
         if ($actor->role === 'salesperson') {
             $isOwner = $engagement->assigned_user_id === $actor->id;
-            $isUnassigned = $engagement->assigned_user_id === null;
-            if (!$isOwner && !$isUnassigned) {
+            if (!$isOwner) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'This lead is assigned to another team member.',
+                    'message' => 'This lead is assigned to another team member or unassigned.',
                     'errors'  => (object)[]
                 ], 403);
             }
