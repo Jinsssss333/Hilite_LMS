@@ -234,4 +234,46 @@ class LeadController extends Controller
         ])->toArray();
         return $summary;
     }
+    /**
+     * PATCH /api/leads/{id}/flag-shared
+     *
+     * FIX #8a — Marks a lead's phone number as a known shared/generic number
+     * (e.g., a corporate switchboard). Once flagged, subsequent intakes for this
+     * phone number bypass deduplication and create fresh engagements per unique person.
+     *
+     * Body: { "is_shared": true|false }
+     * Roles allowed: admin, super_admin, manager, branch_head only.
+     */
+    public function flagShared(Request $request, int $id)
+    {
+        $actor = $request->user();
+        $allowedRoles = ['admin', 'super_admin', 'manager', 'branch_head'];
+
+        if (!in_array($actor->role, $allowedRoles)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have permission to flag shared numbers.',
+                'errors'  => (object)[]
+            ], 403);
+        }
+
+        $request->validate(['is_shared' => 'required|boolean']);
+
+        $engagement = LeadEngagement::with('lead')->findOrFail($id);
+        $lead = $engagement->lead;
+
+        $lead->update(['is_shared_number' => $request->boolean('is_shared')]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $request->boolean('is_shared')
+                ? 'Phone number flagged as shared. Future intakes on this number will create separate leads.'
+                : 'Phone number unflagged. Deduplication is now active again for this number.',
+            'data' => [
+                'lead_id'          => $lead->id,
+                'phone_e164'       => $lead->phone_e164,
+                'is_shared_number' => $lead->is_shared_number,
+            ]
+        ]);
+    }
 }

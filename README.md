@@ -14,7 +14,7 @@ Hilite LMS is a RESTful API backend built with **Laravel 12** that supports mult
 - **Lead ingestion** from multiple sources: manual entry, CSV bulk import, and webhook (e.g. Facebook Lead Ads)
 - **Pipeline management** â€” configurable stages with colour coding and ordering per company
 - **Engagement tracking** â€” each leadâ€“company relationship is tracked as an engagement with a current stage and assigned salesperson
-- **Activity logging** â€” calls, notes, follow-ups, and site visits are recorded against engagements
+- **Activity logging** â€” calls, notes, follow-ups, and site visits are recorded  against engagements
 - **SLA monitoring** â€” configurable breach thresholds per pipeline stage with escalation role targeting
 - **Audit trail** â€” all significant state changes are recorded in an append-only audit log
 - **Phone normalisation** â€” raw phone numbers are normalised to E.164 format using `libphonenumber` to prevent duplicates
