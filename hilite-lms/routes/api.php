@@ -21,6 +21,8 @@ Route::middleware(['auth:sanctum', 'company.scope'])->group(function () {
     Route::get('/leads', [LeadController::class, 'index']);
     Route::post('/leads', [LeadController::class, 'store'])->middleware('throttle:30,1');
     Route::get('/leads/{id}', [LeadController::class, 'show']);
+    // FIX #8a — Flag a lead's phone number as a shared/corporate switchboard number
+    Route::patch('/leads/{id}/flag-shared', [LeadController::class, 'flagShared'])->middleware('throttle:20,1');
 
     // CSV Import — heavier operation, stricter throttle
     Route::post('/leads/import', [ImportController::class, 'upload'])->middleware('throttle:5,1');
