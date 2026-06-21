@@ -50,8 +50,31 @@
                     <input name="email" :disabled="!editMode" :class="{ 'opacity-50 cursor-not-allowed bg-surface-container': !editMode }" class="form-input w-full rounded-xl border border-border-subtle bg-surface h-12 px-4 transition-all" value="{{ \App\Http\Helpers\AuthHelper::user()->email }}" type="email" required />
                 </label>
                 <label class="flex flex-col gap-2 md:col-span-2">
-                    <span class="text-label-md text-on-surface">Phone Number</span>
-                    <input name="phone" :disabled="!editMode" :class="{ 'opacity-50 cursor-not-allowed bg-surface-container': !editMode }" class="form-input w-full rounded-xl border border-border-subtle bg-surface h-12 px-4 transition-all" value="+1 (555) 123-4567" type="tel" />
+                    <span class="text-label-md text-on-surface flex items-center gap-1">
+                        Phone Number
+                        <span class="material-symbols-outlined text-[14px] text-text-muted cursor-help" title="Enter the raw number — country code is detected automatically via libphonenumber. e.g. 9876543210 or +919876543210">info</span>
+                    </span>
+                    <input
+                        name="phone"
+                        :disabled="!editMode"
+                        :class="{ 'opacity-50 cursor-not-allowed bg-surface-container': !editMode }"
+                        class="form-input w-full rounded-xl border border-border-subtle bg-surface h-12 px-4 font-mono tracking-wide transition-all"
+                        value="{{ \App\Http\Helpers\AuthHelper::user()?->phone ?? '' }}"
+                        placeholder="e.g. 9876543210 or +919876543210"
+                        type="tel"
+                    />
+                    @php
+                        $savedPhone = \App\Http\Helpers\AuthHelper::user()?->phone;
+                        $detectedRegion = $savedPhone ? app(\App\Services\PhoneNormalizationService::class)->detectRegion($savedPhone) : null;
+                    @endphp
+                    @if($detectedRegion && $savedPhone)
+                        <span class="text-[11px] text-stage-interested flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[13px]">check_circle</span>
+                            Stored as E.164 · Detected region: <strong>{{ $detectedRegion }}</strong>
+                        </span>
+                    @elseif(!$savedPhone)
+                        <span class="text-[11px] text-text-muted">No phone number saved yet.</span>
+                    @endif
                 </label>
 
             </div>
