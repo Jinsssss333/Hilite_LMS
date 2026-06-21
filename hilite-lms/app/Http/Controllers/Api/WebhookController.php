@@ -34,11 +34,14 @@ class WebhookController extends Controller
             return response()->json(['success' => false, 'message' => 'Unknown company', 'errors' => (object)[]], 404);
         }
 
+        $meta = $request->meta ?? [];
+        $meta['occurred_at'] = $request->timestamp ?? now()->toIso8601String();
+
         $idempotencyKey = hash('sha256',
             $company->id . '|' .
             strtolower(trim($request->phone)) . '|' .
             ($request->source ?? 'webhook') . '|' .
-            json_encode($request->meta ?? [])
+            json_encode($meta)
         );
 
         DB::table('staging_leads')->insertOrIgnore([[

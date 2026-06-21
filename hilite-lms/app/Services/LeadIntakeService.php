@@ -76,6 +76,30 @@ class LeadIntakeService
                     ->first();
 
                 if ($existing) {
+                    // ---------------------------------------------------------------
+                    // FIX 10c: The Zombie Re-Assignment Loop
+                    // If the lead is dormant or closed AND the last activity was > 60 days ago,
+                    // do not reassign to the original swamped agent. Clear the assignment
+                    // to put it back in the pool.
+                    // ---------------------------------------------------------------
+                    if (in_array($existing->status, ['dormant', 'closed'])) {
+                        $daysSinceLastActivity = $existing->last_activity_at ? \Carbon\Carbon::parse($existing->last_activity_at)->diffInDays(now()) : 999;
+                        if ($daysSinceLastActivity > 60) {
+                            $existing->assigned_user_id = null; // Unassign from swamped agent
+                            $existing->status = 'active'; // Re-activate
+                            $existing->save();
+                            
+                            $this->auditService->log(
+                                companyId: $companyId,
+                                engagementId: $existing->id,
+                                actorUserId: $actorUserId,
+                                action: 'zombie_reengaged',
+                                before: ['status' => 'dormant/closed'],
+                                after: ['status' => 'active', 'assigned_user_id' => null]
+                            );
+                        }
+                    }
+
                     $conflict = $existing->assigned_user_id
                         && $existing->assigned_user_id !== $actorUserId
                         && $existing->status === 'active';
@@ -142,6 +166,26 @@ class LeadIntakeService
                     'assigned_at'         => now(),
                     'valid_from'          => now(),
                     'valid_to'            => null,
+                ]);
+            }
+
+            // Create the first activity (source)
+            \App\Models\Activity::create([
+                'engagement_id'      => $engagement->id,
+                'created_by_user_id' => $actorUserId,
+                'type'               => 'note',
+                'notes'              => 'Lead created via ' . ($data['source'] ?? 'manual'),
+                'occurred_at'        => $data['occurred_at'] ?? now(),
+            ]);
+
+            // If notes provided, add them as an activity
+            if (!empty($data['notes'])) {
+                \App\Models\Activity::create([
+                    'engagement_id'      => $engagement->id,
+                    'created_by_user_id' => $actorUserId,
+                    'type'               => 'note',
+                    'notes'              => $data['notes'],
+                    'occurred_at'        => $data['occurred_at'] ?? now(),
                 ]);
             }
 

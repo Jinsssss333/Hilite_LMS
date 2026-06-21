@@ -34,13 +34,16 @@ class ProcessWebhookStagingJob implements ShouldQueue
             ->where('email', 'system+' . $company->slug . '@internal.local')
             ->value('id');
 
+        $meta = json_decode($row->meta, true) ?? [];
+
         try {
             $intakeService->intake([
-                'name'  => $row->raw_name,
-                'phone' => $row->raw_phone,
-                'email' => $row->raw_email,
-                'source'=> $row->source,
-                'notes' => $row->raw_notes,
+                'name'        => $row->raw_name,
+                'phone'       => $row->raw_phone,
+                'email'       => $row->raw_email,
+                'source'      => $row->source,
+                'notes'       => $row->raw_notes,
+                'occurred_at' => $meta['occurred_at'] ?? now()->toIso8601String(),
             ], $this->companyId, $systemUserId);
 
             $row->update(['status' => 'done']);

@@ -8,7 +8,10 @@ use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+})->purpose('Display an inspiring quote')->hourly();
+
+// Check for SLA breaches on inbound replies (The Outbound Loop Trap)
+Schedule::command('sla:check-replies')->hourly();
 
 // Dev C scheduled jobs
 Schedule::job(new CheckSlaBreachJob)->hourly();
