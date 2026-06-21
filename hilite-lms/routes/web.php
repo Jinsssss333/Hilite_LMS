@@ -41,14 +41,8 @@ Route::middleware('auth.lms')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'salesperson'])->name('dashboard.salesperson');
     Route::get('/dashboard/manager', [\App\Http\Controllers\DashboardController::class, 'manager'])->name('dashboard.manager');
 
-    Route::get('/dashboard/assignment', function () {
-        $role = session('user_role');
-        // Salespersons don't see the assignment hub — they only see their own leads
-        if ($role === 'salesperson') {
-            return redirect()->route('leads.index');
-        }
-        return view('dashboard.assignment');
-    })->name('dashboard.assignment');
+    Route::get('/dashboard/assignment', [\App\Http\Controllers\AssignmentHubController::class, 'index'])->name('dashboard.assignment');
+    Route::post('/dashboard/assignment/assign', [\App\Http\Controllers\AssignmentHubController::class, 'assign'])->name('assignment.bulk');
 
     // Leads
     Route::get('/leads', [\App\Http\Controllers\LeadsController::class, 'index'])->name('leads.index');

@@ -19,6 +19,8 @@
 </div>
 
 <!-- High-Density Lead List -->
+<form method="POST" action="{{ route('assignment.bulk') }}" id="assignment-form">
+    @csrf
 <div class="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden shadow-sm">
     <!-- Table Header -->
     <div class="grid grid-cols-[40px_minmax(200px,_1fr)_minmax(120px,_1fr)_minmax(150px,_1fr)_minmax(120px,_1fr)_100px] gap-4 p-4 border-b border-border-subtle bg-surface-container-low/50">
@@ -34,93 +36,42 @@
     
     <!-- List Body -->
     <div class="divide-y divide-border-subtle">
-        <!-- Item 1 -->
+        @forelse($unassigned as $e)
         <div class="lead-row grid grid-cols-[40px_minmax(200px,_1fr)_minmax(120px,_1fr)_minmax(150px,_1fr)_minmax(120px,_1fr)_100px] gap-4 p-4 items-center hover:bg-surface-container-low/30 transition-colors">
             <div class="flex items-center justify-center">
-                <input class="soft-checkbox lead-checkbox" type="checkbox">
+                <input class="soft-checkbox lead-checkbox" name="engagement_ids[]" value="{{ $e->id }}" type="checkbox">
             </div>
             <div>
-                <div class="font-label-md text-label-md text-primary mb-1">Arjun Patel</div>
+                <div class="font-label-md text-label-md text-primary mb-1">{{ $e->lead->name }}</div>
                 <div class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[14px]">call</span> +91 98765 43210
+                    <span class="material-symbols-outlined text-[14px]">call</span> {{ $e->lead->phone_e164 }}
                 </div>
             </div>
-            <div class="font-body-sm text-body-sm text-on-surface-variant">Website organic</div>
+            <div class="font-body-sm text-body-sm text-on-surface-variant">{{ ucfirst($e->source) }}</div>
             <div>
-                <span class="inline-flex items-center px-2 py-1 rounded-full bg-stage-new/10 text-stage-new border border-stage-new/20 font-label-sm text-label-sm">
-                    <span class="w-1.5 h-1.5 rounded-full bg-stage-new mr-1.5"></span> New Inquiry
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-white font-label-sm text-label-sm" style="background-color: {{ $e->stage->color }}">
+                    <span class="w-1.5 h-1.5 rounded-full bg-white mr-1.5 opacity-75"></span> {{ $e->stage->name }}
                 </span>
             </div>
-            <div class="font-body-sm text-body-sm text-error font-medium">4 hrs ago</div>
+            <div class="font-body-sm text-body-sm {{ $e->sla_breached ? 'text-error font-medium' : 'text-on-surface-variant' }}">
+                {{ \Carbon\Carbon::parse($e->created_at)->diffForHumans(null, true) }}
+            </div>
             <div class="text-right">
-                <button class="text-primary hover:bg-surface-container-low p-1.5 rounded-md transition-colors">
+                <button type="button" class="text-primary hover:bg-surface-container-low p-1.5 rounded-md transition-colors">
                     <span class="material-symbols-outlined text-[20px]">visibility</span>
                 </button>
             </div>
         </div>
-        
-        <!-- Item 2 -->
-        <div class="lead-row grid grid-cols-[40px_minmax(200px,_1fr)_minmax(120px,_1fr)_minmax(150px,_1fr)_minmax(120px,_1fr)_100px] gap-4 p-4 items-center hover:bg-surface-container-low/30 transition-colors">
-            <div class="flex items-center justify-center">
-                <input class="soft-checkbox lead-checkbox" type="checkbox">
-            </div>
-            <div>
-                <div class="font-label-md text-label-md text-primary mb-1">Meera Sharma</div>
-                <div class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[14px]">mail</span> m.sharma@example.com
-                </div>
-            </div>
-            <div class="font-body-sm text-body-sm text-on-surface-variant">Facebook Ad</div>
-            <div>
-                <span class="inline-flex items-center px-2 py-1 rounded-full bg-stage-interested/10 text-stage-interested border border-stage-interested/20 font-label-sm text-label-sm">
-                    <span class="w-1.5 h-1.5 rounded-full bg-stage-interested mr-1.5"></span> High Intent
-                </span>
-            </div>
-            <div class="font-body-sm text-body-sm text-on-surface-variant">2 hrs ago</div>
-            <div class="text-right">
-                <button class="text-primary hover:bg-surface-container-low p-1.5 rounded-md transition-colors">
-                    <span class="material-symbols-outlined text-[20px]">visibility</span>
-                </button>
-            </div>
+        @empty
+        <div class="p-8 text-center text-text-muted font-body-md">
+            No unassigned leads found.
         </div>
-        
-        <!-- Item 3 -->
-        <div class="lead-row grid grid-cols-[40px_minmax(200px,_1fr)_minmax(120px,_1fr)_minmax(150px,_1fr)_minmax(120px,_1fr)_100px] gap-4 p-4 items-center hover:bg-surface-container-low/30 transition-colors">
-            <div class="flex items-center justify-center">
-                <input class="soft-checkbox lead-checkbox" type="checkbox">
-            </div>
-            <div>
-                <div class="font-label-md text-label-md text-primary mb-1">Rohan Desai</div>
-                <div class="font-body-sm text-body-sm text-text-muted flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[14px]">call</span> +91 91234 56789
-                </div>
-            </div>
-            <div class="font-body-sm text-body-sm text-on-surface-variant">Referral</div>
-            <div>
-                <span class="inline-flex items-center px-2 py-1 rounded-full bg-stage-contacted/10 text-stage-contacted border border-stage-contacted/20 font-label-sm text-label-sm">
-                    <span class="w-1.5 h-1.5 rounded-full bg-stage-contacted mr-1.5"></span> Follow-up req.
-                </span>
-            </div>
-            <div class="font-body-sm text-body-sm text-on-surface-variant">1 hr ago</div>
-            <div class="text-right">
-                <button class="text-primary hover:bg-surface-container-low p-1.5 rounded-md transition-colors">
-                    <span class="material-symbols-outlined text-[20px]">visibility</span>
-                </button>
-            </div>
-        </div>
+        @endforelse
     </div>
     
     <!-- Pagination Footer -->
-    <div class="p-4 border-t border-border-subtle flex items-center justify-between bg-surface-container-low/30">
-        <div class="font-body-sm text-body-sm text-text-muted">Showing 1-3 of 24 unassigned leads</div>
-        <div class="flex items-center gap-2">
-            <button class="p-1 text-on-surface-variant opacity-50 cursor-not-allowed">
-                <span class="material-symbols-outlined">chevron_left</span>
-            </button>
-            <button class="p-1 text-primary hover:bg-surface-container-low rounded">
-                <span class="material-symbols-outlined">chevron_right</span>
-            </button>
-        </div>
+    <div class="p-4 border-t border-border-subtle bg-surface-container-low/30">
+        {{ $unassigned->links() }}
     </div>
 </div>
 
@@ -141,24 +92,25 @@
         <div class="w-full flex-1">
             <label class="font-label-sm text-label-sm text-inverse-primary block mb-1.5">Assign To Representative</label>
             <div class="relative w-full">
-                <select class="w-full appearance-none bg-inverse-surface border border-outline/50 rounded-lg py-2 pl-3 pr-8 font-body-sm text-body-sm text-on-primary focus:ring-2 focus:ring-primary-fixed focus:border-primary-fixed outline-none">
-                    <option disabled="" selected="" value="">Select Rep...</option>
-                    <option value="priya">Priya S. (12 active leads)</option>
-                    <option value="kiran">Kiran M. (8 active leads)</option>
-                    <option value="ajay">Ajay R. (42 active leads - High Load)</option>
+                <select name="assign_to_user_id" required class="w-full appearance-none bg-inverse-surface border border-outline/50 rounded-lg py-2 pl-3 pr-8 font-body-sm text-body-sm text-on-primary focus:ring-2 focus:ring-primary-fixed focus:border-primary-fixed outline-none">
+                    <option disabled selected value="">Select Rep...</option>
+                    @foreach($assignableUsers as $u)
+                        <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->role }})</option>
+                    @endforeach
                 </select>
                 <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-sm">arrow_drop_down</span>
             </div>
         </div>
         <div class="w-full flex-1">
             <label class="font-label-sm text-label-sm text-inverse-primary block mb-1.5">Assignment Reason (Optional)</label>
-            <input class="w-full bg-inverse-surface border border-outline/50 rounded-lg py-2 px-3 font-body-sm text-body-sm text-on-primary focus:ring-2 focus:ring-primary-fixed focus:border-primary-fixed outline-none placeholder:text-outline" placeholder="e.g. Territory match" type="text">
+            <input name="reason" class="w-full bg-inverse-surface border border-outline/50 rounded-lg py-2 px-3 font-body-sm text-body-sm text-on-primary focus:ring-2 focus:ring-primary-fixed focus:border-primary-fixed outline-none placeholder:text-outline" placeholder="e.g. Territory match" type="text">
         </div>
-        <button class="w-full md:w-auto mt-4 md:mt-0 shrink-0 bg-primary-fixed text-on-primary-fixed font-label-md text-label-md py-2.5 px-6 rounded-lg hover:bg-primary-fixed-dim transition-colors focus:ring-2 focus:ring-primary-fixed/50 outline-none">
+        <button type="submit" class="w-full md:w-auto mt-4 md:mt-0 shrink-0 bg-primary-fixed text-on-primary-fixed font-label-md text-label-md py-2.5 px-6 rounded-lg hover:bg-primary-fixed-dim transition-colors focus:ring-2 focus:ring-primary-fixed/50 outline-none">
             Assign Leads
         </button>
     </div>
 </div>
+</form>
 
 <style>
     /* Soft Paper Checkbox */
