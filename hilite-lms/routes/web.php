@@ -69,9 +69,7 @@ Route::middleware('auth.lms')->group(function () {
     // Flag a lead's phone number as a shared/corporate switchboard number
     Route::patch('/leads/{id}/flag-shared', [\App\Http\Controllers\LeadsController::class, 'flagShared'])->name('leads.flag-shared');
 
-    Route::get('/leads/calendar', function () {
-        return view('leads.calendar');
-    })->name('leads.calendar');
+    Route::get('/leads/calendar', [\App\Http\Controllers\CalendarController::class, 'index'])->name('leads.calendar');
 
     Route::get('/leads/followups', [\App\Http\Controllers\FollowupsController::class, 'index'])->name('leads.followups');
     Route::patch('/leads/followups/{id}/complete', [\App\Http\Controllers\FollowupsController::class, 'complete'])->name('leads.followup.complete');
