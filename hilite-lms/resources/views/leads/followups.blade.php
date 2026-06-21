@@ -33,189 +33,143 @@
 <div class="max-w-[1200px] mx-auto space-y-8">
     
     <!-- OVERDUE GROUP -->
+    @if($overdue->count() > 0)
     <section>
         <h3 class="font-label-sm text-label-sm text-stage-lost flex items-center gap-2 mb-3 uppercase tracking-wider font-bold">
             <span class="material-symbols-outlined" style="font-size: 16px;">error</span>
-            Overdue
+            Overdue ({{ $overdue->count() }})
         </h3>
         <div class="space-y-2">
-            
-            <x-card class="followup-card">
+            @foreach($overdue as $activity)
+            <x-card class="followup-card relative">
                 <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-stage-lost"></div>
                 <div class="flex-1 flex items-center gap-4 pl-3 w-full">
                     <div class="w-9 h-9 rounded-full bg-error-container flex items-center justify-center flex-shrink-0 text-error">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">call</span>
+                        <span class="material-symbols-outlined" style="font-size: 18px;">{{ $activity->type === 'visit' ? 'directions_car' : ($activity->type === 'email' ? 'mail' : 'call') }}</span>
                     </div>
                     <div class="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center">
                         <div class="sm:col-span-4 flex items-center gap-2">
-                            <p class="font-headline-sm text-headline-sm text-on-surface truncate">Sarah Jenkins</p>
-                            <x-stage-pill stage="interested"></x-stage-pill>
+                            <p class="font-headline-sm text-headline-sm text-on-surface truncate">{{ $activity->engagement->lead->name }}</p>
+                            <span class="text-[11px] font-bold uppercase tracking-wider rounded-full px-3 py-1.5 border" style="background-color: {{ $activity->engagement->stage->color }}20; color: {{ $activity->engagement->stage->color }};">{{ $activity->engagement->stage->name }}</span>
                         </div>
                         <div class="sm:col-span-5">
                             <p class="font-body-sm text-body-sm text-text-muted truncate flex items-center gap-1.5">
-                                <span class="font-medium text-on-surface">Call:</span> Follow up on site visit feedback
+                                <span class="font-medium text-on-surface">{{ ucfirst($activity->type) }}:</span> {{ $activity->notes ?? 'Pending follow-up' }}
                             </p>
                         </div>
                         <div class="sm:col-span-3 text-left sm:text-right">
-                            <p class="font-label-sm text-label-sm text-stage-lost font-bold">Yesterday, 2:00 PM</p>
+                            <p class="font-label-sm text-label-sm text-stage-lost font-bold">{{ \Carbon\Carbon::parse($activity->follow_up_at)->format('M d, g:i A') }}</p>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Default Actions -->
                 <div class="default-actions mt-3 sm:mt-0 ml-auto pl-4 transition-opacity duration-200">
-                    <button class="w-8 h-8 flex items-center justify-center rounded-full border border-border-subtle text-text-muted hover:text-on-surface hover:bg-surface-container-low transition-colors">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">check</span>
-                    </button>
-                </div>
-                
-                <!-- Quick Actions (Hover) -->
-                <div class="quick-actions absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-surface-container-lowest pl-4 py-1">
-                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">edit_document</span> Log
-                    </button>
-                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">event</span> Reschedule
-                    </button>
-                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm bg-primary text-on-primary hover:bg-tertiary transition-colors flex items-center gap-1">
-                        View
-                    </button>
+                    <form method="POST" action="{{ route('leads.followup.complete', $activity->id) }}">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" title="Mark Completed" class="w-8 h-8 flex items-center justify-center rounded-full border border-border-subtle text-text-muted hover:text-on-surface hover:bg-surface-container-low transition-colors">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">check</span>
+                        </button>
+                    </form>
                 </div>
             </x-card>
-
-            <x-card class="followup-card">
-                <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-stage-lost"></div>
-                <div class="flex-1 flex items-center gap-4 pl-3 w-full">
-                    <div class="w-9 h-9 rounded-full bg-error-container flex items-center justify-center flex-shrink-0 text-error">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">mail</span>
-                    </div>
-                    <div class="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center">
-                        <div class="sm:col-span-4 flex items-center gap-2">
-                            <p class="font-headline-sm text-headline-sm text-on-surface truncate">Michael Chang</p>
-                            <x-stage-pill stage="new"></x-stage-pill>
-                        </div>
-                        <div class="sm:col-span-5">
-                            <p class="font-body-sm text-body-sm text-text-muted truncate flex items-center gap-1.5">
-                                <span class="font-medium text-on-surface">Email:</span> Send brochure for Phase 2
-                            </p>
-                        </div>
-                        <div class="sm:col-span-3 text-left sm:text-right">
-                            <p class="font-label-sm text-label-sm text-stage-lost font-bold">Sep 12, 10:00 AM</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Default Actions -->
-                <div class="default-actions mt-3 sm:mt-0 ml-auto pl-4 transition-opacity duration-200">
-                    <button class="w-8 h-8 flex items-center justify-center rounded-full border border-border-subtle text-text-muted hover:text-on-surface hover:bg-surface-container-low transition-colors">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">check</span>
-                    </button>
-                </div>
-                <!-- Quick Actions (Hover) -->
-                <div class="quick-actions absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-surface-container-lowest pl-4 py-1">
-                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">edit_document</span> Log
-                    </button>
-                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">event</span> Reschedule
-                    </button>
-                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm bg-primary text-on-primary hover:bg-tertiary transition-colors flex items-center gap-1">
-                        View
-                    </button>
-                </div>
-            </x-card>
+            @endforeach
         </div>
     </section>
+    @endif
 
     <!-- TODAY GROUP -->
     <section>
         <h3 class="font-label-sm text-label-sm text-text-muted flex items-center gap-2 mb-3 uppercase tracking-wider font-bold">
             <span class="material-symbols-outlined" style="font-size: 16px;">today</span>
-            Today
+            Today ({{ $today->count() }})
         </h3>
         <div class="space-y-2">
-            <x-card class="followup-card">
+            @forelse($today as $activity)
+            <x-card class="followup-card relative">
                 <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary-fixed-dim"></div>
                 <div class="flex-1 flex items-center gap-4 pl-3 w-full">
                     <div class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 text-on-surface">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">calendar_clock</span>
+                        <span class="material-symbols-outlined" style="font-size: 18px;">{{ $activity->type === 'visit' ? 'directions_car' : ($activity->type === 'email' ? 'mail' : 'call') }}</span>
                     </div>
                     <div class="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center">
                         <div class="sm:col-span-4 flex items-center gap-2">
-                            <p class="font-headline-sm text-headline-sm text-on-surface truncate">Elena Rodriguez</p>
-                            <x-stage-pill stage="site visit"></x-stage-pill>
+                            <p class="font-headline-sm text-headline-sm text-on-surface truncate">{{ $activity->engagement->lead->name }}</p>
+                            <span class="text-[11px] font-bold uppercase tracking-wider rounded-full px-3 py-1.5 border" style="background-color: {{ $activity->engagement->stage->color }}20; color: {{ $activity->engagement->stage->color }};">{{ $activity->engagement->stage->name }}</span>
                         </div>
                         <div class="sm:col-span-5">
                             <p class="font-body-sm text-body-sm text-text-muted truncate flex items-center gap-1.5">
-                                <span class="font-medium text-on-surface">Meeting:</span> Confirm weekend appointment
+                                <span class="font-medium text-on-surface">{{ ucfirst($activity->type) }}:</span> {{ $activity->notes ?? 'Pending follow-up' }}
                             </p>
                         </div>
                         <div class="sm:col-span-3 text-left sm:text-right">
-                            <p class="font-label-sm text-label-sm text-on-surface font-bold">1:30 PM</p>
+                            <p class="font-label-sm text-label-sm text-on-surface font-bold">{{ \Carbon\Carbon::parse($activity->follow_up_at)->format('g:i A') }}</p>
                         </div>
                     </div>
                 </div>
                 <!-- Default Actions -->
                 <div class="default-actions mt-3 sm:mt-0 ml-auto pl-4 transition-opacity duration-200">
-                    <button class="w-8 h-8 flex items-center justify-center rounded-full border border-border-subtle text-text-muted hover:text-on-surface hover:bg-surface-container-low transition-colors">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">check</span>
-                    </button>
-                </div>
-                <!-- Quick Actions (Hover) -->
-                <div class="quick-actions absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-surface-container-lowest pl-4 py-1">
-                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">edit_document</span> Log
-                    </button>
-                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">event</span> Reschedule
-                    </button>
-                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm bg-primary text-on-primary hover:bg-tertiary transition-colors flex items-center gap-1">
-                        View
-                    </button>
+                    <form method="POST" action="{{ route('leads.followup.complete', $activity->id) }}">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" title="Mark Completed" class="w-8 h-8 flex items-center justify-center rounded-full border border-border-subtle text-text-muted hover:text-on-surface hover:bg-surface-container-low transition-colors">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">check</span>
+                        </button>
+                    </form>
                 </div>
             </x-card>
-
-            <x-card class="followup-card">
-                <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary-fixed-dim"></div>
-                <div class="flex-1 flex items-center gap-4 pl-3 w-full">
-                    <div class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 text-on-surface">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">payments</span>
-                    </div>
-                    <div class="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center">
-                        <div class="sm:col-span-4 flex items-center gap-2">
-                            <p class="font-headline-sm text-headline-sm text-on-surface truncate">David Chen</p>
-                            <x-stage-pill stage="negotiation"></x-stage-pill>
-                        </div>
-                        <div class="sm:col-span-5">
-                            <p class="font-body-sm text-body-sm text-text-muted truncate flex items-center gap-1.5">
-                                <span class="font-medium text-on-surface">Followup:</span> Discuss payment plan options
-                            </p>
-                        </div>
-                        <div class="sm:col-span-3 text-left sm:text-right">
-                            <p class="font-label-sm text-label-sm text-on-surface font-bold">4:00 PM</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Default Actions -->
-                <div class="default-actions mt-3 sm:mt-0 ml-auto pl-4 transition-opacity duration-200">
-                    <button class="w-8 h-8 flex items-center justify-center rounded-full border border-border-subtle text-text-muted hover:text-on-surface hover:bg-surface-container-low transition-colors">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">check</span>
-                    </button>
-                </div>
-                <!-- Quick Actions (Hover) -->
-                <div class="quick-actions absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-surface-container-lowest pl-4 py-1">
-                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">edit_document</span> Log
-                    </button>
-                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">event</span> Reschedule
-                    </button>
-                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm bg-primary text-on-primary hover:bg-tertiary transition-colors flex items-center gap-1">
-                        View
-                    </button>
-                </div>
-            </x-card>
+            @empty
+            <div class="py-4 text-text-muted font-body-sm">No follow-ups due today.</div>
+            @endforelse
         </div>
     </section>
+
+    <!-- UPCOMING GROUP -->
+    @if($upcoming->count() > 0)
+    <section>
+        <h3 class="font-label-sm text-label-sm text-text-muted flex items-center gap-2 mb-3 uppercase tracking-wider font-bold">
+            <span class="material-symbols-outlined" style="font-size: 16px;">update</span>
+            Upcoming ({{ $upcoming->count() }})
+        </h3>
+        <div class="space-y-2">
+            @foreach($upcoming as $activity)
+            <x-card class="followup-card relative">
+                <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-border-subtle"></div>
+                <div class="flex-1 flex items-center gap-4 pl-3 w-full">
+                    <div class="w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center flex-shrink-0 text-text-muted">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">{{ $activity->type === 'visit' ? 'directions_car' : ($activity->type === 'email' ? 'mail' : 'call') }}</span>
+                    </div>
+                    <div class="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center">
+                        <div class="sm:col-span-4 flex items-center gap-2">
+                            <p class="font-headline-sm text-headline-sm text-on-surface truncate">{{ $activity->engagement->lead->name }}</p>
+                            <span class="text-[11px] font-bold uppercase tracking-wider rounded-full px-3 py-1.5 border" style="background-color: {{ $activity->engagement->stage->color }}20; color: {{ $activity->engagement->stage->color }};">{{ $activity->engagement->stage->name }}</span>
+                        </div>
+                        <div class="sm:col-span-5">
+                            <p class="font-body-sm text-body-sm text-text-muted truncate flex items-center gap-1.5">
+                                <span class="font-medium text-on-surface">{{ ucfirst($activity->type) }}:</span> {{ $activity->notes ?? 'Pending follow-up' }}
+                            </p>
+                        </div>
+                        <div class="sm:col-span-3 text-left sm:text-right">
+                            <p class="font-label-sm text-label-sm text-on-surface font-bold">{{ \Carbon\Carbon::parse($activity->follow_up_at)->format('M d, g:i A') }}</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Default Actions -->
+                <div class="default-actions mt-3 sm:mt-0 ml-auto pl-4 transition-opacity duration-200">
+                    <form method="POST" action="{{ route('leads.followup.complete', $activity->id) }}">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" title="Mark Completed" class="w-8 h-8 flex items-center justify-center rounded-full border border-border-subtle text-text-muted hover:text-on-surface hover:bg-surface-container-low transition-colors">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">check</span>
+                        </button>
+                    </form>
+                </div>
+            </x-card>
+            @endforeach
+        </div>
+    </section>
+    @endif
 
 </div>
 

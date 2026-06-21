@@ -73,6 +73,9 @@ Route::middleware('auth.lms')->group(function () {
         return view('leads.calendar');
     })->name('leads.calendar');
 
+    Route::get('/leads/followups', [\App\Http\Controllers\FollowupsController::class, 'index'])->name('leads.followups');
+    Route::patch('/leads/followups/{id}/complete', [\App\Http\Controllers\FollowupsController::class, 'complete'])->name('leads.followup.complete');
+
     // Archive removed — redirect to leads to avoid errors
     Route::get('/leads/archive', function () {
         return redirect()->route('leads.index');
