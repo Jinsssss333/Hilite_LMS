@@ -298,4 +298,49 @@ class LeadsController extends Controller
                 : 'Shared flag removed. Deduplication is now active for this number again.',
         ]);
     }
+
+    public function dispositions()
+    {
+        // Return dispositions for the company
+        $companyId = AuthHelper::user()->company_id;
+        // Check if there are any, else return dummy
+        $dispositions = \App\Models\Disposition::where('company_id', $companyId)->get();
+        if ($dispositions->isEmpty()) {
+            // For prototyping if empty
+            return response()->json([
+                ['id' => 1, 'label' => '✅ Connected / Spoke to Lead'],
+                ['id' => 2, 'label' => '❌ No Answer / Busy'],
+                ['id' => 3, 'label' => '📅 Requested Callback'],
+                ['id' => 4, 'label' => '🚫 Not Interested'],
+            ]);
+        }
+        return response()->json($dispositions);
+    }
+
+    public function logActivity(Request $request, $id)
+    {
+        $user = AuthHelper::user();
+        
+        $request->validate([
+            'disposition_id' => 'required', // could be string if dummy
+            'notes' => 'nullable|string',
+            'follow_up_at' => 'nullable|date',
+        ]);
+
+        $engagement = \App\Models\LeadEngagement::findOrFail($id);
+
+        $activity = \App\Models\Activity::create([
+            'engagement_id' => $engagement->id,
+            'created_by_user_id' => $user->id,
+            'disposition_id' => is_numeric($request->disposition_id) ? $request->disposition_id : null,
+            'type' => 'call',
+            'notes' => $request->notes,
+            'follow_up_at' => $request->follow_up_at,
+        ]);
+
+        // If follow_up_at is provided, engagement needs last_activity_at updated
+        $engagement->update(['last_activity_at' => now()]);
+
+        return response()->json(['success' => true, 'activity' => $activity, 'message' => 'Activity logged successfully.']);
+    }
 }

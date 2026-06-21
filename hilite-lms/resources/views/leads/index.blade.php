@@ -174,7 +174,7 @@
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="opacity-0 group-hover:opacity-100 transition-opacity flex justify-end gap-1">
-                                <button class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center text-text-muted hover:text-primary transition-colors" title="Log Disposition" onclick="document.getElementById('dispositionModal').classList.remove('hidden')">
+                                <button class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center text-text-muted hover:text-primary transition-colors" title="Log Disposition" onclick="openDispositionModal({{ $lead->engagement_id }})">
                                     <span class="material-symbols-outlined text-[18px]">call</span>
                                 </button>
                                 <button class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center text-text-muted hover:text-on-surface">
@@ -221,7 +221,7 @@
 <!-- Disposition Modal -->
 <div id="dispositionModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="document.getElementById('dispositionModal').classList.add('hidden')"></div>
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeDispositionModal()"></div>
     
     <!-- Modal Content -->
     <div class="relative bg-surface-container-lowest border border-border-subtle rounded-[24px] shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -230,50 +230,117 @@
                 <span class="material-symbols-outlined text-primary">support_agent</span>
                 Log Interaction
             </h3>
-            <button onclick="document.getElementById('dispositionModal').classList.add('hidden')" class="text-text-muted hover:text-on-surface bg-surface-container-low rounded-full w-8 h-8 flex items-center justify-center">
+            <button onclick="closeDispositionModal()" class="text-text-muted hover:text-on-surface bg-surface-container-low rounded-full w-8 h-8 flex items-center justify-center">
                 <span class="material-symbols-outlined" style="font-size: 20px;">close</span>
             </button>
         </div>
         
-        <div class="p-6 space-y-6">
-            <label class="flex flex-col gap-2">
-                <span class="text-label-sm font-bold uppercase tracking-wider text-on-surface-variant">Call Outcome / Disposition</span>
-                <select class="form-select w-full rounded-xl border border-border-subtle bg-surface h-12 px-4 text-body-sm text-on-surface focus:ring-2 focus:ring-primary outline-none shadow-sm">
-                    <option value="">Select the call result...</option>
-                    <option value="connected">✅ Connected / Spoke to Lead</option>
-                    <option value="busy">📵 Busy / Disconnected</option>
-                    <option value="no_answer">⏱️ Ringing / No Answer</option>
-                    <option value="not_reachable">📴 Switched Off / Not Reachable</option>
-                    <option value="callback">🔄 Callback Requested</option>
-                    <option value="not_interested">🚫 Not Interested</option>
-                    <option value="invalid">❌ Invalid Number</option>
-                </select>
-            </label>
+        <form id="dispositionForm">
+            <input type="hidden" id="modalEngagementId" name="engagement_id">
+            <div class="p-6 space-y-6">
+                <label class="flex flex-col gap-2">
+                    <span class="text-label-sm font-bold uppercase tracking-wider text-on-surface-variant">Call Outcome / Disposition</span>
+                    <select id="dispositionSelect" name="disposition_id" required class="form-select w-full rounded-xl border border-border-subtle bg-surface h-12 px-4 text-body-sm text-on-surface focus:ring-2 focus:ring-primary outline-none shadow-sm">
+                        <option value="">Select the call result...</option>
+                    </select>
+                </label>
+                
+                <label class="flex flex-col gap-2">
+                    <span class="text-label-sm font-bold uppercase tracking-wider text-on-surface-variant">Interaction Notes</span>
+                    <textarea id="dispositionNotes" name="notes" class="form-textarea w-full rounded-xl border border-border-subtle bg-surface p-4 text-body-sm text-on-surface focus:ring-2 focus:ring-primary outline-none shadow-sm resize-none" rows="3" placeholder="Summarize the conversation..."></textarea>
+                </label>
+                
+                <label class="flex flex-col gap-2">
+                    <span class="text-label-sm font-bold uppercase tracking-wider text-on-surface-variant flex justify-between">
+                        Schedule Follow-up
+                        <span class="text-[10px] text-text-muted font-normal lowercase">(optional)</span>
+                    </span>
+                    <input id="dispositionFollowUp" name="follow_up_at" type="datetime-local" class="form-input w-full rounded-xl border border-border-subtle bg-surface h-12 px-4 text-body-sm text-on-surface focus:ring-2 focus:ring-primary outline-none shadow-sm" />
+                </label>
+            </div>
             
-            <label class="flex flex-col gap-2">
-                <span class="text-label-sm font-bold uppercase tracking-wider text-on-surface-variant">Interaction Notes</span>
-                <textarea class="form-textarea w-full rounded-xl border border-border-subtle bg-surface p-4 text-body-sm text-on-surface focus:ring-2 focus:ring-primary outline-none shadow-sm resize-none" rows="3" placeholder="Summarize the conversation..."></textarea>
-            </label>
-            
-            <label class="flex flex-col gap-2">
-                <span class="text-label-sm font-bold uppercase tracking-wider text-on-surface-variant flex justify-between">
-                    Schedule Follow-up
-                    <span class="text-[10px] text-text-muted font-normal lowercase">(optional)</span>
-                </span>
-                <input type="datetime-local" class="form-input w-full rounded-xl border border-border-subtle bg-surface h-12 px-4 text-body-sm text-on-surface focus:ring-2 focus:ring-primary outline-none shadow-sm" />
-            </label>
-        </div>
-        
-        <div class="p-6 border-t border-border-subtle bg-surface-container-lowest flex justify-end gap-3">
-            <button class="px-5 py-2.5 text-label-md font-bold text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors" onclick="document.getElementById('dispositionModal').classList.add('hidden')">Cancel</button>
-            <x-button variant="primary" onclick="document.getElementById('dispositionModal').classList.add('hidden'); showToast('Interaction saved successfully!', 'success');">
-                <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
-                Save Log
-            </x-button>
-        </div>
+            <div class="p-6 border-t border-border-subtle bg-surface-container-lowest flex justify-end gap-3">
+                <button type="button" class="px-5 py-2.5 text-label-md font-bold text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors" onclick="closeDispositionModal()">Cancel</button>
+                <x-button type="submit" variant="primary">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                    Save Log
+                </x-button>
+            </div>
+        </form>
     </div>
 </div>
 <script>
+    let dispositionsCache = null;
+
+    async function openDispositionModal(engagementId) {
+        document.getElementById('modalEngagementId').value = engagementId;
+        document.getElementById('dispositionNotes').value = '';
+        document.getElementById('dispositionFollowUp').value = '';
+        
+        const select = document.getElementById('dispositionSelect');
+        if (!dispositionsCache) {
+            try {
+                const response = await fetch('/leads/dispositions');
+                if (response.ok) {
+                    dispositionsCache = await response.json();
+                }
+            } catch (e) {
+                console.error('Failed to load dispositions');
+            }
+        }
+        
+        if (dispositionsCache) {
+            select.innerHTML = '<option value="">Select the call result...</option>';
+            dispositionsCache.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d.id;
+                opt.textContent = d.label;
+                select.appendChild(opt);
+            });
+        }
+        
+        document.getElementById('dispositionModal').classList.remove('hidden');
+    }
+
+    function closeDispositionModal() {
+        document.getElementById('dispositionModal').classList.add('hidden');
+    }
+
+    document.getElementById('dispositionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const engagementId = document.getElementById('modalEngagementId').value;
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+
+        try {
+            const formData = new FormData(e.target);
+            const payload = Object.fromEntries(formData.entries());
+
+            const response = await fetch(`/leads/${engagementId}/log-activity`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            if (response.ok && data.success) {
+                showToast('Interaction saved successfully!', 'success');
+                closeDispositionModal();
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                showToast(data.message || 'Failed to save interaction', 'error');
+            }
+        } catch (error) {
+            showToast('Network error while saving', 'error');
+            console.error(error);
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
     async function updateStage(engagementId, stageId, selectElement) {
         try {
             const selectedOption = selectElement.options[selectElement.selectedIndex];

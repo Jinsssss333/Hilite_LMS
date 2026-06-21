@@ -61,8 +61,10 @@ Route::middleware('auth.lms')->group(function () {
         return view('leads.import');
     })->name('leads.import');
 
+    Route::get('/leads/dispositions', [\App\Http\Controllers\LeadsController::class, 'dispositions'])->name('leads.dispositions');
     Route::post('/leads/import', [\App\Http\Controllers\LeadsController::class, 'processImport'])->name('leads.import.post');
     Route::post('/leads/manual', [\App\Http\Controllers\LeadsController::class, 'processManual'])->name('leads.manual.post');
+    Route::post('/leads/{id}/log-activity', [\App\Http\Controllers\LeadsController::class, 'logActivity'])->name('leads.log-activity');
 
     // Flag a lead's phone number as a shared/corporate switchboard number
     Route::patch('/leads/{id}/flag-shared', [\App\Http\Controllers\LeadsController::class, 'flagShared'])->name('leads.flag-shared');
