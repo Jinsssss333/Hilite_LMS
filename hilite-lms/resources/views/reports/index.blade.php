@@ -344,7 +344,6 @@
                             <th class="p-4 font-medium">Leads Assigned</th>
                             <th class="p-4 font-medium">Conversion %</th>
                             <th class="p-4 font-medium">Avg. SLA Breaches</th>
-                            <th class="p-4 font-medium text-right">Est. Pipeline Val</th>
                         </tr>
                     </thead>
                     <tbody class="font-body-sm text-body-sm divide-y divide-border-subtle">
@@ -359,7 +358,6 @@
                             <td class="p-4 text-on-surface-variant">{{ $agent['assigned'] }}</td>
                             <td class="p-4"><span class="inline-flex items-center gap-1 text-stage-booked bg-stage-booked/10 px-2 py-0.5 rounded-full font-label-sm">{{ $agent['conversion'] }}%</span></td>
                             <td class="p-4 text-on-surface-variant">{{ $agent['avg_breach'] }} / lead</td>
-                            <td class="p-4 text-right font-medium text-primary">{{ $agent['pipeline_val'] }}</td>
                         </tr>
                         @empty
                         <tr>
@@ -373,16 +371,41 @@
 
         <!-- Heatmap Section -->
         <x-card class="col-span-12 !p-card-padding mt-6" id="heatmap-section">
-            <h3 class="font-headline-sm text-headline-sm text-primary mb-2">Lead Engagement Heatmap</h3>
-            <p class="font-body-sm text-body-sm text-text-muted mb-6">Activity concentration by time and day (mock representation).</p>
+            <h3 class="font-headline-sm text-headline-sm text-primary mb-2">Lead Source vs Stage Distribution</h3>
+            <p class="font-body-sm text-body-sm text-text-muted mb-6">Real-time concentration of leads by source across pipeline stages.</p>
             <div class="w-full overflow-x-auto">
-                <div class="min-w-[800px] h-64 bg-surface-container-lowest rounded-lg border border-border-subtle flex items-center justify-center relative overflow-hidden">
-                    <div class="absolute inset-0 grid grid-cols-7 grid-rows-6 gap-1 p-2">
-                        @for($i=0; $i<42; $i++)
-                            <div class="rounded-sm" style="background-color: rgba(99, 102, 241, {{ rand(1, 10) / 10 }})"></div>
-                        @endfor
-                    </div>
-                </div>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="p-3 text-text-muted font-label-sm uppercase">Source</th>
+                            @foreach($stages as $stage)
+                            <th class="p-3 text-text-muted font-label-sm uppercase text-center">{{ $stage->name }}</th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($sourceList as $src)
+                        <tr class="border-t border-border-subtle">
+                            <td class="p-3 font-medium text-primary">{{ ucfirst($src) }}</td>
+                            @foreach($stages as $stage)
+                                @php
+                                    $count = $heatmapData[$src][$stage->id] ?? 0;
+                                    $intensity = $totalLeads > 0 ? min(1, ($count / ($totalLeads * 0.2))) : 0; 
+                                @endphp
+                                <td class="p-3 text-center">
+                                    @if($count > 0)
+                                    <div class="inline-flex items-center justify-center w-8 h-8 rounded-md font-bold text-white" style="background-color: rgba(99, 102, 241, {{ max(0.1, $intensity) }})">
+                                        {{ $count }}
+                                    </div>
+                                    @else
+                                    <span class="text-text-muted text-body-sm">-</span>
+                                    @endif
+                                </td>
+                            @endforeach
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </x-card>
     </div>

@@ -69,13 +69,49 @@ class AdminController extends Controller
         $companyId = $this->getCompanyId();
         if (!$companyId) return redirect()->route('login');
 
-        $logs = AuditLog::where('company_id', $companyId)
-            ->leftJoin('users', 'audit_logs.actor_user_id', '=', 'users.id')
-            ->select('audit_logs.*', 'users.name as actor_name')
-            ->orderByDesc('audit_logs.created_at')
-            ->paginate(50);
+        $logs = \App\Models\AuditLog::with(['company', 'user'])->where('company_id', $companyId)->orderBy('created_at', 'desc')->paginate(50);
 
         return view('admin.audit', compact('logs'));
+    }
+
+    public function exportAudit()
+    {
+        $companyId = $this->getCompanyId();
+        if (!$companyId) return redirect()->route('login');
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=audit_logs.csv",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['Timestamp', 'Actor', 'Action', 'Entity Type', 'Entity ID', 'Details'];
+
+        $callback = function() use($companyId, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            \App\Models\AuditLog::where('company_id', $companyId)
+                ->with('user')
+                ->orderBy('created_at', 'desc')
+                ->chunk(100, function ($logs) use ($file) {
+                    foreach ($logs as $log) {
+                        fputcsv($file, [
+                            $log->created_at->format('Y-m-d H:i:s'),
+                            $log->user->name ?? 'System',
+                            $log->action,
+                            $log->entity_type,
+                            $log->entity_id,
+                            json_encode($log->after_state)
+                        ]);
+                    }
+                });
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     // --- USER MANAGEMENT ---

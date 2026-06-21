@@ -8,7 +8,7 @@
         <div>
             <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold text-on-surface mb-1">Lead Inventory</h2>
             <p class="font-body-md text-body-md text-text-muted">
-                Showing {{ $leads->firstItem() ?? 0 }} to {{ $leads->lastItem() ?? 0 }} of {{ $leads->total() }} leads
+                Showing {{ $leads->firstItem() ?? 0 }} to {{ $leads->lastItem() ?? 0 }} leads
                 @if($slaBreaches > 0)
                     &nbsp;·&nbsp;<span class="text-stage-lost font-bold">⚠ {{ $slaBreaches }} SLA {{ Str::plural('breach', $slaBreaches) }}</span>
                 @endif
@@ -112,6 +112,7 @@
     </form>
 
     <!-- Table Card -->
+    <turbo-frame id="leads-table">
     <div class="bg-surface-container-lowest border border-border-subtle rounded-[20px] shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
@@ -208,12 +209,13 @@
         <!-- Pagination Footer -->
         <div class="px-6 py-4 border-t border-border-subtle bg-surface-container-lowest flex items-center justify-between">
             <span class="text-body-sm text-text-muted">
-                Showing {{ $leads->firstItem() ?? 0 }} to {{ $leads->lastItem() ?? 0 }} of {{ $leads->total() }} leads
+                Showing {{ $leads->firstItem() ?? 0 }} to {{ $leads->lastItem() ?? 0 }} leads
             </span>
             <div class="flex items-center gap-2">
                 {{ $leads->links() }}
             </div>
         </div>
+        </turbo-frame>
     </div>
 </div>
 
@@ -330,7 +332,11 @@
             if (response.ok && data.success) {
                 showToast('Interaction saved successfully!', 'success');
                 closeDispositionModal();
-                setTimeout(() => window.location.reload(), 1000);
+                if (typeof Turbo !== 'undefined') {
+                    Turbo.visit(window.location.href, { action: "replace" });
+                } else {
+                    setTimeout(() => window.location.reload(), 500);
+                }
             } else {
                 showToast(data.message || 'Failed to save interaction', 'error');
             }

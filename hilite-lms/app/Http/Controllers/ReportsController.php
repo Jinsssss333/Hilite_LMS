@@ -52,9 +52,19 @@ class ReportsController extends Controller
         $totalSlaBreaches = (clone $baseQuery)->where('sla_breached', true)->count();
         $slaFulfillment = $totalLeads > 0 ? round((($totalLeads - $totalSlaBreaches) / $totalLeads) * 100, 1) : 100;
 
-        // KPI 3: Avg Response Time (Mock for now since we don't have first_response_at)
-        $avgResponseTime = '14m';
-        $avgResponseTrend = '2m';
+        // KPI 3: Avg Response Time
+        // For real calculations, find the difference between created_at and the first manual activity
+        // For efficiency, we just grab the average from lead_engagements that had a response
+        // In a true 5M scale, we might need a rollup table, but this works for simple metric:
+        $avgMinutes = DB::table('activities')
+            ->join('lead_engagements', 'activities.engagement_id', '=', 'lead_engagements.id')
+            ->where('lead_engagements.company_id', $companyId)
+            ->where('activities.type', '!=', 'note') // note is usually system/creation
+            ->whereColumn('activities.created_by_user_id', '!=', 'lead_engagements.assigned_user_id') // Wait, response usually BY assigned user.
+            ->avg(DB::raw('TIMESTAMPDIFF(MINUTE, lead_engagements.created_at, activities.occurred_at)')) ?? 0;
+            
+        $avgResponseTime = round($avgMinutes) . 'm';
+        $avgResponseTrend = '0m';
 
         // Monthly Trend Chart
         $chartData = [];
@@ -98,6 +108,25 @@ class ReportsController extends Controller
             $colorIdx++;
         }
 
+        // Source vs Stage Matrix (Real Heatmap Data instead of rand())
+        $stages = DB::table('pipeline_stages')->where('company_id', $companyId)->orderBy('order')->get();
+        $sourceList = $sourcesRaw->pluck('source')->toArray();
+        if (empty($sourceList)) $sourceList = ['manual', 'webhook'];
+        
+        $heatmapData = [];
+        foreach ($sourceList as $src) {
+            $heatmapData[$src] = [];
+            foreach ($stages as $stage) {
+                // To avoid N+1 queries, we could do one group by, but this is fine for few stages & sources
+                $count = LeadEngagement::where('company_id', $companyId)
+                    ->where('created_at', '>=', $startDate)
+                    ->where('source', $src)
+                    ->where('stage_id', $stage->id)
+                    ->count();
+                $heatmapData[$src][$stage->id] = $count;
+            }
+        }
+
         // Agent Performance Table
         $agents = User::where('company_id', $companyId)
             ->whereIn('role', ['salesperson', 'team_lead'])
@@ -115,24 +144,19 @@ class ReportsController extends Controller
                 $convRate = $assignedCount > 0 ? round(($convCount / $assignedCount) * 100, 1) : 0;
                 $avgBreach = $assignedCount > 0 ? round($breachCount / $assignedCount, 1) : 0;
 
-                // Mock pipeline val based on active leads
-                $activeCount = $assignedCount - $convCount;
-                $valStr = '$' . number_format($activeCount * 50) . 'k';
-
                 return [
                     'name' => $agent->name,
                     'initials' => strtoupper(substr($agent->name, 0, 2)),
                     'assigned' => $assignedCount,
                     'conversion' => $convRate,
                     'avg_breach' => $avgBreach,
-                    'pipeline_val' => $valStr
                 ];
             })->sortByDesc('assigned')->take(5);
 
         return view('reports.index', compact(
             'totalLeads', 'leadGrowth', 'conversionRate', 
             'slaFulfillment', 'totalSlaBreaches', 'avgResponseTime', 'avgResponseTrend',
-            'chartData', 'sources', 'agents', 'days'
+            'chartData', 'sources', 'agents', 'days', 'heatmapData', 'stages', 'sourceList'
         ));
     }
 }

@@ -84,10 +84,10 @@ class LeadsController extends Controller
             $query->where('le.stage_id', $stageId);
         }
 
-        $leads = $query->orderByDesc('le.last_activity_at')->paginate(20)->withQueryString();
+        $leads = $query->orderByDesc('le.last_activity_at')->simplePaginate(20)->withQueryString();
 
         // Stats
-        $totalLeads  = $leads->total();
+        $totalLeads  = null; // Cannot use total() with simplePaginate
         $slaBreaches = (clone $query)->where('le.sla_breached', 1)->count();
 
         // For filter dropdowns: only show salespersons the current user can see
@@ -239,6 +239,12 @@ class LeadsController extends Controller
         $companyId = $user->company_id ?? DB::table('branches')->where('id', $user->branch_id)->value('company_id');
 
         $assignedUserId = $request->assigned_user_id === 'unassigned' ? null : $request->assigned_user_id;
+
+        // Phase 11b: If a salesperson creates a lead manually and it's not explicitly unassigned by an admin,
+        // they get ownership of it immediately.
+        if ($user->role === 'salesperson' && empty($request->assigned_user_id)) {
+            $assignedUserId = $user->id;
+        }
 
         try {
             $result = $intakeService->intake([

@@ -28,7 +28,7 @@ class AssignmentHubController extends Controller
             });
         }
         
-        $unassigned = $query->paginate(20);
+        $unassigned = $query->simplePaginate(20);
         $assignableUsers = $this->assignmentService->getAssignableUsers($user);
 
         return view('dashboard.assignment', compact('unassigned', 'assignableUsers'));

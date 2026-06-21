@@ -107,6 +107,7 @@ Route::middleware('auth.lms')->group(function () {
         Route::delete('/sla/{id}', [\App\Http\Controllers\AdminController::class, 'deleteSla'])->name('sla.delete');
 
         Route::get('/audit', [\App\Http\Controllers\AdminController::class, 'audit'])->name('audit');
+        Route::get('/audit/export', [\App\Http\Controllers\AdminController::class, 'exportAudit'])->name('audit.export');
     });
 
     Route::get('/profile', function () {

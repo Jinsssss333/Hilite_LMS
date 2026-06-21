@@ -83,13 +83,11 @@
         
         <!-- CTA & Footer -->
         <div class="mt-auto space-y-4 pt-4 border-t border-border-subtle">
-            {{-- Add Lead / Import: only for managers and above --}}
-            @if(in_array($navRole, ['admin', 'super_admin', 'manager', 'branch_head']))
+            {{-- Add Lead / Import: all roles --}}
             <a href="{{ route('leads.import') }}" class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-2 px-4 rounded-full font-label-md text-label-md hover:bg-tertiary transition-colors text-center">
                 <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
                 Add Lead
             </a>
-            @endif
             <a href="https://hilitegroup.com/contact-us/" target="_blank" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out">
                 <span class="material-symbols-outlined">help</span>
                 <span class="font-body-md text-body-md">Help Center</span>
