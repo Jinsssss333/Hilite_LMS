@@ -92,8 +92,20 @@ Route::middleware('auth.lms')->group(function () {
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/', [\App\Http\Controllers\AdminController::class, 'index'])->name('index');
         Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('users');
+        Route::post('/users', [\App\Http\Controllers\AdminController::class, 'storeUser'])->name('users.store');
+        Route::patch('/users/{id}', [\App\Http\Controllers\AdminController::class, 'updateUser'])->name('users.update');
+        Route::patch('/users/{id}/toggle', [\App\Http\Controllers\AdminController::class, 'toggleUser'])->name('users.toggle');
+
         Route::get('/pipeline', [\App\Http\Controllers\AdminController::class, 'pipeline'])->name('pipeline');
+        Route::post('/pipeline', [\App\Http\Controllers\AdminController::class, 'storeStage'])->name('pipeline.store');
+        Route::patch('/pipeline/{id}', [\App\Http\Controllers\AdminController::class, 'updateStage'])->name('pipeline.update');
+        Route::delete('/pipeline/{id}', [\App\Http\Controllers\AdminController::class, 'deleteStage'])->name('pipeline.delete');
+
         Route::get('/sla', [\App\Http\Controllers\AdminController::class, 'sla'])->name('sla');
+        Route::post('/sla', [\App\Http\Controllers\AdminController::class, 'storeSla'])->name('sla.store');
+        Route::patch('/sla/{id}', [\App\Http\Controllers\AdminController::class, 'updateSla'])->name('sla.update');
+        Route::delete('/sla/{id}', [\App\Http\Controllers\AdminController::class, 'deleteSla'])->name('sla.delete');
+
         Route::get('/audit', [\App\Http\Controllers\AdminController::class, 'audit'])->name('audit');
     });
 

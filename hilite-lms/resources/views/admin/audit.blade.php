@@ -22,6 +22,26 @@
         </div>
     </div>
 
+    <!-- Alpine Modal for JSON -->
+    <div x-data="{ open: false, rawJson: '' }"
+         @open-json-modal.window="rawJson = $event.detail.json; open = true">
+         
+        <div x-show="open" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div @click.away="open = false" class="bg-surface rounded-2xl p-6 w-full max-w-2xl shadow-lg border border-border-subtle" x-transition>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-headline-sm text-headline-sm text-on-surface">Raw Audit Data</h3>
+                    <button @click="open = false" class="text-text-muted hover:text-on-surface"><span class="material-symbols-outlined">close</span></button>
+                </div>
+                <div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-4 overflow-x-auto max-h-[60vh] custom-scrollbar">
+                    <pre class="font-mono text-sm text-text-muted" x-text="rawJson"></pre>
+                </div>
+                <div class="flex justify-end pt-4">
+                    <button @click="open = false" class="px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md hover:bg-primary/90 transition-colors">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <x-card class="!p-0">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
@@ -49,7 +69,7 @@
                             @endif
                         </td>
                         <td class="p-4 text-right">
-                            <button class="text-primary hover:underline" onclick="alert('Raw Data: {{ addslashes(json_encode($log->after_state)) }}')">
+                            <button class="text-primary hover:underline" @click="$dispatch('open-json-modal', { json: JSON.stringify({{ json_encode($log->after_state) }}, null, 2) })">
                                 View JSON
                             </button>
                         </td>
