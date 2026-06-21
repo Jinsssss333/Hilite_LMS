@@ -15,59 +15,37 @@
 
     <!-- Executive KPIs -->
     <div class="bg-[#E9EFE1] rounded-[20px] p-6 mb-8 flex flex-col sm:flex-row gap-6 border border-[#d2dcc8]">
-        <x-kpi-widget label="Total Pipeline Value" value="$4.5M" subtext="+12% this month" />
+        <x-kpi-widget label="Total Active Leads" value="{{ $totalActive }}" subtext="in pipeline" />
         <div class="hidden sm:block w-px bg-[#d2dcc8]"></div>
-        <x-kpi-widget label="Win Rate" value="18.2%" subtext="avg across teams" valueColor="text-stage-booked" />
+        <x-kpi-widget label="Win Rate" value="{{ $winRate }}%" subtext="avg across teams" valueColor="text-stage-booked" />
         <div class="hidden sm:block w-px bg-[#d2dcc8]"></div>
-        <x-kpi-widget label="Critical SLAs" value="12" subtext="breached today" valueColor="text-stage-lost" />
+        <x-kpi-widget label="Critical SLAs" value="{{ $slaBreaches }}" subtext="breached today" valueColor="text-stage-lost" />
     </div>
 
     <!-- Teams Summary -->
     <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Teams Performance</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Team Card -->
+        @foreach($teams as $team)
         <x-card>
             <div class="flex justify-between items-center mb-4">
-                <h4 class="font-headline-sm text-on-surface">North Branch - Team A</h4>
-                <span class="px-2 py-1 bg-surface-container text-label-sm rounded font-bold">4 Agents</span>
+                <h4 class="font-headline-sm text-on-surface">{{ $team->branch->name ?? '' }} - {{ $team->name }}</h4>
             </div>
             <div class="space-y-3">
                 <div class="flex justify-between items-center border-b border-border-subtle pb-2">
                     <span class="text-text-muted">Total Leads</span>
-                    <span class="font-bold">420</span>
+                    <span class="font-bold">{{ $team->active_count + $team->closed_count }}</span>
                 </div>
                 <div class="flex justify-between items-center border-b border-border-subtle pb-2">
                     <span class="text-text-muted">Conversions</span>
-                    <span class="font-bold text-stage-booked">85</span>
+                    <span class="font-bold text-stage-booked">{{ $team->closed_count }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-text-muted">Pipeline Val</span>
-                    <span class="font-bold text-primary">$1.8M</span>
+                    <span class="text-text-muted">Active Leads</span>
+                    <span class="font-bold text-primary">{{ $team->active_count }}</span>
                 </div>
             </div>
         </x-card>
-
-        <!-- Team Card -->
-        <x-card>
-            <div class="flex justify-between items-center mb-4">
-                <h4 class="font-headline-sm text-on-surface">South Branch - Team B</h4>
-                <span class="px-2 py-1 bg-surface-container text-label-sm rounded font-bold">5 Agents</span>
-            </div>
-            <div class="space-y-3">
-                <div class="flex justify-between items-center border-b border-border-subtle pb-2">
-                    <span class="text-text-muted">Total Leads</span>
-                    <span class="font-bold">510</span>
-                </div>
-                <div class="flex justify-between items-center border-b border-border-subtle pb-2">
-                    <span class="text-text-muted">Conversions</span>
-                    <span class="font-bold text-stage-booked">92</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-text-muted">Pipeline Val</span>
-                    <span class="font-bold text-primary">$2.1M</span>
-                </div>
-            </div>
-        </x-card>
+        @endforeach
     </div>
 </div>
 @endsection

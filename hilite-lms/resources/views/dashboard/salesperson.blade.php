@@ -19,71 +19,64 @@
 
     <!-- Hero Stats Strip -->
     <div class="bg-[#E9EFE1] rounded-[20px] p-6 mb-8 flex flex-col sm:flex-row gap-6 border border-[#d2dcc8]">
-        <x-kpi-widget label="Active Leads" value="42" subtext="total" />
+        <x-kpi-widget label="Active Leads" value="{{ $activeLeads }}" subtext="total" />
         <div class="hidden sm:block w-px bg-[#d2dcc8]"></div>
-        <x-kpi-widget label="Pending Follow-ups" value="8" valueColor="text-stage-contacted" />
+        <x-kpi-widget label="Pending Follow-ups" value="{{ $pendingFollowups }}" valueColor="text-stage-contacted" />
         <div class="hidden sm:block w-px bg-[#d2dcc8]"></div>
-        <x-kpi-widget label="SLA Breaches" value="2" valueColor="text-stage-lost" />
+        <x-kpi-widget label="SLA Breaches" value="{{ $slaBreaches }}" valueColor="text-stage-lost" />
     </div>
 
     <!-- Pipeline Stages (Vertical Accordion) -->
     <div class="space-y-4 pb-12">
-        @php
-            $stages = [
-                ['id' => 'new', 'name' => 'New', 'color' => 'bg-stage-new', 'count' => 12],
-                ['id' => 'contacted', 'name' => 'Contacted', 'color' => 'bg-stage-contacted', 'count' => 8],
-                ['id' => 'interested', 'name' => 'Interested', 'color' => 'bg-stage-interested', 'count' => 5],
-                ['id' => 'site-visit', 'name' => 'Site Visit', 'color' => 'bg-stage-site-visit', 'count' => 3],
-                ['id' => 'negotiation', 'name' => 'Negotiation', 'color' => 'bg-stage-negotiation', 'count' => 2],
-                ['id' => 'booked', 'name' => 'Booked', 'color' => 'bg-stage-booked', 'count' => 10],
-                ['id' => 'lost', 'name' => 'Lost', 'color' => 'bg-stage-lost', 'count' => 0],
-                ['id' => 'not-interested', 'name' => 'Not Interested', 'color' => 'bg-stage-not-interested', 'count' => 2],
-            ];
-        @endphp
-
         @foreach($stages as $index => $stage)
+        @php
+            $stageLeads = $leadsByStage[$stage->id] ?? collect();
+            $count = $stageLeads->count();
+            $isOpen = ($index === 0 && $count > 0);
+        @endphp
         <!-- Accordion Item -->
         <div class="bg-surface-container-low rounded-2xl border border-border-subtle overflow-hidden shadow-sm">
             <!-- Header -->
             <button onclick="toggleAccordion(this)" class="w-full p-5 bg-surface-container-lowest flex items-center justify-between hover:bg-surface-container transition-colors outline-none focus:ring-2 focus:ring-primary focus:ring-inset">
                 <div class="flex items-center gap-4">
-                    <div class="w-4 h-4 rounded-full {{ $stage['color'] }}"></div>
-                    <h3 class="font-headline-sm md:font-headline-md text-headline-sm md:text-headline-md text-on-surface">{{ $stage['name'] }}</h3>
-                    <span class="px-3 py-1 rounded-full bg-surface-container-high text-label-md font-bold text-on-surface-variant">{{ $stage['count'] }}</span>
+                    <div class="w-4 h-4 rounded-full" style="background-color: {{ $stage->color }}"></div>
+                    <h3 class="font-headline-sm md:font-headline-md text-headline-sm md:text-headline-md text-on-surface">{{ $stage->name }}</h3>
+                    <span class="px-3 py-1 rounded-full bg-surface-container-high text-label-md font-bold text-on-surface-variant">{{ $count }}</span>
                 </div>
-                <!-- Default open the first one with count > 0 -->
-                @php $isOpen = $index === 0 && $stage['count'] > 0; @endphp
                 <span class="material-symbols-outlined transition-transform duration-200 chevron-icon {{ $isOpen ? 'rotate-180' : '' }}">expand_more</span>
             </button>
             
             <!-- Body -->
             <div class="accordion-body {{ $isOpen ? 'grid' : 'hidden' }} p-5 bg-surface-container-lowest border-t border-border-subtle grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 
-                @if($stage['count'] > 0)
-                    <!-- Dummy Cards -->
-                    @for($i = 0; $i < min($stage['count'], 4); $i++)
+                @if($count > 0)
+                    @foreach($stageLeads->take(4) as $engagement)
                     <div class="bg-surface border border-border-subtle rounded-xl p-4 hover:shadow-md transition-shadow relative group">
                         <div class="flex justify-between items-start mb-2">
-                            <p class="font-headline-sm text-on-surface truncate pr-6">John Doe {{ $i+1 }}</p>
-                            @if($i == 0)
-                                <span class="material-symbols-outlined text-[18px] text-stage-contacted absolute top-4 right-4" title="Follow up due soon">timer</span>
+                            <p class="font-headline-sm text-on-surface truncate pr-6">{{ $engagement->lead->name }}</p>
+                            @if($engagement->sla_breached)
+                                <span class="material-symbols-outlined text-[18px] text-stage-lost absolute top-4 right-4" title="SLA Breached">warning</span>
+                            @elseif($engagement->activities->first() && $engagement->activities->first()->follow_up_at && $engagement->activities->first()->follow_up_at->isPast())
+                                <span class="material-symbols-outlined text-[18px] text-stage-contacted absolute top-4 right-4" title="Follow up overdue">timer</span>
                             @endif
                         </div>
-                        <p class="font-body-sm text-text-muted font-mono tracking-wider truncate mb-4">+1 (555) ***-**67</p>
+                        <p class="font-body-sm text-text-muted font-mono tracking-wider truncate mb-4">{{ $engagement->lead->phone_e164 }}</p>
                         
                         <div class="flex items-center justify-between pt-3 border-t border-border-subtle">
-                            <span class="text-[10px] text-text-muted font-bold uppercase tracking-wide">2 days in stage</span>
+                            <span class="text-[10px] text-text-muted font-bold uppercase tracking-wide">
+                                {{ \Carbon\Carbon::parse($engagement->updated_at)->diffForHumans(null, true) }} in stage
+                            </span>
                             <div class="flex gap-2">
                                 <button class="w-8 h-8 rounded-full bg-surface-container hover:bg-primary/10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Log Call Disposition" onclick="document.getElementById('dispositionModal').classList.remove('hidden')">
                                     <span class="material-symbols-outlined text-[16px]">call</span>
                                 </button>
-                                <button class="w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-colors" title="View Details">
+                                <a href="#" class="w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-colors" title="View Details">
                                     <span class="material-symbols-outlined text-[16px]">visibility</span>
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
-                    @endfor
+                    @endforeach
                 @else
                     <div class="col-span-full py-8 text-center text-text-muted font-body-md">
                         No leads currently in this stage.

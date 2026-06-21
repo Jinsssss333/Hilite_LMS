@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'company.scope' => \App\Http\Middleware\EnforceCompanyScope::class,
             'auth.lms'      => \App\Http\Middleware\AuthMiddleware::class,
+            'admin'         => \App\Http\Middleware\AdminMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

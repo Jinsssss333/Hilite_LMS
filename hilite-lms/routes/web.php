@@ -38,15 +38,15 @@ Route::middleware('auth.lms')->group(function () {
     })->name('logout');
 
     // Dashboards
-    Route::get('/dashboard', function () {
-        return view('dashboard.salesperson');
-    })->name('dashboard.salesperson');
-
-    Route::get('/dashboard/manager', function () {
-        return view('dashboard.manager');
-    })->name('dashboard.manager');
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'salesperson'])->name('dashboard.salesperson');
+    Route::get('/dashboard/manager', [\App\Http\Controllers\DashboardController::class, 'manager'])->name('dashboard.manager');
 
     Route::get('/dashboard/assignment', function () {
+        $role = session('user_role');
+        // Salespersons don't see the assignment hub — they only see their own leads
+        if ($role === 'salesperson') {
+            return redirect()->route('leads.index');
+        }
         return view('dashboard.assignment');
     })->name('dashboard.assignment');
 
@@ -58,12 +58,20 @@ Route::middleware('auth.lms')->group(function () {
         return view('leads.followups');
     })->name('leads.followups');
 
+    // Import — only managers and above can bulk import leads
     Route::get('/leads/import', function () {
+        $role = session('user_role');
+        if (!in_array($role, ['admin', 'super_admin', 'manager', 'branch_head'])) {
+            abort(403, 'Only managers and above can access the import page.');
+        }
         return view('leads.import');
     })->name('leads.import');
 
     Route::post('/leads/import', [\App\Http\Controllers\LeadsController::class, 'processImport'])->name('leads.import.post');
     Route::post('/leads/manual', [\App\Http\Controllers\LeadsController::class, 'processManual'])->name('leads.manual.post');
+
+    // Flag a lead's phone number as a shared/corporate switchboard number
+    Route::patch('/leads/{id}/flag-shared', [\App\Http\Controllers\LeadsController::class, 'flagShared'])->name('leads.flag-shared');
 
     Route::get('/leads/calendar', function () {
         return view('leads.calendar');
@@ -83,7 +91,8 @@ Route::middleware('auth.lms')->group(function () {
     })->name('reports.heatmap');
 
     // Admin & Profile
-    Route::prefix('admin')->name('admin.')->group(function () {
+    // Admin — restricted to admin and super_admin roles only
+    Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/', [\App\Http\Controllers\AdminController::class, 'index'])->name('index');
         Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('users');
         Route::get('/pipeline', [\App\Http\Controllers\AdminController::class, 'pipeline'])->name('pipeline');

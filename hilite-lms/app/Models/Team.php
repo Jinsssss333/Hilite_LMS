@@ -10,5 +10,6 @@ class Team extends Model
 
     public function company() { return $this->belongsTo(Company::class); }
     public function branch()  { return $this->belongsTo(Branch::class); }
-    public function users()   { return $this->hasMany(User::class); }
+    public function users()       { return $this->hasMany(User::class); }
+    public function engagements() { return $this->hasMany(LeadEngagement::class, 'assigned_team_id'); }
 }
