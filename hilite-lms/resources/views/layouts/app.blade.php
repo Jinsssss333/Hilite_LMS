@@ -36,39 +36,60 @@
         </div>
         
         <!-- Navigation Tabs -->
+        @php $navRole = \App\Http\Helpers\AuthHelper::user()?->role ?? ''; @endphp
         <nav class="flex-1 space-y-1">
-            <a href="{{ route('dashboard.manager') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('dashboard.manager') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
+            {{-- Dashboard: all roles see it but it resolves to different views --}}
+            <a href="{{ route('dashboard.salesperson') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('dashboard.*') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span class="font-body-md text-body-md">Dashboard</span>
             </a>
+
+            {{-- My Leads: all roles --}}
             <a href="{{ route('leads.index') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('leads.index') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
                 <span class="material-symbols-outlined">person_search</span>
-                <span class="font-body-md text-body-md">My Leads</span>
+                <span class="font-body-md text-body-md">{{ in_array($navRole, ['admin','manager','branch_head']) ? 'All Leads' : 'My Leads' }}</span>
             </a>
+
+            {{-- Calendar: all roles --}}
             <a href="{{ route('leads.calendar') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('leads.calendar') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
                 <span class="material-symbols-outlined">calendar_month</span>
                 <span class="font-body-md text-body-md">Calendar</span>
             </a>
+
+            {{-- Assignment Hub: hidden from salesperson --}}
+            @if($navRole !== 'salesperson')
             <a href="{{ route('dashboard.assignment') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('dashboard.assignment') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
                 <span class="material-symbols-outlined">assignment_ind</span>
                 <span class="font-body-md text-body-md">Assignment Hub</span>
             </a>
+            @endif
+
+            {{-- Reports: hidden from salesperson --}}
+            @if($navRole !== 'salesperson')
             <a href="{{ route('reports.index') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('reports.*') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
                 <span class="material-symbols-outlined">bar_chart</span>
                 <span class="font-body-md text-body-md">Reports</span>
             </a>
+            @endif
+
+            {{-- Admin Settings: only admin and super_admin --}}
+            @if(in_array($navRole, ['admin', 'super_admin']))
             <a href="{{ route('admin.index') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('admin.*') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
                 <span class="material-symbols-outlined">settings</span>
                 <span class="font-body-md text-body-md">Admin</span>
             </a>
+            @endif
         </nav>
         
         <!-- CTA & Footer -->
         <div class="mt-auto space-y-4 pt-4 border-t border-border-subtle">
+            {{-- Add Lead / Import: only for managers and above --}}
+            @if(in_array($navRole, ['admin', 'super_admin', 'manager', 'branch_head']))
             <a href="{{ route('leads.import') }}" class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-2 px-4 rounded-full font-label-md text-label-md hover:bg-tertiary transition-colors text-center">
                 <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
                 Add Lead
             </a>
+            @endif
             <a href="https://hilitegroup.com/contact-us/" target="_blank" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out">
                 <span class="material-symbols-outlined">help</span>
                 <span class="font-body-md text-body-md">Help Center</span>

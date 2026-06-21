@@ -180,6 +180,16 @@
                                 <button class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center text-text-muted hover:text-on-surface">
                                     <span class="material-symbols-outlined text-[18px]">visibility</span>
                                 </button>
+                                @if($canFlagShared)
+                                <button
+                                    onclick="toggleSharedFlag({{ $lead->engagement_id }}, this)"
+                                    data-is-shared="{{ $lead->is_shared_number ?? 0 }}"
+                                    class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors {{ ($lead->is_shared_number ?? false) ? 'text-stage-lost' : 'text-text-muted hover:text-stage-lost' }}"
+                                    title="{{ ($lead->is_shared_number ?? false) ? 'Shared number (click to unmark)' : 'Flag as shared/corporate number' }}"
+                                >
+                                    <span class="material-symbols-outlined text-[18px]">device_hub</span>
+                                </button>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -266,7 +276,6 @@
 <script>
     async function updateStage(engagementId, stageId, selectElement) {
         try {
-            // Update UI colors optimistically
             const selectedOption = selectElement.options[selectElement.selectedIndex];
             const color = selectedOption.getAttribute('data-color');
             selectElement.style.backgroundColor = `${color}20`;
@@ -284,16 +293,44 @@
             });
 
             const data = await response.json();
-            
             if (response.ok && data.success) {
                 showToast('Status updated successfully', 'success');
             } else {
                 showToast(data.message || 'Failed to update status', 'error');
-                // Revert to original (this requires page reload or storing original value, for simplicity we show error)
             }
         } catch (error) {
             showToast('Network error while updating status', 'error');
             console.error(error);
+        }
+    }
+
+    async function toggleSharedFlag(engagementId, btn) {
+        const currentlyShared = btn.dataset.isShared === '1' || btn.dataset.isShared === 'true';
+        const newState = !currentlyShared;
+
+        try {
+            const response = await fetch(`/leads/${engagementId}/flag-shared`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ is_shared: newState })
+            });
+
+            const data = await response.json();
+            if (response.ok && data.success) {
+                btn.dataset.isShared = newState ? '1' : '0';
+                btn.title = newState ? 'Shared number (click to unmark)' : 'Flag as shared/corporate number';
+                btn.classList.toggle('text-stage-lost', newState);
+                btn.classList.toggle('text-text-muted', !newState);
+                showToast(data.message, newState ? 'error' : 'success');
+            } else {
+                showToast(data.message || 'Failed to update flag', 'error');
+            }
+        } catch (error) {
+            showToast('Network error', 'error');
         }
     }
 </script>

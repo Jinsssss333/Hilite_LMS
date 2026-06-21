@@ -24,7 +24,7 @@ class LeadsController extends Controller
             ->join('pipeline_stages as ps', 'le.stage_id', '=', 'ps.id')
             ->leftJoin('users as u', 'le.assigned_user_id', '=', 'u.id')
             ->select(
-                'l.id', 'l.name', 'l.phone_e164', 'l.email', 'l.status',
+                'l.id', 'l.name', 'l.phone_e164', 'l.email', 'l.status', 'l.is_shared_number',
                 'l.created_at',
                 'le.id as engagement_id', 'le.stage_id', 'le.source',
                 'le.last_activity_at', 'le.sla_breached', 'le.sla_due_at',
@@ -101,12 +101,13 @@ class LeadsController extends Controller
         };
 
         $stages = DB::table('pipeline_stages')->select('id', 'name', 'color')->get();
-        $canEditStatus   = in_array($role, ['team_lead', 'salesperson']);
+        $canEditStatus   = true; // All roles can update stage on leads within their visibility scope
         $canSeeFullPhone = in_array($role, ['admin', 'manager', 'branch_head', 'team_lead', 'salesperson']);
+        $canFlagShared   = in_array($role, ['admin', 'manager', 'branch_head']);
 
         return view('leads.index', compact(
             'leads', 'user', 'role', 'stages', 'assignableUsers',
-            'totalLeads', 'slaBreaches', 'canEditStatus', 'canSeeFullPhone'
+            'totalLeads', 'slaBreaches', 'canEditStatus', 'canSeeFullPhone', 'canFlagShared'
         ));
     }
 
@@ -266,5 +267,35 @@ class LeadsController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to create lead: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * PATCH /leads/{id}/flag-shared
+     * Marks a lead's phone number as shared (corporate switchboard, generic email etc.)
+     * so the intake service creates separate engagements for each unique person.
+     * Allowed roles: admin, manager, branch_head only.
+     */
+    public function flagShared(Request $request, $id)
+    {
+        $user = AuthHelper::user();
+        if (!in_array($user->role, ['admin', 'super_admin', 'manager', 'branch_head'])) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
+        }
+
+        $request->validate(['is_shared' => 'required|boolean']);
+
+        $engagement = \App\Models\LeadEngagement::with('lead')->find($id);
+        if (!$engagement) {
+            return response()->json(['success' => false, 'message' => 'Lead not found.'], 404);
+        }
+
+        $engagement->lead->update(['is_shared_number' => $request->boolean('is_shared')]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $request->boolean('is_shared')
+                ? 'Flagged as shared number. Future intakes on this phone will create separate leads.'
+                : 'Shared flag removed. Deduplication is now active for this number again.',
+        ]);
     }
 }
