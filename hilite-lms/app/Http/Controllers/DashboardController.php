@@ -35,7 +35,6 @@ class DashboardController extends Controller
         $stages = PipelineStage::orderBy('order')->take(5)->get();
         
         // Group leads by stage for the kanban/accordion
-        // We also want to load the latest activity to show what was the last interaction
         $leadsByStage = LeadEngagement::with(['lead', 'activities' => function($q) {
                 $q->latest()->limit(1);
             }])
@@ -44,67 +43,91 @@ class DashboardController extends Controller
             ->get()
             ->groupBy('stage_id');
 
-        // Calculate Data for Hero Strip Charts
-        // 1. New Leads (last 5 days)
-        $newLeadsData = [];
-        $totalLast5 = 0;
-        $totalPrev5 = 0;
-        for ($i = 4; $i >= 0; $i--) {
-            $date = now()->subDays($i)->format('Y-m-d');
-            $count = LeadEngagement::where('assigned_user_id', $user->id)
-                ->whereDate('created_at', $date)
-                ->count();
-            $newLeadsData[] = [
-                'day' => now()->subDays($i)->format('D'),
-                'count' => $count
-            ];
-            $totalLast5 += $count;
-        }
-        for ($i = 9; $i >= 5; $i--) {
-            $totalPrev5 += LeadEngagement::where('assigned_user_id', $user->id)
-                ->whereDate('created_at', now()->subDays($i)->format('Y-m-d'))
-                ->count();
-        }
-        $newLeadsTrend = $totalPrev5 > 0 ? round((($totalLast5 - $totalPrev5) / $totalPrev5) * 100) : 0;
+        // --- NEW DATA FOR STITCH DASHBOARD ---
 
-        // 2. Conversion Rate (Closed Won vs Total Assigned this quarter)
+        // 1. Total Leads & Trend
+        $totalLeads = LeadEngagement::where('assigned_user_id', $user->id)->count();
+        $totalLeadsLastMonth = LeadEngagement::where('assigned_user_id', $user->id)
+            ->where('created_at', '<', now()->subMonth())->count();
+        $totalLeadsTrend = $totalLeadsLastMonth > 0 ? round((($totalLeads - $totalLeadsLastMonth) / $totalLeadsLastMonth) * 100) : 0;
+
+        // 2. Conversion Rate
         $startOfQuarter = now()->startOfQuarter();
         $assignedThisQuarter = LeadEngagement::where('assigned_user_id', $user->id)
             ->where('created_at', '>=', $startOfQuarter)->count();
-        
-        // Find the "closed" stage id (assume highest order is won/closed)
         $closedStages = PipelineStage::where('is_closed', true)->pluck('id')->toArray();
         if(empty($closedStages)) {
-             // Fallback: take the last stage
              $lastStage = PipelineStage::orderByDesc('order')->first();
              $closedStages = $lastStage ? [$lastStage->id] : [];
         }
-        
         $closedThisQuarter = LeadEngagement::where('assigned_user_id', $user->id)
             ->where('created_at', '>=', $startOfQuarter)
             ->whereIn('stage_id', $closedStages)
             ->count();
         $conversionRate = $assignedThisQuarter > 0 ? round(($closedThisQuarter / $assignedThisQuarter) * 100) : 0;
 
-        // 3. Open Follow-ups & Overdue
-        $openFollowups = Activity::whereHas('engagement', function($q) use ($user) {
-                $q->where('assigned_user_id', $user->id)->where('status', 'active');
-            })->where('type', 'followup')->count();
-        $overdueFollowups = Activity::whereHas('engagement', function($q) use ($user) {
-                $q->where('assigned_user_id', $user->id)->where('status', 'active');
-            })->where('type', 'followup')->where('follow_up_at', '<', now())->count();
-
-        // 4. Closed This Month
-        $startOfMonth = now()->startOfMonth();
-        $closedThisMonth = LeadEngagement::where('assigned_user_id', $user->id)
-            ->where('updated_at', '>=', $startOfMonth)
+        // 3. Avg Close Time
+        $closedEngagements = LeadEngagement::where('assigned_user_id', $user->id)
             ->whereIn('stage_id', $closedStages)
-            ->count();
-        $closedGoal = 15;
+            ->get();
+        $totalDays = 0;
+        foreach($closedEngagements as $eng) {
+            $totalDays += $eng->created_at->diffInDays($eng->updated_at);
+        }
+        $avgCloseTime = $closedEngagements->count() > 0 ? round($totalDays / $closedEngagements->count()) : 0;
+
+        // 4. Activity Trends (7 Days)
+        $activityTrends = [];
+        $maxActivity = 0;
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $count = Activity::whereHas('engagement', function($q) use ($user) {
+                $q->where('assigned_user_id', $user->id);
+            })->whereDate('created_at', $date)->count();
+            $activityTrends[] = ['day' => now()->subDays($i)->format('D'), 'count' => $count];
+            if ($count > $maxActivity) $maxActivity = $count;
+        }
+        foreach($activityTrends as &$trend) {
+            $trend['percent'] = $maxActivity > 0 ? round(($trend['count'] / $maxActivity) * 100) : 5; // min 5% for visual
+        }
+
+        // 5. Lead Distribution
+        $leadDistribution = [];
+        $colors = ['#6366F1', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'];
+        $colorIdx = 0;
+        foreach($stages as $stage) {
+            $count = LeadEngagement::where('assigned_user_id', $user->id)->where('status', 'active')->where('stage_id', $stage->id)->count();
+            $percent = $activeLeads > 0 ? round(($count / $activeLeads) * 100) : 0;
+            if ($count > 0) {
+                $leadDistribution[] = [
+                    'name' => $stage->name,
+                    'count' => $count,
+                    'percent' => $percent,
+                    'color' => $colors[$colorIdx % count($colors)]
+                ];
+            }
+            $colorIdx++;
+        }
+
+        // 6. Priority Engagements (Overdue or SLA Breached)
+        $priorityEngagements = LeadEngagement::with(['lead', 'stage', 'activities' => function($q) {
+                $q->latest()->limit(1);
+            }])
+            ->where('assigned_user_id', $user->id)
+            ->where('status', 'active')
+            ->where(function($q) {
+                $q->where('sla_breached', true)
+                  ->orWhereHas('activities', function($sq) {
+                      $sq->where('type', 'followup')->where('follow_up_at', '<', now());
+                  });
+            })
+            ->take(5)
+            ->get();
 
         return view('dashboard.salesperson', compact(
             'activeLeads', 'pendingFollowups', 'slaBreaches', 'stages', 'leadsByStage',
-            'newLeadsData', 'newLeadsTrend', 'conversionRate', 'openFollowups', 'overdueFollowups', 'closedThisMonth', 'closedGoal'
+            'conversionRate', 'totalLeads', 'totalLeadsTrend', 'avgCloseTime',
+            'activityTrends', 'leadDistribution', 'priorityEngagements'
         ));
     }
 

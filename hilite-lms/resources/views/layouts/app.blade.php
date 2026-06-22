@@ -22,169 +22,127 @@
 </head>
 <body class="font-body-md text-body-md bg-background text-on-background h-screen flex antialiased overflow-hidden w-full">
     
-    <!-- SideNavBar -->
-    <aside class="fixed left-0 top-0 h-full w-[240px] bg-surface border-r border-border-subtle flex flex-col p-4 gap-2 z-50 hidden md:flex">
-        <!-- Brand/Header -->
-        <div class="flex items-center gap-3 px-3 py-4 mb-4">
-            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary">
-                <span class="material-symbols-outlined" style="font-size: 20px;">real_estate_agent</span>
-            </div>
-            <div>
-                <h1 class="font-headline-sm text-headline-sm font-bold text-primary">HiLITE LMS</h1>
-                <p class="font-label-sm text-label-sm text-text-muted">Lead Management</p>
-            </div>
+    <!-- SideNavBar (Stitch Design) -->
+    <aside class="fixed left-0 top-0 h-full w-[240px] flex flex-col p-4 border-r border-outline-variant z-50 bg-surface hidden md:flex">
+        <div class="mb-10 px-4">
+            <h1 class="font-headline-sm text-headline-sm font-extrabold text-primary">HiLITE LMS</h1>
+            <p class="font-label-sm text-label-sm text-text-muted mt-1">Real Estate Lead Mgmt</p>
         </div>
         
-        <!-- Navigation Tabs -->
         @php $navRole = \App\Http\Helpers\AuthHelper::user()?->role ?? ''; @endphp
-        <nav class="flex-1 space-y-1">
-            {{-- Dashboard: all roles see it but it resolves to different views --}}
-            <a href="{{ route('dashboard.salesperson') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('dashboard.*') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
+        <nav class="flex-1 space-y-2">
+            <a href="{{ route('dashboard.salesperson') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-transform active:scale-[0.98] {{ request()->routeIs('dashboard.*') ? 'bg-surface-container-high text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface duration-200' }}">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span class="font-body-md text-body-md">Dashboard</span>
             </a>
 
-            {{-- My Leads: all roles --}}
-            <a href="{{ route('leads.index') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('leads.index') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
+            <a href="{{ route('leads.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-transform active:scale-[0.98] {{ request()->routeIs('leads.index') ? 'bg-surface-container-high text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface duration-200' }}">
                 <span class="material-symbols-outlined">person_search</span>
                 <span class="font-body-md text-body-md">{{ in_array($navRole, ['admin','manager','branch_head']) ? 'All Leads' : 'My Leads' }}</span>
             </a>
 
-            {{-- Calendar: all roles --}}
-            <a href="{{ route('leads.calendar') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('leads.calendar') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
-                <span class="material-symbols-outlined">calendar_month</span>
-                <span class="font-body-md text-body-md">Calendar</span>
+            <a href="{{ route('leads.calendar') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-transform active:scale-[0.98] {{ request()->routeIs('leads.calendar') ? 'bg-surface-container-high text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface duration-200' }}">
+                <span class="material-symbols-outlined">event_upcoming</span>
+                <span class="font-body-md text-body-md">Follow-ups</span>
             </a>
 
-            {{-- Assignment Hub: hidden from salesperson --}}
             @if($navRole !== 'salesperson')
-            <a href="{{ route('dashboard.assignment') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('dashboard.assignment') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
-                <span class="material-symbols-outlined">assignment_ind</span>
-                <span class="font-body-md text-body-md">Assignment Hub</span>
+            <a href="{{ route('dashboard.assignment') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-transform active:scale-[0.98] {{ request()->routeIs('dashboard.assignment') ? 'bg-surface-container-high text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface duration-200' }}">
+                <span class="material-symbols-outlined">groups</span>
+                <span class="font-body-md text-body-md">Team / Assign</span>
             </a>
-            @endif
 
-            {{-- Reports: hidden from salesperson --}}
-            @if($navRole !== 'salesperson')
-            <a href="{{ route('reports.index') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('reports.*') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
-                <span class="material-symbols-outlined">bar_chart</span>
+            <a href="{{ route('reports.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-transform active:scale-[0.98] {{ request()->routeIs('reports.*') ? 'bg-surface-container-high text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface duration-200' }}">
+                <span class="material-symbols-outlined">analytics</span>
                 <span class="font-body-md text-body-md">Reports</span>
             </a>
             @endif
 
-            {{-- Admin Settings: only admin and super_admin --}}
             @if(in_array($navRole, ['admin', 'super_admin']))
-            <a href="{{ route('admin.index') }}" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out {{ request()->routeIs('admin.*') ? 'bg-secondary-container text-on-secondary-container font-bold' : '' }}">
-                <span class="material-symbols-outlined">settings</span>
+            <a href="{{ route('admin.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-transform active:scale-[0.98] {{ request()->routeIs('admin.*') ? 'bg-surface-container-high text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface duration-200' }}">
+                <span class="material-symbols-outlined">admin_panel_settings</span>
                 <span class="font-body-md text-body-md">Admin</span>
             </a>
             @endif
         </nav>
-        
-        <!-- CTA & Footer -->
-        <div class="mt-auto space-y-4 pt-4 border-t border-border-subtle">
-            {{-- Add Lead / Import: all roles --}}
-            <a href="{{ route('leads.import') }}" class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-2 px-4 rounded-full font-label-md text-label-md hover:bg-tertiary transition-colors text-center">
-                <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
-                Add Lead
-            </a>
-            <a href="https://hilitegroup.com/contact-us/" target="_blank" class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors duration-200 ease-in-out">
-                <span class="material-symbols-outlined">help</span>
-                <span class="font-body-md text-body-md">Help Center</span>
-            </a>
-            <div class="flex items-center gap-3 px-3 py-2">
-                <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-[12px]">
-                    {{ substr(\App\Http\Helpers\AuthHelper::user()->name ?? 'U', 0, 1) }}
-                </div>
-                <div class="flex flex-col overflow-hidden">
-                    <span class="font-body-md text-on-surface font-semibold leading-tight truncate">{{ \App\Http\Helpers\AuthHelper::user()->name ?? 'User' }}</span>
-                    <span class="text-[11px] text-text-muted uppercase tracking-wider truncate">{{ str_replace('_', ' ', \App\Http\Helpers\AuthHelper::user()->role ?? 'Role') }}</span>
-                </div>
-            </div>
-        </div>
+
+        <a href="{{ route('leads.import') }}" class="mt-auto w-full py-4 bg-primary text-on-primary rounded-xl font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-opacity-90 transition-all">
+            <span class="material-symbols-outlined">add_circle</span>
+            Add New Lead
+        </a>
     </aside>
 
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col md:ml-[240px] h-screen relative min-w-0 w-full">
-        <!-- TopNavBar -->
-        <header class="flex justify-between items-center px-gutter h-16 w-full bg-background z-10 sticky top-0 md:bg-opacity-90 backdrop-blur-sm px-6">
+        <!-- TopNavBar (Stitch Design + Alpine Logic) -->
+        <header class="sticky top-0 h-16 bg-surface flex justify-between items-center px-8 z-40 border-b border-border-subtle">
             <!-- Mobile Menu Toggle -->
             <button class="md:hidden text-on-surface p-2 -ml-2 rounded-lg hover:bg-surface-container-low">
                 <span class="material-symbols-outlined">menu</span>
             </button>
             
             <!-- Search -->
-            <div class="flex-1 max-w-md hidden sm:block ml-4 md:ml-0">
-                <div class="relative focus-within:ring-2 focus-within:ring-primary rounded-full">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" style="font-size: 20px;">search</span>
-                    <input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-border-subtle rounded-full font-body-sm text-body-sm focus:outline-none focus:border-primary transition-colors" placeholder="Search leads, contacts, or properties..." type="text"/>
+            <div class="flex items-center gap-4 flex-1 max-w-xl hidden sm:flex ml-4 md:ml-0">
+                <div class="relative w-full focus-within:ring-2 focus-within:ring-primary rounded-xl">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                    <input class="w-full bg-surface-container-low border-none rounded-xl py-2 pl-10 pr-4 font-body-md text-body-md focus:ring-0" placeholder="Search leads, tasks, or properties..." type="text">
                 </div>
             </div>
             
-            <!-- Actions -->
-            <div class="flex items-center gap-4 ml-auto">
+            <!-- Actions & Profile -->
+            <div class="flex items-center gap-6 ml-auto pl-4">
                 <div x-data="{ 
                     open: false,
                     notifications: [
                         { id: 1, title: '3 New Leads Assigned', desc: 'Check your Assignment Hub to process them.', time: '10 mins ago', type: 'info', link: '/dashboard/assignment' },
-                        { id: 2, title: 'Site Visit Reminder', desc: 'Meeting with Kiran Verma in 1 hour.', time: '2 hours ago', type: 'info', link: '/leads/calendar' },
-                        { id: 3, title: 'SLA Warning', desc: 'Lead &quot;John Doe&quot; is breaching SLA in 30 mins.', time: 'Yesterday', type: 'warning', link: '#' }
+                        { id: 2, title: 'Site Visit Reminder', desc: 'Meeting with Kiran Verma in 1 hour.', time: '2 hours ago', type: 'info', link: '/leads/calendar' }
                     ],
-                    remove(id) {
-                        this.notifications = this.notifications.filter(n => n.id !== id);
-                    },
-                    removeAll() {
-                        this.notifications = [];
-                    }
-                }" class="flex items-center gap-2 border-r border-border-subtle pr-4 mr-2 relative">
-                    <button @click="open = !open" @click.outside="open = false" class="p-2 text-text-muted hover:text-on-surface hover:bg-surface-container-low rounded-full transition-colors relative">
+                    remove(id) { this.notifications = this.notifications.filter(n => n.id !== id); },
+                    removeAll() { this.notifications = []; }
+                }" class="relative flex items-center">
+                    <button @click="open = !open" @click.outside="open = false" class="text-on-surface-variant hover:text-primary transition-colors relative">
                         <span class="material-symbols-outlined">notifications</span>
-                        <!-- Notification dot -->
-                        <span x-show="notifications.length > 0" class="absolute top-2 right-2 w-2 h-2 bg-stage-lost rounded-full" style="display: none;"></span>
+                        <span x-show="notifications.length > 0" class="absolute top-0 right-0 w-2 h-2 bg-stage-lost rounded-full" style="display: none;"></span>
                     </button>
                     
                     <!-- Notification Dropdown -->
-                    <div x-show="open" x-transition style="display: none;" class="absolute top-full right-0 mt-2 w-80 bg-surface-container-lowest border border-border-subtle rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] flex flex-col z-50 overflow-hidden transform origin-top-right">
+                    <div x-show="open" x-transition style="display: none;" class="absolute top-full right-0 mt-4 w-80 bg-surface-container-lowest border border-border-subtle rounded-xl shadow-lg flex flex-col z-50 overflow-hidden transform origin-top-right">
                         <div class="px-4 py-3 border-b border-border-subtle bg-surface flex justify-between items-center">
                             <h4 class="font-headline-sm text-on-surface m-0">Notifications</h4>
                             <span x-show="notifications.length > 0" x-text="notifications.length + ' New'" class="bg-stage-new/10 text-stage-new text-[10px] font-bold px-2 py-0.5 rounded-full" style="display: none;"></span>
                         </div>
-                        
                         <div class="max-h-[300px] overflow-y-auto">
                             <template x-for="item in notifications" :key="item.id">
                                 <div class="relative group block border-b border-border-subtle hover:bg-surface-container-low transition-colors">
                                     <a :href="item.link" class="block px-4 py-3 pr-10">
                                         <p class="font-label-md text-on-surface mb-0.5" x-text="item.title"></p>
                                         <p class="font-body-sm leading-snug" :class="item.type === 'warning' ? 'text-stage-lost' : 'text-text-muted'" x-text="item.desc"></p>
-                                        <p class="text-[10px] text-text-muted mt-1.5" x-text="item.time"></p>
                                     </a>
-                                    <button @click="remove(item.id)" class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-text-muted hover:text-stage-lost opacity-0 group-hover:opacity-100 transition-opacity rounded-full hover:bg-surface-container" title="Mark as read">
+                                    <button @click="remove(item.id)" class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-text-muted hover:text-stage-lost opacity-0 group-hover:opacity-100 transition-opacity rounded-full hover:bg-surface-container">
                                         <span class="material-symbols-outlined text-[16px]">check</span>
                                     </button>
                                 </div>
                             </template>
-                            
                             <div x-show="notifications.length === 0" class="px-4 py-8 text-center" style="display: none;">
-                                <div class="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <span class="material-symbols-outlined text-text-muted">done_all</span>
-                                </div>
                                 <p class="text-body-sm text-text-muted">You're all caught up!</p>
                             </div>
                         </div>
-                        
-                        <div x-show="notifications.length > 0" class="p-3 border-t border-border-subtle bg-surface text-center" style="display: none;">
-                            <button @click="removeAll()" class="font-label-sm text-primary hover:underline">Mark all as read</button>
-                        </div>
                     </div>
-                    <a href="https://hilitegroup.com/contact-us/" target="_blank" class="p-2 text-text-muted hover:text-on-surface hover:bg-surface-container-low rounded-full transition-colors hidden sm:block" title="Help Center">
-                        <span class="material-symbols-outlined">help</span>
+                </div>
+
+                <a href="https://hilitegroup.com/contact-us/" target="_blank" class="text-on-surface-variant hover:text-primary transition-colors hidden sm:block" title="Help Center">
+                    <span class="material-symbols-outlined">help_outline</span>
+                </a>
+                
+                <div class="flex items-center gap-3 border-l border-outline-variant pl-6">
+                    <div class="text-right hidden lg:block">
+                        <p class="font-label-md text-label-md text-on-surface">{{ \App\Http\Helpers\AuthHelper::user()->name ?? 'User' }}</p>
+                        <p class="font-label-sm text-label-sm text-text-muted uppercase">{{ str_replace('_', ' ', \App\Http\Helpers\AuthHelper::user()->role ?? 'Role') }}</p>
+                    </div>
+                    <a href="/profile" class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-lg border border-border-subtle hover:bg-surface-container-high transition-colors">
+                        {{ substr(\App\Http\Helpers\AuthHelper::user()->name ?? 'U', 0, 1) }}
                     </a>
                 </div>
-                
-                <!-- Profile Avatar -->
-                <a href="/profile" class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center border border-border-subtle cursor-pointer overflow-hidden">
-                    <span class="material-symbols-outlined text-secondary">person</span>
-                </a>
             </div>
         </header>
         

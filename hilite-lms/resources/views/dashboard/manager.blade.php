@@ -13,14 +13,39 @@
         </x-button>
     </header>
 
-    <!-- Executive KPIs -->
-    <div class="bg-[#E9EFE1] rounded-[20px] p-6 mb-8 flex flex-col sm:flex-row gap-6 border border-[#d2dcc8]">
-        <x-kpi-widget label="Total Active Leads" value="{{ $totalActive }}" subtext="in pipeline" />
-        <div class="hidden sm:block w-px bg-[#d2dcc8]"></div>
-        <x-kpi-widget label="Win Rate" value="{{ $winRate }}%" subtext="avg across teams" valueColor="text-stage-booked" />
-        <div class="hidden sm:block w-px bg-[#d2dcc8]"></div>
-        <x-kpi-widget label="Critical SLAs" value="{{ $slaBreaches }}" subtext="breached today" valueColor="text-stage-lost" />
-    </div>
+    <!-- Stitch Hero Stats Area -->
+    <section class="bg-[#E9EFE1] rounded-[20px] p-8 mb-8 flex flex-col md:flex-row justify-between gap-8 border border-[#d2dcc8]">
+        <div class="flex-1">
+            <h2 class="font-headline-lg text-headline-lg text-primary mb-2">Morning, {{ \App\Http\Helpers\AuthHelper::user()->name ?? 'Manager' }}.</h2>
+            <p class="font-body-lg text-body-lg text-secondary max-w-lg">Here is the high-level overview of your teams' pipeline and performance.</p>
+        </div>
+        <div class="flex flex-wrap gap-4">
+            <div class="bg-white rounded-xl p-6 w-48 border border-border-subtle shadow-sm">
+                <p class="font-label-sm text-label-sm text-text-muted mb-1">TOTAL ACTIVE</p>
+                <p class="font-headline-md text-headline-md text-primary">{{ number_format($totalActive) }}</p>
+                <div class="flex items-center gap-1 text-stage-booked mt-2">
+                    <span class="material-symbols-outlined text-[16px]">groups</span>
+                    <span class="font-label-sm text-label-sm">in pipeline</span>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl p-6 w-48 border border-border-subtle shadow-sm">
+                <p class="font-label-sm text-label-sm text-text-muted mb-1">WIN RATE</p>
+                <p class="font-headline-md text-headline-md text-primary">{{ $winRate }}%</p>
+                <div class="flex items-center gap-1 text-stage-booked mt-2">
+                    <span class="material-symbols-outlined text-[16px]">emoji_events</span>
+                    <span class="font-label-sm text-label-sm">avg across teams</span>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl p-6 w-48 border border-border-subtle shadow-sm">
+                <p class="font-label-sm text-label-sm text-text-muted mb-1">CRITICAL SLAs</p>
+                <p class="font-headline-md text-headline-md text-primary">{{ $slaBreaches }}</p>
+                <div class="flex items-center gap-1 text-stage-lost mt-2">
+                    <span class="material-symbols-outlined text-[16px]">warning</span>
+                    <span class="font-label-sm text-label-sm">breached today</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Teams Summary -->
     <h3 class="font-headline-sm text-headline-sm text-primary mb-4">Teams Performance</h3>

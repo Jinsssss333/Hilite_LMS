@@ -17,74 +17,180 @@
         </div>
     </header>
 
-    <!-- Hero Stats Strip (Charts) -->
-    <div class="bg-[#E9EFE1] rounded-[20px] p-6 mb-8 flex flex-col sm:flex-row gap-6 border border-[#d2dcc8]">
-        <!-- 1. NEW LEADS -->
-        <div class="flex-1 bg-white rounded-[16px] p-4 shadow-sm flex flex-col justify-between min-w-[200px]">
-            <div class="flex justify-between items-start mb-4">
-                <span class="text-text-muted font-label-sm uppercase tracking-wider font-bold">New Leads (5 Days)</span>
-                <span class="text-stage-booked font-bold text-label-md flex items-center">
-                    <span class="material-symbols-outlined text-[14px]">trending_up</span>
-                    {{ $newLeadsTrend > 0 ? '+' : '' }}{{ $newLeadsTrend }}%
-                </span>
+    <!-- Stitch Hero Stats Area -->
+    <section class="bg-[#E9EFE1] rounded-[20px] p-8 mb-8 flex flex-col md:flex-row justify-between gap-8 border border-[#d2dcc8]">
+        <div class="flex-1">
+            <h2 class="font-headline-lg text-headline-lg text-primary mb-2">Morning, {{ \App\Http\Helpers\AuthHelper::user()->name ?? 'User' }}.</h2>
+            <p class="font-body-lg text-body-lg text-secondary max-w-lg">You have {{ $pendingFollowups }} priority follow-ups today and {{ $slaBreaches }} SLA breaches. Your pipeline health is {{ $totalLeadsTrend >= 0 ? 'up' : 'down' }} {{ abs($totalLeadsTrend) }}% this month.</p>
+        </div>
+        <div class="flex flex-wrap gap-4">
+            <div class="bg-white rounded-xl p-6 w-48 border border-border-subtle shadow-sm">
+                <p class="font-label-sm text-label-sm text-text-muted mb-1">TOTAL LEADS</p>
+                <p class="font-headline-md text-headline-md text-primary">{{ number_format($totalLeads) }}</p>
+                <div class="flex items-center gap-1 {{ $totalLeadsTrend >= 0 ? 'text-stage-booked' : 'text-stage-lost' }} mt-2">
+                    <span class="material-symbols-outlined text-[16px]">{{ $totalLeadsTrend >= 0 ? 'trending_up' : 'trending_down' }}</span>
+                    <span class="font-label-sm text-label-sm">{{ $totalLeadsTrend >= 0 ? '+' : '' }}{{ $totalLeadsTrend }}%</span>
+                </div>
             </div>
-            <div class="flex items-end justify-between gap-2 h-16">
-                @php $maxCount = max(collect($newLeadsData)->pluck('count')->max(), 1); @endphp
-                @foreach($newLeadsData as $idx => $data)
-                    @php $height = max(10, ($data['count'] / $maxCount) * 100); @endphp
-                    <div class="flex flex-col items-center gap-1 w-full">
-                        <div class="w-full bg-surface-container rounded-t-sm" style="height: {{ $height }}%; background-color: {{ $idx === 4 ? '#000000' : '#E6E6DF' }};"></div>
-                        <span class="text-[10px] text-text-muted font-medium">{{ substr($data['day'], 0, 3) }}</span>
-                    </div>
+            <div class="bg-white rounded-xl p-6 w-48 border border-border-subtle shadow-sm">
+                <p class="font-label-sm text-label-sm text-text-muted mb-1">AVG. CLOSE TIME</p>
+                <p class="font-headline-md text-headline-md text-primary">{{ $avgCloseTime }}d</p>
+                <div class="flex items-center gap-1 text-text-muted mt-2">
+                    <span class="material-symbols-outlined text-[16px]">schedule</span>
+                    <span class="font-label-sm text-label-sm">Days to close</span>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl p-6 w-48 border border-border-subtle shadow-sm">
+                <p class="font-label-sm text-label-sm text-text-muted mb-1">CONVERSION</p>
+                <p class="font-headline-md text-headline-md text-primary">{{ $conversionRate }}%</p>
+                <div class="flex items-center gap-1 {{ $conversionRate >= 15 ? 'text-stage-interested' : 'text-stage-contacted' }} mt-2">
+                    <span class="material-symbols-outlined text-[16px]">{{ $conversionRate >= 15 ? 'check_circle' : 'warning' }}</span>
+                    <span class="font-label-sm text-label-sm">{{ $conversionRate >= 15 ? 'High' : 'Needs Impr.' }}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Grid Insights -->
+    <div class="grid grid-cols-12 gap-8 mb-8">
+        <!-- Activity Trends -->
+        <div class="col-span-12 lg:col-span-8 bg-white border border-border-subtle rounded-xl p-6 shadow-sm">
+            <div class="flex justify-between items-center mb-10">
+                <div>
+                    <h3 class="font-headline-sm text-headline-sm text-primary">Activity Trends</h3>
+                    <p class="font-body-sm text-body-sm text-text-muted">Lead engagement performance over 7 days</p>
+                </div>
+            </div>
+            <div class="flex items-end justify-between h-48 px-4 gap-2">
+                @foreach($activityTrends as $trend)
+                <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-surface-container rounded-t-lg hover:bg-primary transition-all duration-300" style="height: {{ $trend['percent'] }}%;" title="{{ $trend['count'] }} activities"></div>
+                    <span class="font-label-sm text-label-sm text-text-muted">{{ $trend['day'] }}</span>
+                </div>
                 @endforeach
             </div>
         </div>
 
-        <!-- 2. CONVERSION RATE -->
-        <div class="flex-1 bg-white rounded-[16px] p-4 shadow-sm flex items-center justify-between min-w-[240px]">
-            <div class="relative w-20 h-20 flex-shrink-0">
-                <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
-                    <path class="text-surface-container" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                    <path class="text-stage-booked" stroke-dasharray="{{ $conversionRate }}, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+        <!-- Distribution Donut -->
+        <div class="col-span-12 lg:col-span-4 bg-white border border-border-subtle rounded-xl p-6 shadow-sm flex flex-col">
+            <h3 class="font-headline-sm text-headline-sm text-primary mb-1">Lead Distribution</h3>
+            <p class="font-body-sm text-body-sm text-text-muted mb-8">By current sales stage</p>
+            
+            <div class="flex-1 flex items-center justify-center relative">
+                <!-- SVG Circular Gauge -->
+                <svg class="w-48 h-48 transform -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" fill="none" r="40" stroke="#f1eded" stroke-width="12"></circle>
+                    @php $dashOffset = 0; @endphp
+                    @foreach($leadDistribution as $dist)
+                        @if($dist['percent'] > 0)
+                            @php 
+                                $dashArray = ($dist['percent'] / 100) * 251.2; 
+                                $restArray = 251.2 - $dashArray;
+                            @endphp
+                            <circle cx="50" cy="50" fill="none" r="40" stroke="{{ $dist['color'] }}" stroke-dasharray="{{ $dashArray }} {{ $restArray }}" stroke-dashoffset="-{{ $dashOffset }}" stroke-width="12"></circle>
+                            @php $dashOffset += $dashArray; @endphp
+                        @endif
+                    @endforeach
                 </svg>
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <span class="font-bold text-on-surface">{{ $conversionRate }}%</span>
+                <div class="absolute text-center">
+                    <p class="font-headline-md text-headline-md text-primary">{{ $leadDistribution[0]['percent'] ?? 0 }}%</p>
+                    <p class="font-label-sm text-label-sm text-text-muted">{{ $leadDistribution[0]['name'] ?? 'Stage' }}</p>
                 </div>
             </div>
-            <div class="ml-4 flex-1">
-                <h4 class="text-text-muted font-label-sm uppercase tracking-wider font-bold mb-1">Conversion Rate</h4>
-                <p class="text-body-sm text-text-muted">Target: 65%<br>this quarter.</p>
-            </div>
-        </div>
 
-        <!-- 3. OPEN FOLLOW-UPS -->
-        <div class="flex-1 bg-white rounded-[16px] p-4 shadow-sm flex flex-col justify-center min-w-[200px]">
-            <h4 class="text-text-muted font-label-sm uppercase tracking-wider font-bold mb-3 flex items-center gap-1">Open Follow-ups <span class="material-symbols-outlined text-[16px]">arrow_forward</span></h4>
-            <div class="flex items-end gap-3">
-                <span class="text-headline-lg font-bold text-on-surface leading-none">{{ $openFollowups }}</span>
-                @if($overdueFollowups > 0)
-                    <span class="bg-stage-lost/10 text-stage-lost px-2 py-1 rounded-full text-label-sm font-medium">{{ $overdueFollowups }} Overdue</span>
-                @endif
-            </div>
-        </div>
-
-        <!-- 4. CLOSED THIS MONTH -->
-        <div class="flex-1 bg-white rounded-[16px] p-4 shadow-sm flex flex-col justify-between min-w-[200px]">
-            <h4 class="text-text-muted font-label-sm uppercase tracking-wider font-bold mb-2">Closed This Month</h4>
-            <div>
-                <div class="mb-2">
-                    <span class="text-headline-sm font-bold text-on-surface">{{ $closedThisMonth }}</span>
-                    <span class="text-body-sm text-text-muted"> / {{ $closedGoal }} Goal</span>
+            <div class="mt-6 space-y-3">
+                @foreach($leadDistribution as $dist)
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full" style="background-color: {{ $dist['color'] }};"></div>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">{{ $dist['name'] }}</span>
+                    </div>
+                    <span class="font-label-md text-label-md text-primary">{{ $dist['count'] }}</span>
                 </div>
-                <div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
-                    <div class="h-full bg-stage-booked rounded-full" style="width: {{ min(100, ($closedThisMonth / max(1, $closedGoal)) * 100) }}%;"></div>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>
 
+    <!-- Priority Engagements Table -->
+    <section class="bg-white border border-border-subtle rounded-xl overflow-hidden shadow-sm mb-8">
+        <div class="px-6 py-5 border-b border-border-subtle flex justify-between items-center">
+            <div>
+                <h3 class="font-headline-sm text-headline-sm text-primary">Priority Engagements</h3>
+                <p class="font-body-sm text-body-sm text-text-muted">Actions requiring immediate attention</p>
+            </div>
+            <a href="#pipeline-kanban" class="flex items-center gap-2 text-primary font-label-md text-label-md hover:underline">
+                View all pipeline <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-surface-container-low border-b border-border-subtle">
+                        <th class="px-6 py-4 font-label-md text-label-md text-text-muted">CLIENT / LEAD</th>
+                        <th class="px-6 py-4 font-label-md text-label-md text-text-muted">STAGE</th>
+                        <th class="px-6 py-4 font-label-md text-label-md text-text-muted">LAST ACTIVITY</th>
+                        <th class="px-6 py-4 font-label-md text-label-md text-text-muted">STATUS</th>
+                        <th class="px-6 py-4 font-label-md text-label-md text-text-muted text-right">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-border-subtle">
+                    @forelse($priorityEngagements as $engagement)
+                    <tr class="hover:bg-surface-container-lowest transition-colors group">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center font-bold text-primary">
+                                    {{ strtoupper(substr($engagement->lead->first_name, 0, 1) . substr($engagement->lead->last_name, 0, 1)) }}
+                                </div>
+                                <div>
+                                    <p class="font-label-md text-label-md text-primary">{{ $engagement->lead->first_name }} {{ $engagement->lead->last_name }}</p>
+                                    <p class="font-body-sm text-body-sm text-text-muted">{{ $engagement->lead->email ?? $engagement->lead->phone }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 bg-opacity-10 rounded-full font-label-sm text-label-sm" style="color: {{ $engagement->stage->color ?? '#6366F1' }}; background-color: {{ $engagement->stage->color ?? '#6366F1' }}1a; border: 1px solid {{ $engagement->stage->color ?? '#6366F1' }};">{{ $engagement->stage->name }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            @if($engagement->activities->count() > 0)
+                                <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $engagement->activities->first()->title ?? ucfirst($engagement->activities->first()->type) }}</p>
+                                <p class="font-label-sm text-label-sm text-text-muted">{{ $engagement->activities->first()->created_at->diffForHumans() }}</p>
+                            @else
+                                <p class="font-body-sm text-body-sm text-text-muted">No activity yet</p>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-2">
+                                @if($engagement->sla_breached)
+                                    <div class="w-2 h-2 rounded-full bg-stage-lost animate-pulse"></div>
+                                    <span class="font-label-sm text-label-sm text-stage-lost font-bold">SLA BREACH</span>
+                                @else
+                                    <div class="w-2 h-2 rounded-full bg-stage-contacted"></div>
+                                    <span class="font-label-sm text-label-sm text-stage-contacted font-bold">OVERDUE</span>
+                                @endif
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="{{ route('leads.show', $engagement->id) }}" class="p-2 rounded-full group-hover:bg-primary group-hover:text-white transition-all text-primary">
+                                <span class="material-symbols-outlined">visibility</span>
+                            </a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-6 py-8 text-center text-text-muted">
+                            <span class="material-symbols-outlined text-[32px] mb-2 text-surface-dim">check_circle</span>
+                            <p class="font-body-sm">No priority engagements right now. You're all caught up!</p>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
+
     <!-- Pipeline Overview (Kanban Board) -->
-    <div class="mb-4 flex items-center justify-between">
+    <div class="mb-4 flex items-center justify-between" id="pipeline-kanban">
         <h3 class="font-headline-sm text-on-surface">Pipeline Overview</h3>
         <div class="flex items-center gap-2">
             <button class="w-8 h-8 rounded-md bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[18px]">view_list</span></button>
