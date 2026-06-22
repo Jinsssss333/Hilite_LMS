@@ -17,95 +17,141 @@
         </div>
     </header>
 
-    <!-- Hero Stats Strip -->
+    <!-- Hero Stats Strip (Charts) -->
     <div class="bg-[#E9EFE1] rounded-[20px] p-6 mb-8 flex flex-col sm:flex-row gap-6 border border-[#d2dcc8]">
-        <x-kpi-widget label="Active Leads" value="{{ $activeLeads }}" subtext="total" />
-        <div class="hidden sm:block w-px bg-[#d2dcc8]"></div>
-        <x-kpi-widget label="Pending Follow-ups" value="{{ $pendingFollowups }}" valueColor="text-stage-contacted" />
-        <div class="hidden sm:block w-px bg-[#d2dcc8]"></div>
-        <x-kpi-widget label="SLA Breaches" value="{{ $slaBreaches }}" valueColor="text-stage-lost" />
+        <!-- 1. NEW LEADS -->
+        <div class="flex-1 bg-white rounded-[16px] p-4 shadow-sm flex flex-col justify-between min-w-[200px]">
+            <div class="flex justify-between items-start mb-4">
+                <span class="text-text-muted font-label-sm uppercase tracking-wider font-bold">New Leads (5 Days)</span>
+                <span class="text-stage-booked font-bold text-label-md flex items-center">
+                    <span class="material-symbols-outlined text-[14px]">trending_up</span>
+                    {{ $newLeadsTrend > 0 ? '+' : '' }}{{ $newLeadsTrend }}%
+                </span>
+            </div>
+            <div class="flex items-end justify-between gap-2 h-16">
+                @php $maxCount = max(collect($newLeadsData)->pluck('count')->max(), 1); @endphp
+                @foreach($newLeadsData as $idx => $data)
+                    @php $height = max(10, ($data['count'] / $maxCount) * 100); @endphp
+                    <div class="flex flex-col items-center gap-1 w-full">
+                        <div class="w-full bg-surface-container rounded-t-sm" style="height: {{ $height }}%; background-color: {{ $idx === 4 ? '#000000' : '#E6E6DF' }};"></div>
+                        <span class="text-[10px] text-text-muted font-medium">{{ substr($data['day'], 0, 3) }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- 2. CONVERSION RATE -->
+        <div class="flex-1 bg-white rounded-[16px] p-4 shadow-sm flex items-center justify-between min-w-[240px]">
+            <div class="relative w-20 h-20 flex-shrink-0">
+                <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                    <path class="text-surface-container" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    <path class="text-stage-booked" stroke-dasharray="{{ $conversionRate }}, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="font-bold text-on-surface">{{ $conversionRate }}%</span>
+                </div>
+            </div>
+            <div class="ml-4 flex-1">
+                <h4 class="text-text-muted font-label-sm uppercase tracking-wider font-bold mb-1">Conversion Rate</h4>
+                <p class="text-body-sm text-text-muted">Target: 65%<br>this quarter.</p>
+            </div>
+        </div>
+
+        <!-- 3. OPEN FOLLOW-UPS -->
+        <div class="flex-1 bg-white rounded-[16px] p-4 shadow-sm flex flex-col justify-center min-w-[200px]">
+            <h4 class="text-text-muted font-label-sm uppercase tracking-wider font-bold mb-3 flex items-center gap-1">Open Follow-ups <span class="material-symbols-outlined text-[16px]">arrow_forward</span></h4>
+            <div class="flex items-end gap-3">
+                <span class="text-headline-lg font-bold text-on-surface leading-none">{{ $openFollowups }}</span>
+                @if($overdueFollowups > 0)
+                    <span class="bg-stage-lost/10 text-stage-lost px-2 py-1 rounded-full text-label-sm font-medium">{{ $overdueFollowups }} Overdue</span>
+                @endif
+            </div>
+        </div>
+
+        <!-- 4. CLOSED THIS MONTH -->
+        <div class="flex-1 bg-white rounded-[16px] p-4 shadow-sm flex flex-col justify-between min-w-[200px]">
+            <h4 class="text-text-muted font-label-sm uppercase tracking-wider font-bold mb-2">Closed This Month</h4>
+            <div>
+                <div class="mb-2">
+                    <span class="text-headline-sm font-bold text-on-surface">{{ $closedThisMonth }}</span>
+                    <span class="text-body-sm text-text-muted"> / {{ $closedGoal }} Goal</span>
+                </div>
+                <div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+                    <div class="h-full bg-stage-booked rounded-full" style="width: {{ min(100, ($closedThisMonth / max(1, $closedGoal)) * 100) }}%;"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Pipeline Stages (Vertical Accordion) -->
-    <div class="space-y-4 pb-12">
-        @foreach($stages as $index => $stage)
+    <!-- Pipeline Overview (Kanban Board) -->
+    <div class="mb-4 flex items-center justify-between">
+        <h3 class="font-headline-sm text-on-surface">Pipeline Overview</h3>
+        <div class="flex items-center gap-2">
+            <button class="w-8 h-8 rounded-md bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[18px]">view_list</span></button>
+            <button class="w-8 h-8 rounded-md bg-surface-container-high flex items-center justify-center text-on-surface"><span class="material-symbols-outlined text-[18px]">view_kanban</span></button>
+        </div>
+    </div>
+
+    <!-- Kanban Container -->
+    <div class="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory hide-scrollbar">
+        @foreach($stages as $stage)
         @php
             $stageLeads = $leadsByStage[$stage->id] ?? collect();
             $count = $stageLeads->count();
-            $isOpen = ($index === 0 && $count > 0);
         @endphp
-        <!-- Accordion Item -->
-        <div class="bg-surface-container-low rounded-2xl border border-border-subtle overflow-hidden shadow-sm">
-            <!-- Header -->
-            <button onclick="toggleAccordion(this)" class="w-full p-5 bg-surface-container-lowest flex items-center justify-between hover:bg-surface-container transition-colors outline-none focus:ring-2 focus:ring-primary focus:ring-inset">
-                <div class="flex items-center gap-4">
-                    <div class="w-4 h-4 rounded-full" style="background-color: {{ $stage->color }}"></div>
-                    <h3 class="font-headline-sm md:font-headline-md text-headline-sm md:text-headline-md text-on-surface">{{ $stage->name }}</h3>
-                    <span class="px-3 py-1 rounded-full bg-surface-container-high text-label-md font-bold text-on-surface-variant">{{ $count }}</span>
+        <!-- Column -->
+        <div class="flex-shrink-0 w-[320px] snap-start flex flex-col">
+            <!-- Column Header -->
+            <div class="flex items-center justify-between mb-4 px-1 pb-2 border-b border-border-subtle" style="border-bottom-color: {{ $stage->color }}40; border-bottom-width: 2px;">
+                <div class="flex items-center gap-2">
+                    <div class="w-2.5 h-2.5 rounded-full" style="background-color: {{ $stage->color }}"></div>
+                    <h4 class="font-label-sm uppercase tracking-wider text-on-surface font-bold">{{ $stage->name }}</h4>
                 </div>
-                <span class="material-symbols-outlined transition-transform duration-200 chevron-icon {{ $isOpen ? 'rotate-180' : '' }}">expand_more</span>
-            </button>
-            
-            <!-- Body -->
-            <div class="accordion-body {{ $isOpen ? 'grid' : 'hidden' }} p-5 bg-surface-container-lowest border-t border-border-subtle grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                
+                <span class="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center font-label-sm text-primary">{{ $count }}</span>
+            </div>
+
+            <!-- Column Body -->
+            <div class="flex flex-col gap-3 min-h-[150px]">
                 @if($count > 0)
-                    @foreach($stageLeads->take(4) as $engagement)
-                    <div class="bg-surface border border-border-subtle rounded-xl p-4 hover:shadow-md transition-shadow relative group">
+                    @foreach($stageLeads->take(10) as $engagement)
+                    <!-- Lead Card -->
+                    <div class="bg-surface-container-lowest border border-border-subtle rounded-[16px] p-4 shadow-sm hover:shadow-md transition-shadow relative {{ $engagement->sla_breached ? 'ring-1 ring-stage-lost' : '' }}">
                         <div class="flex justify-between items-start mb-2">
-                            <p class="font-headline-sm text-on-surface truncate pr-6">{{ $engagement->lead->name }}</p>
-                            @if($engagement->sla_breached)
-                                <span class="material-symbols-outlined text-[18px] text-stage-lost absolute top-4 right-4" title="SLA Breached">warning</span>
-                            @elseif($engagement->activities->first() && $engagement->activities->first()->follow_up_at && $engagement->activities->first()->follow_up_at->isPast())
-                                <span class="material-symbols-outlined text-[18px] text-stage-contacted absolute top-4 right-4" title="Follow up overdue">timer</span>
-                            @endif
+                            <span class="px-2 py-0.5 rounded bg-surface-container text-text-muted font-label-sm text-[10px] uppercase">{{ $engagement->source ?? 'Manual' }}</span>
+                            <button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[16px]">more_horiz</span></button>
                         </div>
+                        
+                        <h5 class="font-headline-sm text-on-surface truncate mb-1">{{ $engagement->lead->name }}</h5>
                         <p class="font-body-sm text-text-muted font-mono tracking-wider truncate mb-4">{{ $engagement->lead->phone_e164 }}</p>
                         
                         <div class="flex items-center justify-between pt-3 border-t border-border-subtle">
-                            <span class="text-[10px] text-text-muted font-bold uppercase tracking-wide">
-                                {{ \Carbon\Carbon::parse($engagement->updated_at)->diffForHumans(null, true) }} in stage
-                            </span>
-                            <div class="flex gap-2">
-                                <button type="button" class="w-8 h-8 rounded-full bg-surface-container hover:bg-primary/10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Log Call Disposition" onclick="openDispositionModal({{ $engagement->id }})">
-                                    <span class="material-symbols-outlined text-[16px]">call</span>
+                            <div class="flex items-center gap-1 text-text-muted text-[11px] font-medium">
+                                <span class="material-symbols-outlined text-[14px]">schedule</span>
+                                {{ \Carbon\Carbon::parse($engagement->updated_at)->diffForHumans(null, true) }}
+                            </div>
+                            <div class="flex gap-1.5">
+                                <button type="button" class="w-7 h-7 rounded-full bg-surface-container hover:bg-primary hover:text-on-primary flex items-center justify-center text-on-surface-variant transition-colors" title="Log Interaction" onclick="openDispositionModal({{ $engagement->id }})">
+                                    <span class="material-symbols-outlined text-[14px]">call</span>
                                 </button>
-                                <a href="#" class="w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-colors" title="View Details">
-                                    <span class="material-symbols-outlined text-[16px]">visibility</span>
-                                </a>
                             </div>
                         </div>
+                        @if($engagement->sla_breached)
+                            <div class="absolute -top-2 -right-2 bg-stage-lost text-white text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded flex items-center gap-0.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[10px]">warning</span> SLA
+                            </div>
+                        @endif
                     </div>
                     @endforeach
                 @else
-                    <div class="col-span-full py-8 text-center text-text-muted font-body-md">
-                        No leads currently in this stage.
+                    <div class="w-full py-8 text-center border-2 border-dashed border-border-subtle rounded-xl text-text-muted font-body-sm">
+                        No leads
                     </div>
                 @endif
-
             </div>
         </div>
         @endforeach
-
     </div>
 </div>
-
-<script>
-function toggleAccordion(button) {
-    const body = button.nextElementSibling;
-    const chevron = button.querySelector('.chevron-icon');
-    
-    if (body.classList.contains('hidden')) {
-        body.classList.remove('hidden');
-        body.classList.add('grid');
-        chevron.classList.add('rotate-180');
-    } else {
-        body.classList.add('hidden');
-        body.classList.remove('grid');
-        chevron.classList.remove('rotate-180');
-    }
-}
-</script>
 
 @push('modals')
 <!-- Disposition Modal -->

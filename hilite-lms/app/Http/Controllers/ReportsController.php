@@ -108,23 +108,38 @@ class ReportsController extends Controller
             $colorIdx++;
         }
 
-        // Source vs Stage Matrix (Real Heatmap Data instead of rand())
-        $stages = DB::table('pipeline_stages')->where('company_id', $companyId)->orderBy('order')->get();
-        $sourceList = $sourcesRaw->pluck('source')->toArray();
-        if (empty($sourceList)) $sourceList = ['manual', 'webhook'];
+        // Lead Engagement Heatmap (42 blocks: 7 days x 6 time periods of 4 hours)
+        $heatmapData = array_fill(0, 42, 0); // Initialize with 0
         
-        $heatmapData = [];
-        foreach ($sourceList as $src) {
-            $heatmapData[$src] = [];
-            foreach ($stages as $stage) {
-                // To avoid N+1 queries, we could do one group by, but this is fine for few stages & sources
-                $count = LeadEngagement::where('company_id', $companyId)
-                    ->where('created_at', '>=', $startDate)
-                    ->where('source', $src)
-                    ->where('stage_id', $stage->id)
-                    ->count();
-                $heatmapData[$src][$stage->id] = $count;
-            }
+        // Grab activities in the current date range
+        $activities = DB::table('activities')
+            ->join('lead_engagements', 'activities.engagement_id', '=', 'lead_engagements.id')
+            ->where('lead_engagements.company_id', $companyId)
+            ->where('activities.occurred_at', '>=', $startDate)
+            ->select('activities.occurred_at')
+            ->get();
+
+        $maxActivity = 1; // Prevent division by zero
+        $blockCounts = array_fill(0, 42, 0);
+
+        foreach ($activities as $act) {
+            $date = Carbon::parse($act->occurred_at);
+            // Day of week: 0 (Sunday) to 6 (Saturday)
+            $dayOfWeek = $date->dayOfWeek; 
+            // Hour: 0 to 23 -> map to 6 blocks (0-3, 4-7, 8-11, 12-15, 16-19, 20-23)
+            $timeBlock = floor($date->hour / 4); 
+            
+            $index = ($dayOfWeek * 6) + $timeBlock;
+            $blockCounts[$index]++;
+        }
+
+        if (count($activities) > 0) {
+            $maxActivity = max(max($blockCounts), 1);
+        }
+
+        // Calculate intensity (0.1 to 1.0)
+        foreach ($blockCounts as $i => $count) {
+            $heatmapData[$i] = $count > 0 ? max(0.1, $count / $maxActivity) : 0.05; // 0.05 is the base background
         }
 
         // Agent Performance Table

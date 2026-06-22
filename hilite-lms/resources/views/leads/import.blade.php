@@ -309,6 +309,8 @@
                 showToast('Only CSV files are allowed.', 'error');
                 return;
             }
+            // Assign the dropped files to the hidden input so the form submits them
+            document.getElementById('csv-file-input').files = files;
             showFilePreview(files[0]);
         }
     }

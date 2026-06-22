@@ -371,41 +371,16 @@
 
         <!-- Heatmap Section -->
         <x-card class="col-span-12 !p-card-padding mt-6" id="heatmap-section">
-            <h3 class="font-headline-sm text-headline-sm text-primary mb-2">Lead Source vs Stage Distribution</h3>
-            <p class="font-body-sm text-body-sm text-text-muted mb-6">Real-time concentration of leads by source across pipeline stages.</p>
+            <h3 class="font-headline-sm text-headline-sm text-primary mb-2">Lead Engagement Heatmap</h3>
+            <p class="font-body-sm text-body-sm text-text-muted mb-6">Activity concentration by time and day (real data).</p>
             <div class="w-full overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr>
-                            <th class="p-3 text-text-muted font-label-sm uppercase">Source</th>
-                            @foreach($stages as $stage)
-                            <th class="p-3 text-text-muted font-label-sm uppercase text-center">{{ $stage->name }}</th>
-                            @endforeach
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($sourceList as $src)
-                        <tr class="border-t border-border-subtle">
-                            <td class="p-3 font-medium text-primary">{{ ucfirst($src) }}</td>
-                            @foreach($stages as $stage)
-                                @php
-                                    $count = $heatmapData[$src][$stage->id] ?? 0;
-                                    $intensity = $totalLeads > 0 ? min(1, ($count / ($totalLeads * 0.2))) : 0; 
-                                @endphp
-                                <td class="p-3 text-center">
-                                    @if($count > 0)
-                                    <div class="inline-flex items-center justify-center w-8 h-8 rounded-md font-bold text-white" style="background-color: rgba(99, 102, 241, {{ max(0.1, $intensity) }})">
-                                        {{ $count }}
-                                    </div>
-                                    @else
-                                    <span class="text-text-muted text-body-sm">-</span>
-                                    @endif
-                                </td>
-                            @endforeach
-                        </tr>
+                <div class="min-w-[800px] h-64 bg-surface-container-lowest rounded-lg border border-border-subtle flex items-center justify-center relative overflow-hidden">
+                    <div class="absolute inset-0 grid grid-cols-7 grid-rows-6 gap-1 p-2">
+                        @foreach($heatmapData as $intensity)
+                            <div class="rounded-sm" style="background-color: rgba(99, 102, 241, {{ $intensity }})" title="Activity Level: {{ $intensity * 10 }}"></div>
                         @endforeach
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </div>
         </x-card>
     </div>
