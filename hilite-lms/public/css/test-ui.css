@@ -301,8 +301,7 @@ a { text-decoration: none; color: inherit; }
 
 /* ── Role-based sidebar visibility ── */
 /* Elements visible only to admin/manager */
-.admin-only,
-.manager-only { display: flex !important; }
+
 
 /* Applied by JS when role=salesperson */
 body.role-salesperson .admin-only,
