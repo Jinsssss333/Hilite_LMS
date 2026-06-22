@@ -115,7 +115,7 @@ class DashboardController extends Controller
             return redirect()->route('login');
         }
         
-        $query = LeadEngagement::query();
+        $query = LeadEngagement::where('company_id', $user->company_id);
         
         // If branch head, scope to branch
         if ($user->role === 'branch_head') {
@@ -130,7 +130,7 @@ class DashboardController extends Controller
         
         $slaBreaches = (clone $query)->where('status', 'active')->where('sla_breached', true)->count();
         
-        $teamsQuery = Team::withCount([
+        $teamsQuery = Team::where('company_id', $user->company_id)->withCount([
             'engagements as active_count' => function($q) {
                 $q->where('status', 'active');
             },
