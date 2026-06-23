@@ -111,6 +111,73 @@ class LeadsController extends Controller
         ));
     }
 
+    public function show($id)
+    {
+        $user = AuthHelper::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+        $role = $user->role;
+
+        // Fetch engagement with lead, stage, and assigned user
+        $engagement = DB::table('lead_engagements as le')
+            ->join('leads as l', 'le.lead_id', '=', 'l.id')
+            ->join('pipeline_stages as ps', 'le.stage_id', '=', 'ps.id')
+            ->leftJoin('users as u', 'le.assigned_user_id', '=', 'u.id')
+            ->where('le.id', $id)
+            ->where('le.company_id', $user->company_id)
+            ->select(
+                'l.id as lead_id', 'l.name', 'l.phone_e164', 'l.email', 'l.status', 'l.is_shared_number',
+                'l.created_at',
+                'le.id as engagement_id', 'le.stage_id', 'le.source',
+                'le.last_activity_at', 'le.sla_breached', 'le.sla_due_at',
+                'ps.name as stage_name', 'ps.color as stage_color',
+                'u.name as assigned_name', 'u.id as assigned_id'
+            )->first();
+
+        if (!$engagement) {
+            abort(404, 'Lead not found or access denied.');
+        }
+
+        // Role-based scoping check
+        if ($role === 'branch_head') {
+            $branchUserIds = DB::table('users')->where('branch_id', $user->branch_id)->pluck('id')->toArray();
+            if ($engagement->assigned_id && !in_array($engagement->assigned_id, $branchUserIds)) {
+                abort(403);
+            }
+        } elseif ($role === 'team_lead') {
+            $teamUserIds = DB::table('users')->where('team_id', $user->team_id)->pluck('id')->toArray();
+            if ($engagement->assigned_id && !in_array($engagement->assigned_id, $teamUserIds)) {
+                abort(403);
+            }
+        } elseif ($role === 'salesperson') {
+            if ($engagement->assigned_id !== $user->id) {
+                abort(403);
+            }
+        }
+
+        $activities = DB::table('activities as a')
+            ->leftJoin('users as u', 'a.user_id', '=', 'u.id')
+            ->leftJoin('pipeline_stages as ps', 'a.stage_id', '=', 'ps.id')
+            ->where('a.engagement_id', $id)
+            ->select('a.*', 'u.name as user_name', 'ps.name as stage_name', 'ps.color as stage_color')
+            ->orderByDesc('a.created_at')
+            ->get();
+
+        $stages = DB::table('pipeline_stages')->where('company_id', $user->company_id)->orderBy('order')->select('id', 'name', 'color')->get();
+        
+        $assignableUsers = match ($role) {
+            'admin', 'manager' => \App\Models\User::where('company_id', $user->company_id)->whereIn('role', ['salesperson', 'team_lead'])->get(['id', 'name']),
+            'branch_head'      => \App\Models\User::where('branch_id', $user->branch_id)->whereIn('role', ['salesperson', 'team_lead'])->get(['id', 'name']),
+            'team_lead'        => \App\Models\User::where('team_id', $user->team_id)->get(['id', 'name']),
+            default            => collect(),
+        };
+
+        $canSeeFullPhone = in_array($role, ['admin', 'manager', 'branch_head', 'team_lead']);
+
+        return view('leads.show', compact('engagement', 'activities', 'stages', 'assignableUsers', 'canSeeFullPhone'));
+    }
+
     public function updateStage(Request $request, $id)
     {
         $user = AuthHelper::user();
@@ -141,7 +208,10 @@ class LeadsController extends Controller
         $engagement->stage_id = $request->stage_id;
         $engagement->save();
 
-        return response()->json(['success' => true, 'message' => 'Status updated successfully']);
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Status updated successfully']);
+        }
+        return back()->with('success', 'Status updated successfully');
     }
 
     public function processImport(Request $request, \App\Services\LeadIntakeService $intakeService)
@@ -347,6 +417,9 @@ class LeadsController extends Controller
         // If follow_up_at is provided, engagement needs last_activity_at updated
         $engagement->update(['last_activity_at' => now()]);
 
-        return response()->json(['success' => true, 'activity' => $activity, 'message' => 'Activity logged successfully.']);
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'activity' => $activity, 'message' => 'Activity logged successfully.']);
+        }
+        return back()->with('success', 'Activity logged successfully.');
     }
 }

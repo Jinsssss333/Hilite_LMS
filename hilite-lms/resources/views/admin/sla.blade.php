@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-[800px] w-full mx-auto">
+<div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar max-w-[1200px] w-full mx-auto">
     <div class="flex items-center gap-4 mb-8">
         <a href="{{ route('admin.index') }}" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors">
             <span class="material-symbols-outlined">arrow_back</span>

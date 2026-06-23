@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-[800px] w-full mx-auto">
+<div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar max-w-[1000px] w-full mx-auto">
     <header class="mb-8">
         <h2 class="font-headline-lg text-headline-lg font-bold text-on-surface mb-1">System Administration</h2>
         <p class="font-body-md text-body-md text-text-muted">Manage users, teams, pipeline stages, and global settings.</p>

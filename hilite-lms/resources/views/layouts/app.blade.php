@@ -31,7 +31,7 @@
         
         @php $navRole = \App\Http\Helpers\AuthHelper::user()?->role ?? ''; @endphp
         <nav class="flex-1 space-y-2">
-            <a href="{{ route('dashboard.salesperson') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-transform active:scale-[0.98] {{ request()->routeIs('dashboard.*') ? 'bg-surface-container-high text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface duration-200' }}">
+            <a href="{{ in_array($navRole, ['admin', 'super_admin', 'manager', 'branch_head']) ? route('dashboard.manager') : route('dashboard.salesperson') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-transform active:scale-[0.98] {{ request()->routeIs('dashboard.*') ? 'bg-surface-container-high text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface duration-200' }}">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span class="font-body-md text-body-md">Dashboard</span>
             </a>

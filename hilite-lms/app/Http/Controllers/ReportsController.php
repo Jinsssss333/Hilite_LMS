@@ -168,6 +168,9 @@ class ReportsController extends Controller
                 ];
             })->sortByDesc('assigned')->take(5);
 
+        $stages = \App\Models\PipelineStage::where('company_id', $companyId)->orderBy('order')->get();
+        $sourceList = \App\Models\LeadEngagement::where('company_id', $companyId)->select('source')->distinct()->pluck('source')->toArray();
+
         return view('reports.index', compact(
             'totalLeads', 'leadGrowth', 'conversionRate', 
             'slaFulfillment', 'totalSlaBreaches', 'avgResponseTime', 'avgResponseTrend',

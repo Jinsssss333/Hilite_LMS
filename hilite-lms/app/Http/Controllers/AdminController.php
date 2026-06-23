@@ -31,7 +31,7 @@ class AdminController extends Controller
 
         // Note: Using eager loading if Team/Branch relationships exist, otherwise left joins.
         // Assuming user belongsTo team and branch.
-        $users = User::where('company_id', $companyId)
+        $users = User::where('users.company_id', $companyId)
             ->leftJoin('teams', 'users.team_id', '=', 'teams.id')
             ->leftJoin('branches', 'users.branch_id', '=', 'branches.id')
             ->select('users.*', 'teams.name as team_name', 'branches.name as branch_name')
@@ -69,7 +69,7 @@ class AdminController extends Controller
         $companyId = $this->getCompanyId();
         if (!$companyId) return redirect()->route('login');
 
-        $logs = \App\Models\AuditLog::with(['company', 'user'])->where('company_id', $companyId)->orderBy('created_at', 'desc')->paginate(50);
+        $logs = \App\Models\AuditLog::with(['company', 'actor'])->where('company_id', $companyId)->orderBy('created_at', 'desc')->paginate(50);
 
         return view('admin.audit', compact('logs'));
     }

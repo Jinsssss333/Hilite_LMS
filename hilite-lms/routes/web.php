@@ -21,7 +21,10 @@ Route::post('/login', function (\Illuminate\Http\Request $request) {
             'user_role' => $user->role,
             'user_name' => $user->name,
         ]);
-        return redirect()->route('leads.index');
+        if (in_array($user->role, ['admin', 'super_admin', 'manager', 'branch_head'])) {
+            return redirect()->route('dashboard.manager');
+        }
+        return redirect()->route('dashboard.salesperson');
     }
     return back()
         ->withErrors(['email' => 'Invalid credentials. Check email/password.'])
@@ -46,11 +49,17 @@ Route::middleware('auth.lms')->group(function () {
 
     // Leads
     Route::get('/leads', [\App\Http\Controllers\LeadsController::class, 'index'])->name('leads.index');
-    Route::patch('/leads/{id}/stage', [\App\Http\Controllers\LeadsController::class, 'updateStage'])->name('leads.update-stage');
 
-    Route::get('/leads/followups', function () {
-        return view('leads.followups');
-    })->name('leads.followups');
+    // Archive removed — redirect to leads to avoid errors
+    Route::get('/leads/archive', function () {
+        return redirect()->route('leads.index');
+    })->name('leads.archive');
+
+    Route::get('/leads/followups', [\App\Http\Controllers\FollowupsController::class, 'index'])->name('leads.followups');
+    Route::patch('/leads/followups/{id}/complete', [\App\Http\Controllers\FollowupsController::class, 'complete'])->name('leads.followup.complete');
+
+    Route::get('/leads/calendar', [\App\Http\Controllers\CalendarController::class, 'index'])->name('leads.calendar');
+    Route::get('/leads/dispositions', [\App\Http\Controllers\LeadsController::class, 'dispositions'])->name('leads.dispositions');
 
     // Import — only managers and above can bulk import leads
     Route::get('/leads/import', function () {
@@ -60,24 +69,14 @@ Route::middleware('auth.lms')->group(function () {
         }
         return view('leads.import');
     })->name('leads.import');
-
-    Route::get('/leads/dispositions', [\App\Http\Controllers\LeadsController::class, 'dispositions'])->name('leads.dispositions');
     Route::post('/leads/import', [\App\Http\Controllers\LeadsController::class, 'processImport'])->name('leads.import.post');
     Route::post('/leads/manual', [\App\Http\Controllers\LeadsController::class, 'processManual'])->name('leads.manual.post');
+
+    // These {id} routes must be at the bottom of the /leads prefix
+    Route::get('/leads/{id}', [\App\Http\Controllers\LeadsController::class, 'show'])->name('leads.show');
+    Route::patch('/leads/{id}/stage', [\App\Http\Controllers\LeadsController::class, 'updateStage'])->name('leads.update-stage');
     Route::post('/leads/{id}/log-activity', [\App\Http\Controllers\LeadsController::class, 'logActivity'])->name('leads.log-activity');
-
-    // Flag a lead's phone number as a shared/corporate switchboard number
     Route::patch('/leads/{id}/flag-shared', [\App\Http\Controllers\LeadsController::class, 'flagShared'])->name('leads.flag-shared');
-
-    Route::get('/leads/calendar', [\App\Http\Controllers\CalendarController::class, 'index'])->name('leads.calendar');
-
-    Route::get('/leads/followups', [\App\Http\Controllers\FollowupsController::class, 'index'])->name('leads.followups');
-    Route::patch('/leads/followups/{id}/complete', [\App\Http\Controllers\FollowupsController::class, 'complete'])->name('leads.followup.complete');
-
-    // Archive removed — redirect to leads to avoid errors
-    Route::get('/leads/archive', function () {
-        return redirect()->route('leads.index');
-    })->name('leads.archive');
 
     // Reports (heatmap merged inside)
     Route::get('/reports', [\App\Http\Controllers\ReportsController::class, 'index'])->name('reports.index');
