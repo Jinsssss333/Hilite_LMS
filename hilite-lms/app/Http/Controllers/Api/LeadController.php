@@ -62,7 +62,19 @@ class LeadController extends Controller
             $query->when($request->assigned_to, fn($q) => $q->where('assigned_user_id', $request->assigned_to));
         }
 
-        $query->orderByRaw('last_activity_at IS NULL, last_activity_at DESC');
+        $sortBy = $request->get('sort_by', 'last_activity_at');
+        $sortDir = strtolower($request->get('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+
+        $allowedSorts = ['created_at', 'last_activity_at', 'lead_score'];
+        if (in_array($sortBy, $allowedSorts)) {
+            if ($sortBy === 'last_activity_at') {
+                $query->orderByRaw('last_activity_at IS NULL, last_activity_at ' . strtoupper($sortDir));
+            } else {
+                $query->orderBy($sortBy, $sortDir);
+            }
+        } else {
+            $query->orderByRaw('last_activity_at IS NULL, last_activity_at DESC');
+        }
 
         $perPage = min((int) ($request->per_page ?? 25), 100);
         $results = $query->paginate($perPage);
@@ -207,6 +219,9 @@ class LeadController extends Controller
             'sla_due_at'       => $e->sla_due_at?->toIso8601String(),
             'sla_breached'     => $e->sla_breached,
             'created_at'       => $e->created_at->toIso8601String(),
+            'lead_score'       => $e->lead_score,
+            'lead_rating'      => $e->lead_rating,
+            'scored_at'        => $e->scored_at?->toIso8601String(),
         ];
     }
 
@@ -229,5 +244,60 @@ class LeadController extends Controller
             'assigned_at' => $a->assigned_at->toIso8601String(),
         ])->toArray();
         return $summary;
+    }
+
+    public function metrics(Request $request)
+    {
+        $companyId = app('current_company_id');
+        $actor     = $request->user();
+
+        $query = LeadEngagement::where('company_id', $companyId)
+            ->where('status', 'active');
+
+        // Scoping
+        if ($actor->role === 'salesperson') {
+            $query->where('assigned_user_id', $actor->id);
+        } elseif ($actor->role === 'team_lead') {
+            $teamUserIds = \App\Models\User::where('company_id', $companyId)
+                ->where('team_id', $actor->team_id)
+                ->pluck('id');
+            $query->where(fn($q) =>
+                $q->whereIn('assigned_user_id', $teamUserIds)
+                  ->orWhereNull('assigned_user_id')
+            );
+        }
+
+        $engagements = $query->get(['lead_score', 'lead_rating', 'assigned_user_id', 'created_at', 'scored_at']);
+
+        $cold = $engagements->where('lead_rating', 'Cold')->count();
+        $warm = $engagements->where('lead_rating', 'Warm')->count();
+        $hot = $engagements->where('lead_rating', 'Hot')->count();
+        $veryHot = $engagements->where('lead_rating', 'Very Hot')->count();
+        $avgScore = round($engagements->avg('lead_score') ?? 0);
+        $highestScoreToday = $engagements->where('scored_at', '>=', now()->startOfDay())->max('lead_score') ?? 0;
+        
+        $newHotLeadsToday = $engagements->whereIn('lead_rating', ['Hot', 'Very Hot'])
+            ->where('created_at', '>=', now()->startOfDay())->count();
+        
+        $hotLeadsAssigned = $engagements->where('lead_rating', 'Hot')
+            ->whereNotNull('assigned_user_id')->count();
+        
+        $veryHotLeadsWaiting = $engagements->where('lead_rating', 'Very Hot')
+            ->whereNull('assigned_user_id')->count();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'cold' => $cold,
+                'warm' => $warm,
+                'hot' => $hot,
+                'very_hot' => $veryHot,
+                'avg_score' => $avgScore,
+                'highest_score_today' => $highestScoreToday,
+                'new_hot_leads_today' => $newHotLeadsToday,
+                'hot_leads_assigned' => $hotLeadsAssigned,
+                'very_hot_leads_waiting' => $veryHotLeadsWaiting,
+            ]
+        ]);
     }
 }

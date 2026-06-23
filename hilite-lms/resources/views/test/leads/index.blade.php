@@ -25,6 +25,17 @@
             <option value="">All Stages</option>
         </select>
     </div>
+    <div class="form-group">
+        <label for="filter-sort">Sort By</label>
+        <select id="filter-sort" class="form-control" onchange="loadLeads(1)">
+            <option value="last_activity_at|desc">Last Activity (Newest)</option>
+            <option value="last_activity_at|asc">Last Activity (Oldest)</option>
+            <option value="created_at|desc">Time Created (Newest)</option>
+            <option value="created_at|asc">Time Created (Oldest)</option>
+            <option value="lead_score|desc">Priority (Hot to Cold)</option>
+            <option value="lead_score|asc">Priority (Cold to Hot)</option>
+        </select>
+    </div>
     <div class="form-group" style="min-width:unset;flex:0;">
         <label>&nbsp;</label>
         <button class="btn btn--primary" onclick="loadLeads(1)" id="apply-btn">Search</button>
@@ -91,6 +102,7 @@
                 <th>Name</th>
                 <th>Phone</th>
                 <th>Stage</th>
+                <th>Priority</th>
                 <th>SLA</th>
                 <th>Last Activity</th>
                 {{-- Extra columns hidden from salesperson --}}
@@ -156,7 +168,7 @@ async function loadLeads(page = 1) {
     const cfg     = window.__config || {};
     const tbody   = document.getElementById('leads-tbody');
     const applyBtn = document.getElementById('apply-btn');
-    const colCount = cfg.canSeeGlobal ? 10 : 7;
+    const colCount = cfg.canSeeGlobal ? 11 : 8;
 
     tbody.innerHTML = `<tr><td colspan="${colCount}">
         <div class="loading-block"><span class="spinner"></span> Loading…</div>
@@ -171,14 +183,21 @@ async function loadLeads(page = 1) {
     const stage  = document.getElementById('filter-stage').value;
     const slaEl  = document.getElementById('filter-sla');
     const srcEl  = document.getElementById('filter-source');
+    const sortEl = document.getElementById('filter-sort');
     const sla    = slaEl?.value || '';
     const source = srcEl?.value || '';
+    const sortVal= sortEl?.value || '';
 
     if (search) url += `&search=${encodeURIComponent(search)}`;
     if (stage)  url += `&stage_id=${stage}`;
     if (sla === 'breached') url += '&sla_breached=1';
     if (sla === 'ok')       url += '&sla_breached=0';
     if (source) url += `&source=${source}`;
+    
+    if (sortVal) {
+        const [sortBy, sortDir] = sortVal.split('|');
+        url += `&sort_by=${sortBy}&sort_dir=${sortDir}`;
+    }
 
     const res = await api(url);
     if (applyBtn) { applyBtn.disabled = false; applyBtn.textContent = 'Search'; }
@@ -208,6 +227,9 @@ async function loadLeads(page = 1) {
 
         tbody.innerHTML = data.data.map(l => {
             const sc = l.stage?.color || '#7C3AED';
+            const score = l.lead_score || 0;
+            const rating = l.lead_rating || 'Cold';
+            const badgeClass = 'badge--' + rating.toLowerCase().replace(' ', '-');
 
             // Base columns (all roles see these)
             let row = `<tr class="clickable" onclick="window.location='/test/leads/${l.engagement_id}'">
@@ -221,6 +243,10 @@ async function loadLeads(page = 1) {
                         style="background:${sc}15;color:${sc};border-color:${sc}30;">
                         ${l.stage?.name || '—'}
                     </span>
+                </td>
+                <td>
+                    <span class="badge ${badgeClass}">${rating}</span>
+                    <small style="color:var(--text-muted); margin-left:4px;">${score} / 100</small>
                 </td>
                 <td>
                     ${l.sla_breached

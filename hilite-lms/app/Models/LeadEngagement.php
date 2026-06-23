@@ -8,14 +8,17 @@ use Illuminate\Database\Eloquent\Builder;
 class LeadEngagement extends Model
 {
     protected $fillable = [
-        'company_id','lead_id','assigned_user_id','stage_id',
-        'source','status','last_activity_at','sla_due_at','sla_breached'
+        'company_id','lead_id','assigned_user_id','assigned_branch_id','assigned_team_id','stage_id',
+        'source','status','last_activity_at','sla_due_at','sla_breached',
+        'lead_score', 'lead_rating', 'scored_at'
     ];
 
     protected $casts = [
         'last_activity_at' => 'datetime',
         'sla_due_at' => 'datetime',
         'sla_breached' => 'boolean',
+        'lead_score' => 'integer',
+        'scored_at' => 'datetime',
     ];
 
     protected static function booted(): void

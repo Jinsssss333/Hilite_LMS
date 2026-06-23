@@ -45,5 +45,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('view-admin-users', fn($user) =>
             in_array($user->role, ['admin', 'super_admin', 'manager', 'branch_head', 'team_lead'])
         );
+
+        \App\Models\Lead::observe(\App\Observers\LeadObserver::class);
+        \App\Models\LeadEngagement::observe(\App\Observers\LeadEngagementObserver::class);
     }
 }

@@ -161,7 +161,12 @@ async function loadDetail() {
     document.getElementById('lead-subtitle').textContent = l.phone_e164;
 
     const sc = l.stage?.color || '#7C3AED';
+    const score = l.lead_score || 0;
+    const rating = l.lead_rating || 'Cold';
+    const badgeClass = 'badge--' + rating.toLowerCase().replace(' ', '-');
+
     let badges = '';
+    badges += `<span class="badge ${badgeClass}">${rating}</span>`;
     if (l.stage) badges += `<span class="badge badge--stage" style="background:${sc}15;color:${sc};border-color:${sc}30;">${l.stage.name}</span>`;
     if (l.sla_breached) badges += `<span class="badge badge--sla-breached">⚠ SLA Breached</span>`;
     document.getElementById('lead-header-badges').innerHTML = badges;
@@ -182,6 +187,13 @@ async function loadDetail() {
             <div class="detail-field__value">${l.email
                 ? `<a href="mailto:${l.email}" style="color:var(--accent);">${l.email}</a>`
                 : '<span style="color:var(--text-muted)">—</span>'}</div>
+        </div>
+        <div class="detail-field">
+            <div class="detail-field__label">Priority</div>
+            <div class="detail-field__value">
+                <span class="badge ${badgeClass}">${rating}</span>
+                <span style="color:var(--text-muted);font-size:13px;margin-left:6px;">${score} / 100</span>
+            </div>
         </div>
         <div class="detail-field">
             <div class="detail-field__label">Source</div>

@@ -152,6 +152,7 @@ async function loadDashboard() {
                         <th>Name</th>
                         <th>Phone</th>
                         <th>Stage</th>
+                        <th>Priority</th>
                         <th>Activity</th>
                         <th>SLA</th>
                     </tr>
@@ -160,6 +161,9 @@ async function loadDashboard() {
                     ${leadsData.data.map(l => {
                         if (l.sla_breached) breached++;
                         const sc = l.stage?.color || '#7C3AED';
+                        const score = l.lead_score || 0;
+                        const rating = l.lead_rating || 'Cold';
+                        const badgeClass = 'badge--' + rating.toLowerCase().replace(' ', '-');
                         return `<tr class="clickable" onclick="window.location='/test/leads/${l.engagement_id}'">
                             <td><strong>${l.name || '—'}</strong></td>
                             <td><code style="font-size:11px;">${l.phone_e164}</code></td>
@@ -168,6 +172,10 @@ async function loadDashboard() {
                                     style="background:${sc}18;color:${sc};border-color:${sc}30;">
                                     ${l.stage?.name || '—'}
                                 </span>
+                            </td>
+                            <td>
+                                <span class="badge ${badgeClass}">${rating}</span>
+                                <small style="color:var(--text-muted); margin-left:4px;">${score} / 100</small>
                             </td>
                             <td style="font-size:12px;color:var(--text-muted);">${relativeTime(l.last_activity_at)}</td>
                             <td>${l.sla_breached
@@ -185,6 +193,23 @@ async function loadDashboard() {
 
         document.getElementById('recent-leads').innerHTML = recentHtml;
         document.getElementById('stat-breached').textContent = breached;
+    }
+
+    // Fetch Metrics
+    const metricsRes = await api('/leads/metrics');
+    if (metricsRes) {
+        const metricsData = await metricsRes.json();
+        if (metricsData.success) {
+            // These elements have been removed from the top row to restore the old layout
+            // If they are added back elsewhere, they can be updated here
+            const elVeryHot = document.getElementById('stat-very-hot');
+            const elHot = document.getElementById('stat-hot');
+            const elAvg = document.getElementById('stat-avg-score');
+            
+            if (elVeryHot) elVeryHot.textContent = metricsData.data.very_hot;
+            if (elHot) elHot.textContent = metricsData.data.hot;
+            if (elAvg) elAvg.textContent = metricsData.data.avg_score;
+        }
     }
 
     // Follow-ups

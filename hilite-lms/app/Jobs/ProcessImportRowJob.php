@@ -45,12 +45,13 @@ class ProcessImportRowJob implements ShouldQueue
                     'email' => $row->raw_email,
                     'source'=> $row->source,
                     'notes' => $row->raw_notes,
+                    'meta'  => $row->meta ? json_decode($row->meta, true) : [],
                 ], $row->company_id, $job->uploaded_by_user_id);
 
                 $row->update(['status' => 'done']);
                 $job->increment('processed_rows');
                 $result['is_duplicate'] ? $job->increment('duplicate_count') : $job->increment('created_count');
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $row->update(['status' => 'failed', 'failure_reason' => $e->getMessage()]);
                 $job->increment('processed_rows');
                 $job->increment('failed_count');

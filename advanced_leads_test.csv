@@ -1,0 +1,64 @@
+name,phone,email,notes,company,budget,is_decision_maker,invalid_phone,email_bounced
+"Perfect CEO 1",+971509990001,ceo_perfect1@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 2",+971509990002,ceo_perfect2@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 3",+971509990003,ceo_perfect3@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 4",+971509990004,ceo_perfect4@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 5",+971509990005,ceo_perfect5@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 6",+971509990006,ceo_perfect6@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 7",+971509990007,ceo_perfect7@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 8",+971509990008,ceo_perfect8@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 9",+971509990009,ceo_perfect9@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 10",+971509990010,ceo_perfect10@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 11",+971509990011,ceo_perfect11@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 12",+971509990012,ceo_perfect12@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 13",+971509990013,ceo_perfect13@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 14",+971509990014,ceo_perfect14@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 15",+971509990015,ceo_perfect15@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 16",+971509990016,ceo_perfect16@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 17",+971509990017,ceo_perfect17@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 18",+971509990018,ceo_perfect18@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 19",+971509990019,ceo_perfect19@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Perfect CEO 20",+971509990020,ceo_perfect20@enterprise.com,"Ready to buy now","Global Enterprise Corp",150000,1,,
+"Manager 1",+971508880001,manager1@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 2",+971508880002,manager2@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 3",+971508880003,manager3@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 4",+971508880004,manager4@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 5",+971508880005,manager5@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 6",+971508880006,manager6@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 7",+971508880007,manager7@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 8",+971508880008,manager8@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 9",+971508880009,manager9@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 10",+971508880010,manager10@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 11",+971508880011,manager11@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 12",+971508880012,manager12@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 13",+971508880013,manager13@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 14",+971508880014,manager14@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 15",+971508880015,manager15@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 16",+971508880016,manager16@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 17",+971508880017,manager17@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 18",+971508880018,manager18@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 19",+971508880019,manager19@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Manager 20",+971508880020,manager20@smallbiz.com,"Looking for cheaper alternatives","Small Biz LLC",5000,1,,
+"Fake Spam Lead 1",+910000000001,bounced_email1@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 2",+910000000002,bounced_email2@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 3",+910000000003,bounced_email3@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 4",+910000000004,bounced_email4@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 5",+910000000005,bounced_email5@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 6",+910000000006,bounced_email6@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 7",+910000000007,bounced_email7@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 8",+910000000008,bounced_email8@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 9",+910000000009,bounced_email9@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 10",+910000000010,bounced_email10@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 11",+910000000011,bounced_email11@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 12",+910000000012,bounced_email12@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 13",+910000000013,bounced_email13@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 14",+910000000014,bounced_email14@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 15",+910000000015,bounced_email15@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 16",+910000000016,bounced_email16@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 17",+910000000017,bounced_email17@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 18",+910000000018,bounced_email18@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 19",+910000000019,bounced_email19@spam.com,"Fake number and bad email",,,,1,1
+"Fake Spam Lead 20",+910000000020,bounced_email20@spam.com,"Fake number and bad email",,,,1,1
+"Duplicate CEO",+971507771234,dup@test.com,"First submission","Duplicate Inc",50000,1,,
+"Duplicate CEO",+971507771234,dup@test.com,"Second submission!","Duplicate Inc",50000,1,,
+"Duplicate CEO",+971507771234,dup@test.com,"Third submission!!","Duplicate Inc",50000,1,,

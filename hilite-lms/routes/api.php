@@ -27,6 +27,7 @@ Route::middleware(['auth:sanctum', 'company.scope'])->group(function () {
 
     // Leads — reads are not throttled beyond Sanctum defaults; writes are
     Route::get('/leads/check-duplicate', [LeadController::class, 'checkDuplicate']);
+    Route::get('/leads/metrics', [LeadController::class, 'metrics']);
     Route::get('/leads', [LeadController::class, 'index']);
     Route::post('/leads', [LeadController::class, 'store'])->middleware('throttle:30,1');
     Route::get('/leads/{id}', [LeadController::class, 'show']);

@@ -82,6 +82,15 @@ class ImportController extends Controller
 
             $idempotencyKey = hash('sha256', $companyId . '|' . strtolower($rawPhone) . '|' . $source . '|' . $job->id);
 
+            // Pack any extra columns into a meta JSON array
+            $standardFields = ['name', 'phone', 'email', 'notes'];
+            $metaData = [];
+            foreach ($data as $col => $val) {
+                if (!in_array($col, $standardFields) && trim((string)$val) !== '') {
+                    $metaData[$col] = trim((string)$val);
+                }
+            }
+
             $batch[] = [
                 'company_id'      => $companyId,
                 'import_job_id'   => $job->id,
@@ -90,7 +99,7 @@ class ImportController extends Controller
                 'raw_email'       => trim((string) ($data['email'] ?? '')) ?: null,
                 'source'          => $source,
                 'raw_notes'       => trim((string) ($data['notes'] ?? '')) ?: null,
-                'meta'            => null,
+                'meta'            => empty($metaData) ? null : json_encode($metaData),
                 'status'          => 'pending',
                 'idempotency_key' => $idempotencyKey,
                 'created_at'      => $now,
