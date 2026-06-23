@@ -16,75 +16,76 @@
 </div>
 
 <div class="page-header">
-    <h1 id="dashboard-heading">Dashboard</h1>
-    <p id="dashboard-subhead">Real-time overview of your lead pipeline</p>
+    <h1 id="dashboard-heading">Pipeline Overview</h1>
     <div class="header-actions">
-        <a href="/test/leads/create" class="btn btn--primary btn--sm">✚ New Lead</a>
-        <button class="btn btn--ghost btn--sm" onclick="refreshDashboard()" id="refresh-btn">↻ Refresh</button>
+        <button class="btn btn--ghost" onclick="refreshDashboard()" id="refresh-btn">↻</button>
     </div>
 </div>
 
-{{-- Stat Cards --}}
-<div class="stats-row" id="stats-row">
-    <div class="stat-card stat-card--accent animate-in">
-        <div class="stat-card__icon stat-card__icon--accent">👥</div>
-        <div class="stat-card__label" id="stat-total-label">My Leads</div>
-        <div class="stat-card__value stat-card__value--accent" id="stat-total">
-            <span class="spinner" style="width:22px;height:22px;border-width:2px;"></span>
-        </div>
-    </div>
-    <div class="stat-card stat-card--danger animate-in">
-        <div class="stat-card__icon stat-card__icon--danger">🚨</div>
-        <div class="stat-card__label">SLA Breached</div>
-        <div class="stat-card__value stat-card__value--danger" id="stat-breached">—</div>
-    </div>
-    <div class="stat-card stat-card--warning animate-in">
-        <div class="stat-card__icon stat-card__icon--warning">📅</div>
-        <div class="stat-card__label">Upcoming Follow-ups</div>
-        <div class="stat-card__value stat-card__value--warning" id="stat-followups">—</div>
-    </div>
-    {{-- Pipeline stat — hidden from salesperson --}}
-    <div class="stat-card stat-card--success animate-in admin-only">
-        <div class="stat-card__icon stat-card__icon--success">🔀</div>
-        <div class="stat-card__label">Pipeline Stages</div>
-        <div class="stat-card__value stat-card__value--success" id="stat-stages">—</div>
-    </div>
+{{-- Pill Navigation --}}
+<div class="pill-nav">
+    <button class="pill active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        All Leads
+    </button>
+    <button class="pill">🔥 Hot Leads</button>
+    <button class="pill">⚠️ Breached SLA</button>
+    <button class="pill">✅ Closed Won</button>
 </div>
 
 {{-- Main content grid --}}
-<div class="detail-grid" style="gap:20px;">
-    {{-- Recent Leads --}}
-    <div class="card">
-        <div class="section-header" style="margin-bottom:16px;">
-            <div class="card__title" style="margin-bottom:0;">
-                <span class="card__title-icon">👥</span>
-                <span id="recent-leads-title">My Recent Leads</span>
-            </div>
-            <a href="/test/leads" class="btn btn--soft btn--sm">View all →</a>
-        </div>
-        <div id="recent-leads">
-            <div class="loading-block" style="padding:36px;">
-                <span class="spinner"></span> Loading leads…
-            </div>
-        </div>
-    </div>
+<div class="section-header" style="margin-top: 32px;">
+    <h2 id="recent-leads-title">Recent Opportunities</h2>
+    <a href="/test/leads" class="btn btn--ghost btn--sm" style="border:none;">View all →</a>
+</div>
 
-    {{-- Upcoming Follow-ups --}}
-    <div class="card">
-        <div class="section-header" style="margin-bottom:16px;">
-            <div class="card__title" style="margin-bottom:0;">
-                <span class="card__title-icon">📅</span>
-                Upcoming Follow-ups
-            </div>
-            <a href="/test/activities" class="btn btn--soft btn--sm">View all →</a>
-        </div>
-        <div id="upcoming-followups">
-            <div class="loading-block" style="padding:36px;">
-                <span class="spinner"></span> Loading…
-            </div>
+<div id="recent-leads" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px; margin-bottom:40px;">
+    <div class="loading-block" style="padding:36px; grid-column:1/-1;">
+        <span class="spinner"></span> Loading opportunities…
+    </div>
+</div>
+
+{{-- Upcoming Follow-ups --}}
+<div class="section-header">
+    <h2>Upcoming Activities</h2>
+</div>
+<div class="card bg-pastel-white">
+    <div id="upcoming-followups">
+        <div class="loading-block" style="padding:36px;">
+            <span class="spinner"></span> Loading…
         </div>
     </div>
 </div>
+
+{{-- Template for Right Sidebar Stats --}}
+<template id="right-sidebar-stats-template">
+    <div style="background:#FFF; border-radius:var(--radius-sm); padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.03);">
+        <h3 style="font-size:14px; margin-bottom:16px;">Activity Summary</h3>
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            <div>
+                <div style="font-size:24px; font-weight:800;" id="stat-total">...</div>
+                <div style="font-size:12px; color:var(--text-muted);" id="stat-total-label">Total Leads</div>
+            </div>
+            <div style="display:flex; gap:12px;">
+                <div style="flex:1; background:var(--pastel-purple); padding:12px; border-radius:12px;">
+                    <div style="font-size:18px; font-weight:800; color:#2e3b5a;" id="stat-breached">...</div>
+                    <div style="font-size:11px; font-weight:600; color:#2e3b5a; opacity:0.8;">Breached</div>
+                </div>
+                <div style="flex:1; background:var(--pastel-orange); padding:12px; border-radius:12px;">
+                    <div style="font-size:18px; font-weight:800; color:#5a3c1e;" id="stat-followups">...</div>
+                    <div style="font-size:11px; font-weight:600; color:#5a3c1e; opacity:0.8;">Follow-ups</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="admin-only" style="background:var(--pastel-green); border-radius:var(--radius-sm); padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.03);">
+        <div style="font-size:24px; font-weight:800; color:#1e4a36;" id="stat-stages">...</div>
+        <div style="font-size:12px; font-weight:600; color:#1e4a36; opacity:0.8;">Pipeline Stages</div>
+    </div>
+    
+    <a href="/test/leads/create" class="btn btn--primary" style="width:100%; border-radius:12px; padding:12px;">✚ Add New Lead</a>
+</template>
 
 {{-- Admin-only: Quick Links section --}}
 <div class="card admin-only" style="margin-top:20px;">
@@ -108,15 +109,25 @@
 (function() {
     const cfg = window.__config;
     if (cfg && !cfg.canSeeGlobal) {
-        document.getElementById('dashboard-heading').textContent    = 'My Dashboard';
-        document.getElementById('dashboard-subhead').textContent    = 'Your personal lead overview';
-        document.getElementById('stat-total-label').textContent     = 'My Leads';
+        document.getElementById('dashboard-heading').textContent    = 'My Pipeline';
         document.getElementById('recent-leads-title').textContent   = 'My Recent Leads';
     } else {
-        document.getElementById('dashboard-heading').textContent    = 'Dashboard';
-        document.getElementById('dashboard-subhead').textContent    = 'Organization-wide lead overview';
-        document.getElementById('stat-total-label').textContent     = 'Total Leads';
-        document.getElementById('recent-leads-title').textContent   = 'Recent Leads';
+        document.getElementById('dashboard-heading').textContent    = 'Pipeline Overview';
+        document.getElementById('recent-leads-title').textContent   = 'Recent Opportunities';
+    }
+    
+    // Inject right sidebar stats
+    const portal = document.getElementById('right-sidebar-portal');
+    const template = document.getElementById('right-sidebar-stats-template');
+    if (portal && template) {
+        portal.appendChild(template.content.cloneNode(true));
+        
+        if (cfg && !cfg.canSeeGlobal) {
+            document.getElementById('stat-total-label').textContent = 'My Leads';
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+        } else {
+            document.getElementById('stat-total-label').textContent = 'Total Leads';
+        }
     }
 })();
 
@@ -145,47 +156,34 @@ async function loadDashboard() {
             leadsData.meta?.total ?? leadsData.data.length;
 
         let breached = 0;
+        const pastelColors = ['bg-pastel-pink', 'bg-pastel-purple', 'bg-pastel-green', 'bg-pastel-orange'];
+        
         const recentHtml = leadsData.data.length
-            ? `<table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>Stage</th>
-                        <th>Priority</th>
-                        <th>Activity</th>
-                        <th>SLA</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${leadsData.data.map(l => {
-                        if (l.sla_breached) breached++;
-                        const sc = l.stage?.color || '#7C3AED';
-                        const score = l.lead_score || 0;
-                        const rating = l.lead_rating || 'Cold';
-                        const badgeClass = 'badge--' + rating.toLowerCase().replace(' ', '-');
-                        return `<tr class="clickable" onclick="window.location='/test/leads/${l.engagement_id}'">
-                            <td><strong>${l.name || '—'}</strong></td>
-                            <td><code style="font-size:11px;">${l.phone_e164}</code></td>
-                            <td>
-                                <span class="badge badge--stage"
-                                    style="background:${sc}18;color:${sc};border-color:${sc}30;">
-                                    ${l.stage?.name || '—'}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge ${badgeClass}">${rating}</span>
-                                <small style="color:var(--text-muted); margin-left:4px;">${score} / 100</small>
-                            </td>
-                            <td style="font-size:12px;color:var(--text-muted);">${relativeTime(l.last_activity_at)}</td>
-                            <td>${l.sla_breached
-                                ? '<span class="badge badge--sla-breached">⚠ Breached</span>'
-                                : '<span class="badge badge--sla-ok">✓ OK</span>'}</td>
-                        </tr>`;
-                    }).join('')}
-                </tbody>
-               </table>`
-            : `<div class="empty-state">
+            ? leadsData.data.map((l, i) => {
+                if (l.sla_breached) breached++;
+                const colorClass = pastelColors[i % pastelColors.length];
+                const score = l.lead_score || 0;
+                
+                return `
+                <div class="card ${colorClass}" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; min-height:160px;" onclick="window.location='/test/leads/${l.engagement_id}'">
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div class="card__title-icon" style="background:rgba(255,255,255,0.5);">👤</div>
+                            <div style="background:rgba(255,255,255,0.5); padding:4px 8px; border-radius:8px; font-size:12px; font-weight:700;">★ ${score}</div>
+                        </div>
+                        <h3 style="font-size:20px; font-weight:700; margin:16px 0 8px; line-height:1.2;">${l.name || '—'}</h3>
+                        <div style="font-size:13px; opacity:0.8;">${l.stage?.name || '—'}</div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+                        <div style="font-size:12px; font-weight:600;">${l.sla_breached ? '⚠️ Breached' : '✓ On Track'}</div>
+                        <div style="display:flex; margin-left:-8px;">
+                            <!-- Placeholder for assigned user avatars -->
+                            <div style="width:24px; height:24px; border-radius:50%; background:#FFF; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#333;">A</div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('')
+            : `<div class="empty-state" style="grid-column:1/-1;">
                 <span class="empty-state__icon">📭</span>
                 <div class="empty-state__text">No leads yet</div>
                 <div class="empty-state__sub">Create your first lead to get started</div>

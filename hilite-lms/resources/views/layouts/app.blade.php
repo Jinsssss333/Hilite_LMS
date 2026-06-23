@@ -12,83 +12,48 @@
     <link rel="stylesheet" href="{{ asset('css/test-ui.css') }}">
 </head>
 <body>
-    {{-- Top Bar --}}
-    <header class="topbar">
-        <div class="topbar__brand">
-            <span class="topbar__logo">H</span>
-            <span class="topbar__title">Hilite LMS <small>CRM</small></span>
-        </div>
-
-        {{-- Role-aware top nav (collapsed on mobile) --}}
-        <div class="topbar__center" id="topbar-center" style="display:none;">
-            {{-- Populated by JS based on role --}}
-        </div>
-
-        <div class="topbar__user" id="topbar-user" style="display:flex;align-items:center;gap:16px;">
-            {{-- Availability Toggle --}}
-            <div id="availability-wrapper" style="display:none;align-items:center;gap:8px;font-size:12px;color:var(--text-muted);font-weight:500;">
-                <label class="switch">
-                    <input type="checkbox" id="availability-toggle" onchange="toggleAvailability(this.checked)">
-                    <span class="slider"></span>
-                </label>
-                <span id="availability-label">Available</span>
-            </div>
-
-            <div class="topbar__user-info" id="topbar-user-info" style="display:none">
-                <div class="topbar__avatar" id="topbar-avatar">?</div>
-                <span id="topbar-username"></span>
-                <span id="topbar-role" class="badge badge--role" style="font-size:10px;"></span>
-            </div>
-            <button class="btn btn--ghost btn--sm" onclick="doLogout()" id="logout-btn" style="display:none">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-                Sign Out
-            </button>
-        </div>
-    </header>
+    {{-- Top Bar Removed for new layout --}}
 
     <div class="app-shell">
-        {{-- Sidebar — roles control visibility of items via CSS + JS body classes --}}
+        {{-- Sidebar — minimal icons only --}}
         <nav class="sidebar" id="sidebar">
+            <div class="sidebar__logo">H</div>
             <div class="sidebar__section">Main</div>
 
-            <a href="/test/dashboard" class="sidebar__link @yield('nav-dashboard')">
-                <span class="sidebar__icon">📊</span> Dashboard
+            <a href="/test/dashboard" class="sidebar__link @yield('nav-dashboard')" title="Dashboard">
+                <span class="sidebar__icon">📊</span><span class="sidebar__link-text">Dashboard</span>
             </a>
-            <a href="/test/leads" class="sidebar__link @yield('nav-leads')">
-                <span class="sidebar__icon">👥</span> Leads
+            <a href="/test/leads" class="sidebar__link @yield('nav-leads')" title="Leads">
+                <span class="sidebar__icon">👥</span><span class="sidebar__link-text">Leads</span>
             </a>
-            <a href="/test/leads/create" class="sidebar__link @yield('nav-create')">
-                <span class="sidebar__icon">✚</span> New Lead
+            <a href="/test/leads/create" class="sidebar__link @yield('nav-create')" title="New Lead">
+                <span class="sidebar__icon">✚</span><span class="sidebar__link-text">New Lead</span>
             </a>
-            <a href="/test/activities" class="sidebar__link @yield('nav-activities')">
-                <span class="sidebar__icon">📅</span> Follow-ups
+            <a href="/test/activities" class="sidebar__link @yield('nav-activities')" title="Follow-ups">
+                <span class="sidebar__icon">📅</span><span class="sidebar__link-text">Follow-ups</span>
             </a>
 
-            {{-- Management section — hidden for salesperson role --}}
+            {{-- Management section --}}
             <div class="sidebar__divider admin-only" style="display:block;"></div>
             <div class="sidebar__section admin-only">Management</div>
-            <a href="/test/pipeline" class="sidebar__link admin-only @yield('nav-pipeline')">
-                <span class="sidebar__icon">🔀</span> Pipeline
+            <a href="/test/pipeline" class="sidebar__link admin-only @yield('nav-pipeline')" title="Pipeline">
+                <span class="sidebar__icon">🔀</span><span class="sidebar__link-text">Pipeline</span>
             </a>
-            <a href="/test/import" class="sidebar__link admin-only @yield('nav-import')">
-                <span class="sidebar__icon">📤</span> Bulk Import
+            <a href="/test/import" class="sidebar__link admin-only @yield('nav-import')" title="Bulk Import">
+                <span class="sidebar__icon">📤</span><span class="sidebar__link-text">Bulk Import</span>
             </a>
-            <a href="/test/users" class="sidebar__link admin-only @yield('nav-users')">
-                <span class="sidebar__icon">👤</span> Users
+            <a href="/test/users" class="sidebar__link admin-only @yield('nav-users')" title="Users">
+                <span class="sidebar__icon">👤</span><span class="sidebar__link-text">Users</span>
             </a>
 
-            {{-- System section — admin/manager only --}}
+            {{-- System section --}}
             <div class="sidebar__divider admin-only" style="display:block;"></div>
             <div class="sidebar__section admin-only">System</div>
-            <a href="/test/audit" class="sidebar__link admin-only @yield('nav-audit')">
-                <span class="sidebar__icon">📋</span> Audit Logs
+            <a href="/test/audit" class="sidebar__link admin-only @yield('nav-audit')" title="Audit Logs">
+                <span class="sidebar__icon">📋</span><span class="sidebar__link-text">Audit Logs</span>
             </a>
-            <a href="/test/sla" class="sidebar__link admin-only @yield('nav-sla')">
-                <span class="sidebar__icon">⏱️</span> SLA Policies
+            <a href="/test/sla" class="sidebar__link admin-only @yield('nav-sla')" title="SLA Policies">
+                <span class="sidebar__icon">⏱️</span><span class="sidebar__link-text">SLA Policies</span>
             </a>
         </nav>
 
@@ -96,6 +61,40 @@
         <main class="main-content">
             @yield('content')
         </main>
+
+        {{-- Right Sidebar --}}
+        <aside class="sidebar-right" id="sidebar-right">
+            {{-- User Profile Area --}}
+            <div id="topbar-user-info" style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <div class="topbar__avatar" id="topbar-avatar" style="width:64px; height:64px; font-size:24px; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.1);">?</div>
+                <div id="topbar-username" style="font-size:18px; font-weight:700;"></div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span id="topbar-role" class="badge badge--role" style="font-size:11px;"></span>
+                </div>
+            </div>
+
+            {{-- Availability Toggle --}}
+            <div id="availability-wrapper" style="display:none; align-items:center; justify-content:center; gap:8px; font-size:13px; color:var(--text-muted); font-weight:600; background:#FFF; padding:10px; border-radius:12px; margin-top:10px;">
+                <label class="switch">
+                    <input type="checkbox" id="availability-toggle" onchange="toggleAvailability(this.checked)">
+                    <span class="slider"></span>
+                </label>
+                <span id="availability-label">Available</span>
+            </div>
+
+            {{-- Logout Button --}}
+            <button class="btn btn--ghost" onclick="doLogout()" id="logout-btn" style="display:none; width:100%; border-radius:12px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Sign Out
+            </button>
+
+            {{-- Portal for page-specific right sidebar content --}}
+            <div id="right-sidebar-portal" style="margin-top:20px; display:flex; flex-direction:column; gap:20px;"></div>
+        </aside>
     </div>
 
     {{-- Toast container --}}
@@ -238,7 +237,7 @@
             availLabel.style.color = isAvailable ? '#059669' : 'var(--text-muted)';
         }
 
-        // Show user info in topbar
+        // Show user info in right sidebar
         const userInfoEl = document.getElementById('topbar-user-info');
         const logoutBtn  = document.getElementById('logout-btn');
         const avatarEl   = document.getElementById('topbar-avatar');
@@ -246,7 +245,7 @@
         const roleEl     = document.getElementById('topbar-role');
 
         if (userInfoEl) userInfoEl.style.display = 'flex';
-        if (logoutBtn)  logoutBtn.style.display  = 'inline-flex';
+        if (logoutBtn)  logoutBtn.style.display  = 'flex';
 
         if (user) {
             if (avatarEl) avatarEl.textContent = (user.name || '?')[0].toUpperCase();
