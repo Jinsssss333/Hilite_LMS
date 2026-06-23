@@ -82,4 +82,22 @@ class AssignmentController extends Controller
             ])->values(),
         ], 200);
     }
+
+    /**
+     * POST /api/admin/assignments/process-queue
+     * Admins can manually trigger the auto-assignment queue.
+     */
+    public function processQueue(Request $request, \App\Services\Routing\AssignmentEngine $assignmentEngine)
+    {
+        $companyId = app('current_company_id');
+        $assignedCount = $assignmentEngine->processQueue($companyId);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Queue processed successfully',
+            'data'    => [
+                'assigned_count' => $assignedCount
+            ]
+        ], 200);
+    }
 }

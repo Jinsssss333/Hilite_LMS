@@ -63,6 +63,11 @@ class StageTransitionService
 
         $engagement->update($updates);
 
+        if ($newStage->is_closed) {
+            // A slot just opened up for this salesperson. Attempt to process queued leads.
+            app(\App\Services\Routing\AssignmentEngine::class)->processQueue($engagement->company_id);
+        }
+
         // Log the stage change activity automatically
         if ($dispositionId || $notes) {
             $engagement->activities()->create([

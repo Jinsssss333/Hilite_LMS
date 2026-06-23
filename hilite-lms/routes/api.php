@@ -54,4 +54,7 @@ Route::middleware(['auth:sanctum', 'company.scope'])->group(function () {
     Route::get('/admin/sla-policies', [SlaPolicyController::class, 'index']);
     Route::patch('/admin/sla-policies/{id}', [SlaPolicyController::class, 'update']);
     Route::get('/admin/users', [UserController::class, 'index']);
+    Route::post('/admin/users', [UserController::class, 'store']);
+    Route::delete('/admin/users/{id}', [UserController::class, 'destroy']);
+    Route::post('/admin/assignments/process-queue', [AssignmentController::class, 'processQueue']);
 });

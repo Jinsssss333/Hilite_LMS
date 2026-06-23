@@ -104,4 +104,43 @@ class AssignmentEngine
         }
         return false;
     }
+
+    /**
+     * Processes the assignment queue for a company.
+     * Tries to assign waiting leads. Skips already assigned leads.
+     * @return int Number of leads successfully assigned.
+     */
+    public function processQueue(int $companyId): int
+    {
+        $queuedItems = AssignmentQueue::where('company_id', $companyId)
+            ->where('status', 'waiting')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $assignedCount = 0;
+
+        foreach ($queuedItems as $item) {
+            $engagement = $item->engagement;
+
+            if (!$engagement) {
+                $item->update(['status' => 'failed', 'failure_reason' => 'Engagement not found']);
+                continue;
+            }
+
+            // Exclude already assigned leads
+            if ($engagement->assigned_user_id !== null) {
+                $item->update(['status' => 'assigned']);
+                continue;
+            }
+
+            // Try to assign
+            $assigned = $this->autoAssign($engagement);
+            if ($assigned) {
+                $item->update(['status' => 'assigned']);
+                $assignedCount++;
+            }
+        }
+
+        return $assignedCount;
+    }
 }
