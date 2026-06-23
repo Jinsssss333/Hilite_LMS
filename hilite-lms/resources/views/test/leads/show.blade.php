@@ -143,6 +143,10 @@
 @section('scripts')
 <script>
 const engagementId = {{ $id }};
+let currentStageOrder = 0;
+let currentStageName = '';
+let isLeadClosed = false;
+let allStages = [];
 
 async function loadDetail() {
     const res = await api(`/leads/${engagementId}`);
@@ -157,6 +161,11 @@ async function loadDetail() {
     }
 
     const l = data.data;
+    
+    currentStageOrder = l.stage?.order || 0;
+    currentStageName = (l.stage?.name || '').toLowerCase().trim();
+    isLeadClosed = l.stage?.is_closed || false;
+    
     document.getElementById('lead-title').textContent   = l.name || `Lead #${engagementId}`;
     document.getElementById('lead-subtitle').textContent = l.phone_e164;
 
@@ -280,6 +289,9 @@ async function loadDetail() {
             <div class="empty-state__text">No assignment history</div>
         </div>`;
     }
+    
+    // Now that we have the lead's current stage, render the options correctly
+    renderStageOptions();
 }
 
 async function loadStages() {
@@ -287,9 +299,50 @@ async function loadStages() {
     if (!res) return;
     const data = await res.json();
     if (data.success) {
-        document.getElementById('action-stage').innerHTML =
-            data.data.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+        allStages = data.data;
+        renderStageOptions();
     }
+}
+
+function renderStageOptions() {
+    if (!allStages.length) return;
+    
+    // The exact state machine requested by the user
+    const allowedTransitions = {
+        'new': ['contacted', 'not interested', 'lost'],
+        'contacted': ['interested', 'site visit scheduled', 'not interested', 'lost'],
+        'interested': ['site visit scheduled', 'negotiation', 'not interested', 'lost'],
+        'site visit scheduled': ['negotiation', 'booked', 'not interested', 'lost'],
+        'negotiation': ['booked', 'lost'],
+        'booked': [],
+        'lost': ['new', 'contacted'],
+        'not interested': ['new', 'contacted']
+    };
+    
+    let allowedStages = [];
+    
+    if (allowedTransitions[currentStageName]) {
+        // Enforce the explicit mapping
+        const allowedNames = allowedTransitions[currentStageName];
+        allowedStages = allStages.filter(s => allowedNames.includes(s.name.toLowerCase().trim()));
+    } else {
+        // Fallback to order-based logic if the name doesn't match the map
+        if (isLeadClosed) {
+            const firstOpen = allStages.find(s => !s.is_closed);
+            allowedStages = allStages.filter(s => s.id === firstOpen?.id || s.is_closed);
+        } else {
+            allowedStages = allStages.filter(s => s.order > currentStageOrder || s.is_closed);
+        }
+    }
+    
+    // Always include the current stage so the dropdown doesn't blank out
+    if (!allowedStages.find(s => s.name.toLowerCase().trim() === currentStageName)) {
+        const curr = allStages.find(s => s.name.toLowerCase().trim() === currentStageName);
+        if (curr) allowedStages.unshift(curr);
+    }
+    
+    document.getElementById('action-stage').innerHTML =
+        allowedStages.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
 }
 
 async function loadDispositions() {
@@ -330,7 +383,11 @@ async function updateStage() {
     });
     const data = await res.json();
     btn.disabled = false; btn.textContent = 'Update Stage';
-    if (data.success) { toast('Stage updated!', 'success'); loadDetail(); }
+    if (data.success) { 
+        toast('Stage updated!', 'success'); 
+        await loadDetail(); 
+        renderStageOptions();
+    }
     else toast(data.message || 'Error', 'error');
 }
 
@@ -374,13 +431,18 @@ async function logActivity() {
         toast('Activity logged!', 'success');
         document.getElementById('act-notes').value = '';
         document.getElementById('act-followup').value = '';
-        loadDetail();
+        await loadDetail();
+        renderStageOptions();
     } else toast(data.message || 'Error', 'error');
 }
 
-loadDetail();
-loadStages();
-loadDispositions();
-loadAssignable();
+async function init() {
+    await loadStages();
+    await loadDetail();
+    loadDispositions();
+    loadAssignable();
+}
+
+init();
 </script>
 @endsection

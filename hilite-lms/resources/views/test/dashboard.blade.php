@@ -6,31 +6,33 @@
 
 {{-- Role-contextual banners --}}
 <div class="role-banner role-banner--salesperson animate-in">
-    👋 Welcome! You're viewing <strong>your assigned leads</strong> only.
+    <i data-lucide="hand" style="width:16px;height:16px"></i> Welcome! You're viewing <strong>your assigned leads</strong> only.
 </div>
 <div class="role-banner role-banner--admin animate-in">
-    🛡️ Admin view — showing <strong>all global data</strong> across the organization.
+    <i data-lucide="shield" style="width:16px;height:16px"></i> Admin view — showing <strong>all global data</strong> across the organization.
 </div>
 <div class="role-banner role-banner--manager animate-in">
-    📊 Manager view — you can see <strong>team-wide data</strong>.
+    <i data-lucide="bar-chart-2" style="width:16px;height:16px"></i> Manager view — you can see <strong>team-wide data</strong>.
 </div>
 
 <div class="page-header">
     <h1 id="dashboard-heading">Pipeline Overview</h1>
     <div class="header-actions">
-        <button class="btn btn--ghost" onclick="refreshDashboard()" id="refresh-btn">↻</button>
+        <button class="btn btn--ghost" onclick="refreshDashboard()" id="refresh-btn">
+            <i data-lucide="refresh-cw" style="width:16px;height:16px"></i>
+        </button>
     </div>
 </div>
 
 {{-- Pill Navigation --}}
 <div class="pill-nav">
     <button class="pill active">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <i data-lucide="users" style="width:16px;height:16px"></i>
         All Leads
     </button>
-    <button class="pill">🔥 Hot Leads</button>
-    <button class="pill">⚠️ Breached SLA</button>
-    <button class="pill">✅ Closed Won</button>
+    <button class="pill"><i data-lucide="flame" style="width:16px;height:16px;color:var(--danger)"></i> Hot Leads</button>
+    <button class="pill"><i data-lucide="alert-triangle" style="width:16px;height:16px;color:var(--warning)"></i> Breached SLA</button>
+    <button class="pill"><i data-lucide="check-circle" style="width:16px;height:16px;color:var(--success)"></i> Closed Won</button>
 </div>
 
 {{-- Main content grid --}}
@@ -84,20 +86,22 @@
         <div style="font-size:12px; font-weight:600; color:var(--text-muted); opacity:0.8;">Pipeline Stages</div>
     </div>
     
-    <a href="/test/leads/create" class="btn btn--primary" style="width:100%; border-radius:12px; padding:12px;">✚ Add New Lead</a>
+    <a href="/test/leads/create" class="btn btn--primary" style="width:100%; border-radius:12px; padding:12px;">
+        <i data-lucide="plus" style="width:16px;height:16px"></i> Add New Lead
+    </a>
 </template>
 
 {{-- Admin-only: Quick Links section --}}
 <div class="card admin-only" style="margin-top:20px;">
     <div class="card__title">
-        <span class="card__title-icon">⚡</span>
+        <span class="card__title-icon"><i data-lucide="zap" style="width:16px;height:16px"></i></span>
         Quick Admin Actions
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <a href="/test/audit"  class="btn btn--ghost btn--sm">📋 Audit Logs</a>
-        <a href="/test/sla"    class="btn btn--ghost btn--sm">⏱️ SLA Policies</a>
-        <a href="/test/users"  class="btn btn--ghost btn--sm">👤 Manage Users</a>
-        <a href="/test/import" class="btn btn--ghost btn--sm">📤 Bulk Import</a>
+        <a href="/test/audit"  class="btn btn--ghost btn--sm"><i data-lucide="clipboard-list" style="width:14px;height:14px"></i> Audit Logs</a>
+        <a href="/test/sla"    class="btn btn--ghost btn--sm"><i data-lucide="timer" style="width:14px;height:14px"></i> SLA Policies</a>
+        <a href="/test/users"  class="btn btn--ghost btn--sm"><i data-lucide="user-cog" style="width:14px;height:14px"></i> Manage Users</a>
+        <a href="/test/import" class="btn btn--ghost btn--sm"><i data-lucide="upload" style="width:14px;height:14px"></i> Bulk Import</a>
     </div>
 </div>
 
@@ -133,9 +137,13 @@
 
 async function refreshDashboard() {
     const btn = document.getElementById('refresh-btn');
-    btn.disabled = true; btn.textContent = '↻ Refreshing…';
+    btn.disabled = true; 
+    btn.innerHTML = '<i data-lucide="refresh-cw" style="width:16px;height:16px;animation:spin 1s linear infinite"></i>';
+    lucide.createIcons();
     await loadDashboard();
-    btn.disabled = false; btn.textContent = '↻ Refresh';
+    btn.disabled = false; 
+    btn.innerHTML = '<i data-lucide="refresh-cw" style="width:16px;height:16px"></i>';
+    lucide.createIcons();
     toast('Dashboard refreshed', 'success');
 }
 
@@ -177,13 +185,12 @@ async function loadDashboard() {
                 if (!stageColors[stageName] && sc.startsWith('#')) {
                     // Just use whatever color the DB provides if it's not in the map
                 }
-                
                 return `
                 <div class="card" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; min-height:160px;" onclick="window.location='/test/leads/${l.engagement_id}'">
                     <div>
                         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                            <div class="card__title-icon" style="background:var(--bg-input); border:1px solid var(--border-light);">👤</div>
-                            <div style="background:var(--bg-input); padding:4px 8px; border-radius:8px; font-size:12px; font-weight:700; color:var(--text-primary); border:1px solid var(--border-light);">★ ${score}</div>
+                            <div class="card__title-icon" style="background:var(--bg-input); border:1px solid var(--border-light);"><i data-lucide="user" style="width:14px;height:14px"></i></div>
+                            <div style="background:var(--bg-input); padding:4px 8px; border-radius:8px; font-size:12px; font-weight:700; color:var(--text-primary); border:1px solid var(--border-light); display:flex; align-items:center; gap:4px;"><i data-lucide="gauge" style="width:12px;height:12px;color:var(--text-muted)"></i> ${score}</div>
                         </div>
                         <h3 style="font-size:20px; font-weight:700; margin:16px 0 8px; line-height:1.2; color:var(--text-primary);">${l.name || '—'}</h3>
                         <div style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:${sc}; background:${sc}1A; padding:4px 8px; border-radius:6px; border:1px solid ${sc}33;">
@@ -192,7 +199,9 @@ async function loadDashboard() {
                         </div>
                     </div>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding-top:16px; border-top:1px solid var(--border-light);">
-                        <div style="font-size:12px; font-weight:600; color:${l.sla_breached ? 'var(--danger)' : 'var(--text-muted)'};">${l.sla_breached ? '⚠️ Breached' : '✓ On Track'}</div>
+                        <div style="display:flex; align-items:center; gap:4px; font-size:12px; font-weight:600; color:${l.sla_breached ? 'var(--danger)' : 'var(--text-muted)'};">
+                            ${l.sla_breached ? '<i data-lucide="alert-triangle" style="width:14px;height:14px"></i> Breached' : '<i data-lucide="check-circle" style="width:14px;height:14px"></i> On Track'}
+                        </div>
                         <div style="display:flex; margin-left:-8px;">
                             <!-- Placeholder for assigned user avatars -->
                             <div style="width:24px; height:24px; border-radius:50%; background:var(--bg-input); border:2px solid var(--bg-card); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:var(--text-primary);">A</div>
@@ -201,13 +210,14 @@ async function loadDashboard() {
                 </div>`;
             }).join('')
             : `<div class="empty-state" style="grid-column:1/-1;">
-                <span class="empty-state__icon">📭</span>
+                <span class="empty-state__icon"><i data-lucide="inbox" style="width:48px;height:48px;stroke-width:1"></i></span>
                 <div class="empty-state__text">No leads yet</div>
                 <div class="empty-state__sub">Create your first lead to get started</div>
                </div>`;
 
         document.getElementById('recent-leads').innerHTML = recentHtml;
         document.getElementById('stat-breached').textContent = breached;
+        if(window.lucide) lucide.createIcons();
     }
 
     // Fetch Metrics
@@ -239,12 +249,12 @@ async function loadDashboard() {
             ? `<div class="timeline">
                 ${fuData.data.slice(0, 5).map(a => `
                     <div class="timeline__item">
-                        <div class="timeline__meta">
-                            ${formatDate(a.follow_up_at)}
-                            ${a.overdue ? ' <strong style="color:var(--danger);">● Overdue</strong>' : ''}
+                        <div class="timeline__meta" style="display:flex;align-items:center;gap:4px;">
+                            <i data-lucide="clock" style="width:12px;height:12px"></i> ${formatDate(a.follow_up_at)}
+                            ${a.overdue ? ' <strong style="color:var(--danger); display:flex; align-items:center; gap:4px;"><i data-lucide="alert-circle" style="width:12px;height:12px"></i> Overdue</strong>' : ''}
                         </div>
                         <div class="timeline__content">
-                            <span class="timeline__type">${a.type}</span>
+                            <span class="timeline__type" style="display:inline-flex;align-items:center;gap:4px;"><i data-lucide="check-square" style="width:12px;height:12px"></i> ${a.type}</span>
                             — ${a.lead_name || a.phone_e164}
                             ${a.notes ? `<br><small style="color:var(--text-muted);font-size:11px;">${a.notes}</small>` : ''}
                         </div>
@@ -252,12 +262,13 @@ async function loadDashboard() {
                 `).join('')}
                </div>`
             : `<div class="empty-state">
-                <span class="empty-state__icon">✅</span>
+                <span class="empty-state__icon"><i data-lucide="check-circle" style="width:48px;height:48px;stroke-width:1"></i></span>
                 <div class="empty-state__text">All clear!</div>
                 <div class="empty-state__sub">No follow-ups in the next 7 days</div>
                </div>`;
 
         document.getElementById('upcoming-followups').innerHTML = fuHtml;
+        if(window.lucide) lucide.createIcons();
     }
 
     // Pipeline stats (admin/manager only)

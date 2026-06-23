@@ -41,6 +41,25 @@ class StageTransitionService
         $previousStage = $engagement->stage;
         $isForwardMove = $newStage->order > $previousStage->order;
 
+        // Strict Pipeline State Machine Logic for Salespeople
+        if (!$isPrivileged && $newStageId !== $previousStage->id) {
+            if ($previousStage->is_closed) {
+                // Closed leads can only be reopened to the very first open stage
+                $firstOpenStage = PipelineStage::where('company_id', $engagement->company_id)
+                    ->where('is_closed', false)
+                    ->orderBy('order')
+                    ->first();
+                if (!$newStage->is_closed && $newStage->id !== $firstOpenStage->id) {
+                    throw new \Exception('Closed leads can only be reactivated to the first stage.');
+                }
+            } else {
+                // Open leads can only move forward, or to terminal closed states
+                if (!$newStage->is_closed && $newStage->order <= $previousStage->order) {
+                    throw new \Exception('You cannot move a lead backwards in the pipeline.');
+                }
+            }
+        }
+
         $updates = [
             'stage_id'         => $newStageId,
             'last_activity_at' => Carbon::now(),

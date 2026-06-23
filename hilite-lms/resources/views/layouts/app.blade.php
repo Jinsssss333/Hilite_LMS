@@ -10,6 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/test-ui.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .lucide { width: 1em; height: 1em; stroke-width: 2; }
+    </style>
 </head>
 <body>
     {{-- Top Bar Removed for new layout --}}
@@ -21,39 +25,39 @@
             <div class="sidebar__section">Main</div>
 
             <a href="/test/dashboard" class="sidebar__link @yield('nav-dashboard')" title="Dashboard">
-                <span class="sidebar__icon">📊</span><span class="sidebar__link-text">Dashboard</span>
+                <span class="sidebar__icon"><i data-lucide="layout-dashboard"></i></span><span class="sidebar__link-text">Dashboard</span>
             </a>
             <a href="/test/leads" class="sidebar__link @yield('nav-leads')" title="Leads">
-                <span class="sidebar__icon">👥</span><span class="sidebar__link-text">Leads</span>
+                <span class="sidebar__icon"><i data-lucide="users"></i></span><span class="sidebar__link-text">Leads</span>
             </a>
             <a href="/test/leads/create" class="sidebar__link @yield('nav-create')" title="New Lead">
-                <span class="sidebar__icon">✚</span><span class="sidebar__link-text">New Lead</span>
+                <span class="sidebar__icon"><i data-lucide="plus-circle"></i></span><span class="sidebar__link-text">New Lead</span>
             </a>
             <a href="/test/activities" class="sidebar__link @yield('nav-activities')" title="Follow-ups">
-                <span class="sidebar__icon">📅</span><span class="sidebar__link-text">Follow-ups</span>
+                <span class="sidebar__icon"><i data-lucide="calendar"></i></span><span class="sidebar__link-text">Follow-ups</span>
             </a>
 
             {{-- Management section --}}
             <div class="sidebar__divider admin-only" style="display:block;"></div>
             <div class="sidebar__section admin-only">Management</div>
             <a href="/test/pipeline" class="sidebar__link admin-only @yield('nav-pipeline')" title="Pipeline">
-                <span class="sidebar__icon">🔀</span><span class="sidebar__link-text">Pipeline</span>
+                <span class="sidebar__icon"><i data-lucide="git-branch"></i></span><span class="sidebar__link-text">Pipeline</span>
             </a>
             <a href="/test/import" class="sidebar__link admin-only @yield('nav-import')" title="Bulk Import">
-                <span class="sidebar__icon">📤</span><span class="sidebar__link-text">Bulk Import</span>
+                <span class="sidebar__icon"><i data-lucide="upload"></i></span><span class="sidebar__link-text">Bulk Import</span>
             </a>
             <a href="/test/users" class="sidebar__link admin-only @yield('nav-users')" title="Users">
-                <span class="sidebar__icon">👤</span><span class="sidebar__link-text">Users</span>
+                <span class="sidebar__icon"><i data-lucide="user-cog"></i></span><span class="sidebar__link-text">Users</span>
             </a>
 
             {{-- System section --}}
             <div class="sidebar__divider admin-only" style="display:block;"></div>
             <div class="sidebar__section admin-only">System</div>
             <a href="/test/audit" class="sidebar__link admin-only @yield('nav-audit')" title="Audit Logs">
-                <span class="sidebar__icon">📋</span><span class="sidebar__link-text">Audit Logs</span>
+                <span class="sidebar__icon"><i data-lucide="clipboard-list"></i></span><span class="sidebar__link-text">Audit Logs</span>
             </a>
             <a href="/test/sla" class="sidebar__link admin-only @yield('nav-sla')" title="SLA Policies">
-                <span class="sidebar__icon">⏱️</span><span class="sidebar__link-text">SLA Policies</span>
+                <span class="sidebar__icon"><i data-lucide="timer"></i></span><span class="sidebar__link-text">SLA Policies</span>
             </a>
         </nav>
 
@@ -66,7 +70,7 @@
         <aside class="sidebar-right" id="sidebar-right">
             {{-- User Profile Area --}}
             <div id="topbar-user-info" style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <div class="topbar__avatar" id="topbar-avatar" style="width:64px; height:64px; font-size:24px; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.2);">?</div>
+                <div id="topbar-avatar" style="width:64px; height:64px; font-size:24px; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.1); background:var(--bg-card); display:flex; align-items:center; justify-content:center; color:var(--text-primary);">?</div>
                 <div id="topbar-username" style="font-size:18px; font-weight:700; color:var(--text-primary);"></div>
                 <div style="display:flex; align-items:center; gap:8px;">
                     <span id="topbar-role" class="badge badge--role" style="font-size:11px;"></span>
@@ -83,12 +87,8 @@
             </div>
 
             {{-- Logout Button --}}
-            <button class="btn btn--ghost" onclick="doLogout()" id="logout-btn" style="display:none; width:100%; border-radius:12px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
+            <button class="btn btn--ghost" onclick="doLogout()" id="logout-btn" style="display:none; width:100%; border-radius:12px; align-items: center; justify-content: center; gap: 8px;">
+                <i data-lucide="log-out" style="width:16px; height:16px;"></i>
                 Sign Out
             </button>
 
@@ -190,16 +190,17 @@
        ══════════════════════════════════════════════════════════════ */
     function toast(message, type = 'info') {
         const icons = {
-            success: `<svg width="14" height="14" fill="none" stroke="#059669" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`,
-            error:   `<svg width="14" height="14" fill="none" stroke="#DC2626" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
-            warning: `<svg width="14" height="14" fill="none" stroke="#D97706" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
-            info:    `<svg width="14" height="14" fill="none" stroke="#7C3AED" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+            success: `<i data-lucide="check-circle" style="color:#059669"></i>`,
+            error:   `<i data-lucide="alert-circle" style="color:#DC2626"></i>`,
+            warning: `<i data-lucide="alert-triangle" style="color:#D97706"></i>`,
+            info:    `<i data-lucide="info" style="color:#7C3AED"></i>`,
         };
         const container = document.getElementById('toast-container');
         const el = document.createElement('div');
         el.className = `toast toast--${type}`;
-        el.innerHTML = `<span>${icons[type] || icons.info}</span> ${message}`;
+        el.innerHTML = `<span style="display:inline-block; width:16px; height:16px;">${icons[type] || icons.info}</span> ${message}`;
         container.appendChild(el);
+        lucide.createIcons();
         requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('toast--visible')));
         setTimeout(() => {
             el.classList.remove('toast--visible');
@@ -367,6 +368,12 @@
             month:'short', day:'numeric', year:'numeric'
         });
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        if(window.lucide) {
+            lucide.createIcons();
+        }
+    });
     </script>
     @yield('scripts')
 </body>

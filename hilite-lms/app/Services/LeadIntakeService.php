@@ -74,7 +74,10 @@ class LeadIntakeService
                     actorUserId: $actorUserId,
                     action: 'duplicate_attached',
                     before: null,
-                    after: ['phone' => $phone]
+                    after: [
+                        'phone' => $phone,
+                        'attempted_source' => $data['source'] ?? 'unknown'
+                    ]
                 );
 
                 return [
