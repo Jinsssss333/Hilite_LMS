@@ -49,7 +49,7 @@
 <div class="section-header">
     <h2>Upcoming Activities</h2>
 </div>
-<div class="card bg-pastel-white">
+<div class="card">
     <div id="upcoming-followups">
         <div class="loading-block" style="padding:36px;">
             <span class="spinner"></span> Loading…
@@ -59,29 +59,29 @@
 
 {{-- Template for Right Sidebar Stats --}}
 <template id="right-sidebar-stats-template">
-    <div style="background:#FFF; border-radius:var(--radius-sm); padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.03);">
-        <h3 style="font-size:14px; margin-bottom:16px;">Activity Summary</h3>
+    <div style="background:var(--bg-card); border-radius:var(--radius-sm); padding:20px; border:1px solid var(--border);">
+        <h3 style="font-size:14px; margin-bottom:16px; color:var(--text-secondary);">Activity Summary</h3>
         <div style="display:flex; flex-direction:column; gap:16px;">
             <div>
-                <div style="font-size:24px; font-weight:800;" id="stat-total">...</div>
+                <div style="font-size:24px; font-weight:800; color:var(--text-primary);" id="stat-total">...</div>
                 <div style="font-size:12px; color:var(--text-muted);" id="stat-total-label">Total Leads</div>
             </div>
             <div style="display:flex; gap:12px;">
-                <div style="flex:1; background:var(--pastel-purple); padding:12px; border-radius:12px;">
-                    <div style="font-size:18px; font-weight:800; color:#2e3b5a;" id="stat-breached">...</div>
-                    <div style="font-size:11px; font-weight:600; color:#2e3b5a; opacity:0.8;">Breached</div>
+                <div style="flex:1; background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-light);">
+                    <div style="font-size:18px; font-weight:800; color:var(--danger);" id="stat-breached">...</div>
+                    <div style="font-size:11px; font-weight:600; color:var(--text-muted); opacity:0.8;">Breached</div>
                 </div>
-                <div style="flex:1; background:var(--pastel-orange); padding:12px; border-radius:12px;">
-                    <div style="font-size:18px; font-weight:800; color:#5a3c1e;" id="stat-followups">...</div>
-                    <div style="font-size:11px; font-weight:600; color:#5a3c1e; opacity:0.8;">Follow-ups</div>
+                <div style="flex:1; background:var(--bg-input); padding:12px; border-radius:12px; border:1px solid var(--border-light);">
+                    <div style="font-size:18px; font-weight:800; color:var(--warning);" id="stat-followups">...</div>
+                    <div style="font-size:11px; font-weight:600; color:var(--text-muted); opacity:0.8;">Follow-ups</div>
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="admin-only" style="background:var(--pastel-green); border-radius:var(--radius-sm); padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.03);">
-        <div style="font-size:24px; font-weight:800; color:#1e4a36;" id="stat-stages">...</div>
-        <div style="font-size:12px; font-weight:600; color:#1e4a36; opacity:0.8;">Pipeline Stages</div>
+    <div class="admin-only" style="background:var(--bg-card); border-radius:var(--radius-sm); padding:20px; border:1px solid var(--border);">
+        <div style="font-size:24px; font-weight:800; color:var(--success);" id="stat-stages">...</div>
+        <div style="font-size:12px; font-weight:600; color:var(--text-muted); opacity:0.8;">Pipeline Stages</div>
     </div>
     
     <a href="/test/leads/create" class="btn btn--primary" style="width:100%; border-radius:12px; padding:12px;">✚ Add New Lead</a>
@@ -156,29 +156,46 @@ async function loadDashboard() {
             leadsData.meta?.total ?? leadsData.data.length;
 
         let breached = 0;
-        const pastelColors = ['bg-pastel-pink', 'bg-pastel-purple', 'bg-pastel-green', 'bg-pastel-orange'];
+        
+        const stageColors = {
+            'discovered': '#6B7280',  /* Gray */
+            'assigned': '#2563EB',    /* Blue */
+            'contacted': '#0891B2',   /* Cyan */
+            'negotiation': '#7C3AED', /* Purple */
+            'won': '#16A34A',         /* Green */
+            'lost': '#DC2626',        /* Red */
+            'dormant': '#D97706'      /* Orange */
+        };
         
         const recentHtml = leadsData.data.length
             ? leadsData.data.map((l, i) => {
                 if (l.sla_breached) breached++;
-                const colorClass = pastelColors[i % pastelColors.length];
                 const score = l.lead_score || 0;
                 
+                const stageName = (l.stage?.name || '').toLowerCase();
+                let sc = stageColors[stageName] || l.stage?.color || 'var(--accent)';
+                if (!stageColors[stageName] && sc.startsWith('#')) {
+                    // Just use whatever color the DB provides if it's not in the map
+                }
+                
                 return `
-                <div class="card ${colorClass}" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; min-height:160px;" onclick="window.location='/test/leads/${l.engagement_id}'">
+                <div class="card" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; min-height:160px;" onclick="window.location='/test/leads/${l.engagement_id}'">
                     <div>
                         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                            <div class="card__title-icon" style="background:rgba(255,255,255,0.5);">👤</div>
-                            <div style="background:rgba(255,255,255,0.5); padding:4px 8px; border-radius:8px; font-size:12px; font-weight:700;">★ ${score}</div>
+                            <div class="card__title-icon" style="background:var(--bg-input); border:1px solid var(--border-light);">👤</div>
+                            <div style="background:var(--bg-input); padding:4px 8px; border-radius:8px; font-size:12px; font-weight:700; color:var(--text-primary); border:1px solid var(--border-light);">★ ${score}</div>
                         </div>
-                        <h3 style="font-size:20px; font-weight:700; margin:16px 0 8px; line-height:1.2;">${l.name || '—'}</h3>
-                        <div style="font-size:13px; opacity:0.8;">${l.stage?.name || '—'}</div>
+                        <h3 style="font-size:20px; font-weight:700; margin:16px 0 8px; line-height:1.2; color:var(--text-primary);">${l.name || '—'}</h3>
+                        <div style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:${sc}; background:${sc}1A; padding:4px 8px; border-radius:6px; border:1px solid ${sc}33;">
+                            <span style="width:6px; height:6px; border-radius:50%; background:${sc};"></span>
+                            ${l.stage?.name || '—'}
+                        </div>
                     </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
-                        <div style="font-size:12px; font-weight:600;">${l.sla_breached ? '⚠️ Breached' : '✓ On Track'}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding-top:16px; border-top:1px solid var(--border-light);">
+                        <div style="font-size:12px; font-weight:600; color:${l.sla_breached ? 'var(--danger)' : 'var(--text-muted)'};">${l.sla_breached ? '⚠️ Breached' : '✓ On Track'}</div>
                         <div style="display:flex; margin-left:-8px;">
                             <!-- Placeholder for assigned user avatars -->
-                            <div style="width:24px; height:24px; border-radius:50%; background:#FFF; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#333;">A</div>
+                            <div style="width:24px; height:24px; border-radius:50%; background:var(--bg-input); border:2px solid var(--bg-card); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:var(--text-primary);">A</div>
                         </div>
                     </div>
                 </div>`;

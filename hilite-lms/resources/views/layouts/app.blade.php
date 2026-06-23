@@ -66,15 +66,15 @@
         <aside class="sidebar-right" id="sidebar-right">
             {{-- User Profile Area --}}
             <div id="topbar-user-info" style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <div class="topbar__avatar" id="topbar-avatar" style="width:64px; height:64px; font-size:24px; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.1);">?</div>
-                <div id="topbar-username" style="font-size:18px; font-weight:700;"></div>
+                <div class="topbar__avatar" id="topbar-avatar" style="width:64px; height:64px; font-size:24px; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.2);">?</div>
+                <div id="topbar-username" style="font-size:18px; font-weight:700; color:var(--text-primary);"></div>
                 <div style="display:flex; align-items:center; gap:8px;">
                     <span id="topbar-role" class="badge badge--role" style="font-size:11px;"></span>
                 </div>
             </div>
 
             {{-- Availability Toggle --}}
-            <div id="availability-wrapper" style="display:none; align-items:center; justify-content:center; gap:8px; font-size:13px; color:var(--text-muted); font-weight:600; background:#FFF; padding:10px; border-radius:12px; margin-top:10px;">
+            <div id="availability-wrapper" style="display:none; align-items:center; justify-content:center; gap:8px; font-size:13px; color:var(--text-muted); font-weight:600; background:var(--bg-input); padding:10px; border-radius:12px; margin-top:10px; border:1px solid var(--border);">
                 <label class="switch">
                     <input type="checkbox" id="availability-toggle" onchange="toggleAvailability(this.checked)">
                     <span class="slider"></span>
