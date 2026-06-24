@@ -168,6 +168,37 @@ class DashboardController extends Controller
         
         $teams = $teamsQuery->get();
 
-        return view('dashboard.manager', compact('totalActive', 'winRate', 'slaBreaches', 'teams'));
+        // NEW DATA FOR MANAGER DASHBOARD
+        $projectedRevenue = 42.5; // Mock $42.5M
+        $revenueGrowth = 12; // Mock +12%
+        $globalConversion = $winRate;
+        $avgCycle = 42; // Mock 42 Days
+        $velocity = 1.2; // Mock +1.2x
+        $topBranchName = 'Dubai Central';
+        $topBranchAttainment = 118;
+
+        // Macro Pipeline Volume
+        $pipelineStages = PipelineStage::orderBy('order')->get();
+        $pipelineVolumes = [];
+        foreach ($pipelineStages as $stage) {
+            $count = (clone $query)->where('stage_id', $stage->id)->where('status', 'active')->count();
+            if ($stage->is_closed) {
+                $count = (clone $query)->where('stage_id', $stage->id)->count(); // include non-active if closed
+            }
+            $pipelineVolumes[] = [
+                'name' => $stage->name,
+                'color' => $stage->color ?? '#6366F1',
+                'count' => $count,
+                'volume' => round($count * 0.05, 1), // Mock volume calculation in Millions
+                'is_closed' => $stage->is_closed
+            ];
+        }
+
+        return view('dashboard.manager', compact(
+            'totalActive', 'winRate', 'slaBreaches', 'teams',
+            'projectedRevenue', 'revenueGrowth', 'globalConversion',
+            'avgCycle', 'velocity', 'topBranchName', 'topBranchAttainment',
+            'pipelineVolumes'
+        ));
     }
 }
