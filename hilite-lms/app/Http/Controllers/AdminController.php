@@ -29,13 +29,10 @@ class AdminController extends Controller
         $companyId = $this->getCompanyId();
         if (!$companyId) return redirect()->route('login');
 
-        // Note: Using eager loading if Team/Branch relationships exist, otherwise left joins.
-        // Assuming user belongsTo team and branch.
-        $users = User::where('users.company_id', $companyId)
-            ->leftJoin('teams', 'users.team_id', '=', 'teams.id')
-            ->leftJoin('branches', 'users.branch_id', '=', 'branches.id')
-            ->select('users.*', 'teams.name as team_name', 'branches.name as branch_name')
-            ->orderBy('users.name')
+        // Fixed: Using eager loading to prevent column conflicts and simplify logic
+        $users = User::with(['team', 'branch'])
+            ->where('company_id', $companyId)
+            ->orderBy('name')
             ->get();
 
         return view('admin.users', compact('users'));
