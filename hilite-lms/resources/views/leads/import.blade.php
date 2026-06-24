@@ -10,9 +10,15 @@
 
     <!-- Hero Stats Strip -->
     <div class="bg-[#E9EFE1] rounded-[20px] p-6 mb-8 flex flex-col sm:flex-row gap-6 border border-[#d2dcc8]">
-        <x-kpi-widget label="Today's Intake" value="14" subtext="leads added" />
+        <div class="flex-1">
+            <p class="text-label-sm text-secondary uppercase tracking-wider font-bold mb-1">Today's Intake</p>
+            <p class="text-headline-lg text-on-surface font-bold">14 <span class="text-body-md text-text-muted font-normal ml-2">leads added</span></p>
+        </div>
         <div class="hidden sm:block w-px bg-[#d2dcc8]"></div>
-        <x-kpi-widget label="Upload Errors" value="0" subtext="requires attention" valueColor="text-stage-lost" />
+        <div class="flex-1">
+            <p class="text-label-sm text-secondary uppercase tracking-wider font-bold mb-1">Upload Errors</p>
+            <p class="text-headline-lg text-stage-lost font-bold">0 <span class="text-body-md text-text-muted font-normal ml-2">requires attention</span></p>
+        </div>
     </div>
 
     <!-- Flash Messages -->
@@ -59,6 +65,7 @@
                         <span class="text-label-md text-on-surface">Full Name</span>
                         <input name="name" class="form-input w-full rounded-xl border border-border-subtle bg-surface-container-lowest h-12 px-4 text-body-md placeholder:text-text-muted" placeholder="e.g. Jane Doe" type="text" required />
                     </label>
+
                     <!-- Phone -->
                     <label class="flex flex-col gap-2 relative">
                         <span class="text-label-md text-on-surface flex justify-between items-center">
@@ -70,19 +77,21 @@
                                 <span class="material-symbols-outlined text-[12px]">check_circle</span> Unique
                             </span>
                         </span>
-                        <input
-                            name="phone"
-                            class="form-input w-full rounded-xl border border-border-subtle bg-surface-container-lowest h-12 px-4 text-body-md placeholder:text-text-muted font-mono tracking-wide"
-                            placeholder="e.g. 9876543210 or +919876543210"
-                            type="tel"
-                            required
-                        />
+                        <div class="flex">
+                            <div class="flex items-center justify-center bg-surface-container-low border border-border-subtle border-r-0 rounded-l-xl px-3 text-text-muted border-collapse">
+                                <span class="material-symbols-outlined text-[18px]">language</span>
+                                <span class="ml-1 text-sm">+1</span>
+                            </div>
+                            <input name="phone" class="form-input flex-1 rounded-r-xl border border-border-subtle bg-surface-container-lowest h-12 px-4 text-body-md placeholder:text-text-muted font-mono tracking-wide" placeholder="(555) 000-0000" type="tel" required />
+                        </div>
                     </label>
+
                     <!-- Email -->
                     <label class="flex flex-col gap-2">
                         <span class="text-label-md text-on-surface">Email Address</span>
                         <input name="email" class="form-input w-full rounded-xl border border-border-subtle bg-surface-container-lowest h-12 px-4 text-body-md placeholder:text-text-muted" placeholder="jane@example.com" type="email" />
                     </label>
+
                     <!-- Source Dropdown -->
                     <label class="flex flex-col gap-2">
                         <span class="text-label-md text-on-surface">Source</span>
@@ -93,6 +102,7 @@
                             <option value="callsync_auto">CallSync Auto</option>
                         </select>
                     </label>
+
                     <!-- Assigned Rep -->
                     <label class="flex flex-col gap-2">
                         <span class="text-label-md text-on-surface">Assigned Rep</span>
@@ -101,12 +111,13 @@
                             <option value="1">Admin User</option>
                         </select>
                     </label>
+
                     <!-- Pipeline Stage -->
                     <label class="flex flex-col gap-2">
                         <span class="text-label-md text-on-surface">Initial Stage</span>
                         <div class="relative">
                             <select disabled class="form-input w-full rounded-xl border border-border-subtle bg-surface-container-lowest h-12 px-4 pl-10 text-body-md text-on-surface opacity-50 cursor-not-allowed">
-                                <option value="new">Default Pipeline Stage</option>
+                                <option value="new">New Lead</option>
                             </select>
                             <div class="absolute left-4 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-stage-new"></div>
                         </div>
@@ -119,28 +130,25 @@
                 </label>
                 <!-- Actions -->
                 <div class="flex justify-end items-center gap-4 mt-4 pt-6 border-t border-border-subtle">
-                    <x-button type="button" variant="ghost">Cancel</x-button>
-                    <x-button type="submit" variant="primary">
+                    <button type="button" class="px-6 py-2.5 rounded-full border border-border-subtle text-on-surface text-body-sm font-medium hover:bg-surface-container-low transition-colors">Cancel</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-full bg-primary text-on-primary text-body-sm font-medium flex items-center gap-2 hover:bg-tertiary transition-colors">
                         <span class="material-symbols-outlined text-[18px]">add</span> Add Lead
-                    </x-button>
+                    </button>
                 </div>
             </form>
 
             <!-- Bulk Import Section -->
-            <div x-show="tab === 'bulk'" style="display: none;" class="flex flex-col gap-6">
-
+            <div x-show="tab === 'bulk'" style="display: none;" class="flex flex-col gap-8">
                 <!-- Template Download Banner -->
-                <div class="flex items-center justify-between bg-[#E9EFE1] border border-[#d2dcc8] p-4 rounded-xl">
+                <div class="flex items-center justify-between bg-surface-container-low p-4 rounded-xl border border-border-subtle">
                     <div class="flex items-center gap-3">
-                        <span class="material-symbols-outlined text-primary text-[28px]">description</span>
+                        <span class="material-symbols-outlined text-text-muted text-[24px]">description</span>
                         <div>
-                            <p class="text-body-sm font-semibold text-on-surface">Download the CSV Template first</p>
-                            <p class="text-[11px] text-text-muted mt-0.5">
-                                Required columns: <span class="font-mono bg-surface-container-low px-1 rounded text-[10px]">name, phone, email, source, region, notes</span>
-                            </p>
+                            <p class="text-body-sm font-medium text-on-surface">Ensure your data matches our format.</p>
+                            <p class="text-body-sm text-text-muted">Missing fields may cause import errors.</p>
                         </div>
                     </div>
-                    <button onclick="downloadTemplate()" class="flex items-center gap-2 px-4 py-2.5 bg-primary text-on-primary rounded-full text-label-md font-bold hover:bg-on-surface-variant transition-colors shadow-sm">
+                    <button type="button" onclick="downloadTemplate()" class="px-4 py-2 rounded-full border border-outline-variant text-on-surface text-body-sm font-medium flex items-center gap-2 hover:bg-surface-variant transition-colors bg-surface-container-lowest">
                         <span class="material-symbols-outlined text-[18px]">download</span>
                         Download Template
                     </button>
@@ -189,37 +197,29 @@
                     </div>
                 </div>
 
-                <!-- Drop Zone & Preview Form -->
+                <!-- Drop Zone Form -->
                 <form action="{{ route('leads.import.post') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <!-- Drop Zone -->
-                    <div
-                        id="drop-zone"
-                        class="border-2 border-dashed border-border-subtle rounded-[20px] p-12 flex flex-col items-center justify-center text-center bg-transparent hover:bg-surface-container-low hover:border-primary transition-all cursor-pointer group"
-                        onclick="document.getElementById('csv-file-input').click()"
-                        ondragover="event.preventDefault(); this.classList.add('bg-surface-container-low','border-primary')"
-                        ondragleave="this.classList.remove('bg-surface-container-low','border-primary')"
-                        ondrop="handleDrop(event)"
-                    >
-                        <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                            <span class="material-symbols-outlined text-primary text-[32px]">cloud_upload</span>
+                    <div id="drop-zone"
+                         class="border-2 border-dashed border-outline-variant rounded-[20px] p-12 flex flex-col items-center justify-center text-center bg-transparent hover:bg-surface-container-low hover:border-primary transition-all cursor-pointer group"
+                         onclick="document.getElementById('csv-file-input').click()"
+                         ondragover="event.preventDefault(); this.classList.add('bg-surface-container-low','border-primary')"
+                         ondragleave="this.classList.remove('bg-surface-container-low','border-primary')"
+                         ondrop="handleDrop(event)">
+                        
+                        <div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                            <span class="material-symbols-outlined text-outline text-[32px]">cloud_upload</span>
                         </div>
-                        <h3 class="text-headline-sm text-on-surface mb-1">Click to browse or drag & drop</h3>
-                        <p class="text-body-sm text-text-muted">CSV files only · Max 10 MB</p>
-
+                        <h3 class="text-headline-sm text-on-surface mb-1">Click to upload or drag and drop</h3>
+                        <p class="text-body-sm text-text-muted">CSV files only (Max 10MB)</p>
+                        
                         <!-- Hidden real file input -->
-                        <input
-                            id="csv-file-input"
-                            name="csv_file"
-                            type="file"
-                            accept=".csv"
-                            class="hidden"
-                            onchange="handleFileSelect(this.files)"
-                        />
+                        <input id="csv-file-input" name="csv_file" type="file" accept=".csv" class="hidden" onchange="handleFileSelect(this.files)" />
                     </div>
 
                     <!-- Selected File Preview (hidden until file chosen) -->
-                    <div id="file-preview" class="hidden items-center justify-between p-4 rounded-xl border border-primary bg-[#E9EFE1]">
+                    <div id="file-preview" class="hidden items-center justify-between p-4 rounded-xl border border-primary bg-[#E9EFE1] mt-4">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                                 <span class="material-symbols-outlined text-primary">csv</span>
@@ -233,10 +233,10 @@
                             <button type="button" onclick="clearFile()" class="text-text-muted hover:text-stage-lost transition-colors" title="Remove file">
                                 <span class="material-symbols-outlined">close</span>
                             </button>
-                            <x-button type="submit" variant="primary">
+                            <button type="submit" class="px-4 py-2 rounded-full bg-primary text-on-primary text-body-sm font-medium flex items-center gap-2 hover:bg-tertiary transition-colors">
                                 <span class="material-symbols-outlined text-[18px]">upload</span>
                                 Start Import
-                            </x-button>
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -306,7 +306,7 @@
         const files = event.dataTransfer.files;
         if (files.length > 0) {
             if (!files[0].name.endsWith('.csv')) {
-                showToast('Only CSV files are allowed.', 'error');
+                alert('Only CSV files are allowed.');
                 return;
             }
             // Assign the dropped files to the hidden input so the form submits them
@@ -339,7 +339,6 @@
         a.download = 'hilite_leads_template.csv';
         a.click();
         URL.revokeObjectURL(url);
-        showToast('Template downloaded!', 'success');
     }
 </script>
 

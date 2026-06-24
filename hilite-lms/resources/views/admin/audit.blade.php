@@ -1,137 +1,159 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar max-w-[1600px] w-full mx-auto">
-    <!-- Page Header -->
-    <div class="mb-8">
-        <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+<div class="flex-1 overflow-y-auto bg-surface">
+    <!-- Page Header & Tabs -->
+    <header class="px-6 md:px-8 py-8 pb-6 border-b border-border-subtle mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-                <h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Audit Logs</h2>
-                <p class="text-on-surface-variant font-body-md text-body-md mt-1">Comprehensive traceability of all lead engagements and system events.</p>
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-surface-container-high text-on-surface-variant border border-border-subtle">System Settings</span>
+                </div>
+                <h2 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">Administration</h2>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-2xl">Manage system users, define Service Level Agreement policies, and monitor global audit logs.</p>
             </div>
             <div class="flex gap-2">
-                <a href="{{ route('admin.audit.export') }}" class="flex items-center gap-2 px-4 py-2 bg-surface-container-lowest border border-border-subtle rounded-xl font-label-md text-label-md hover:bg-surface-container-high transition-colors">
+                <a href="{{ route('admin.audit.export') }}" class="flex items-center gap-2 px-4 py-2 bg-surface border border-border-subtle rounded-full hover:bg-surface-container-high transition-colors font-label-md text-label-md text-primary shadow-sm">
                     <span class="material-symbols-outlined text-[18px]">download</span>
                     Export CSV
                 </a>
-                <button onclick="window.print()" class="flex items-center gap-2 px-4 py-2 bg-surface-container-lowest border border-border-subtle rounded-xl font-label-md text-label-md hover:bg-surface-container-high transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">print</span>
-                    Print
+            </div>
+        </div>
+        <!-- In-Page Navigation (Tabs) -->
+        <div class="mt-8 flex overflow-x-auto no-scrollbar -mb-6">
+            <a href="{{ route('admin.users') }}" class="px-4 py-3 font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">User Management</a>
+            <a href="{{ route('admin.pipeline') }}" class="px-4 py-3 font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">Pipeline Stages</a>
+            <a href="{{ route('admin.sla') }}" class="px-4 py-3 font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap">SLA Policies</a>
+            <a href="{{ route('admin.audit') }}" class="px-4 py-3 font-label-md text-label-md text-primary border-b-2 border-primary whitespace-nowrap">Audit Log</a>
+        </div>
+    </header>
+
+    <div class="px-6 md:px-8 pb-12 flex-1 space-y-6">
+        <!-- Page Title & Restriction Notice -->
+        <div class="flex flex-col gap-2 mb-6">
+            <div class="flex items-center gap-3">
+                <h3 class="font-headline-sm text-headline-sm text-primary font-bold">System Audit Logs</h3>
+                <span class="px-2 py-0.5 bg-error-container text-on-error-container text-label-sm font-label-sm rounded-md flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">lock</span>
+                    Restricted View
+                </span>
+            </div>
+            <p class="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">
+                Viewing historical activity logs. Note: Sensitive personal information (PII) is automatically masked for compliance with regional data privacy standards.
+            </p>
+        </div>
+
+        <!-- Filters Strip -->
+        <div class="flex flex-wrap items-center gap-4 mb-6 bg-surface p-4 rounded-xl border border-border-subtle shadow-sm shadow-primary/5">
+            <div class="flex items-center gap-2">
+                <span class="font-label-md text-label-md text-on-surface-variant">Action Type:</span>
+                <select class="bg-surface-container-low border border-border-subtle rounded-lg px-3 py-1.5 font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary appearance-none">
+                    <option>All Actions</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2 ml-auto">
+                <button class="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg font-body-sm text-body-sm hover:bg-surface-container-high transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">filter_list</span>
+                    More Filters
                 </button>
             </div>
         </div>
-    </div>
 
-    <!-- Filters Section (Bento Inspired) -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-8">
-        <div class="md:col-span-4 bg-surface-container-lowest p-4 rounded-2xl border border-border-subtle shadow-sm">
-            <label class="block font-label-md text-label-md text-on-surface-variant mb-2">ACTION TYPE</label>
-            <select class="w-full bg-surface-container-low border border-border-subtle rounded-xl text-body-md py-2 px-3 focus:ring-1 focus:ring-primary outline-none appearance-none">
-                <option>All Actions</option>
-                <option>Lead Rescored</option>
-                <option>Stage Changed</option>
-                <option>Lead Assigned</option>
-                <option>Field Updated</option>
-                <option>Document Uploaded</option>
-            </select>
-        </div>
-        <div class="md:col-span-6 bg-surface-container-lowest p-4 rounded-2xl border border-border-subtle grid grid-cols-2 gap-4 shadow-sm">
-            <div>
-                <label class="block font-label-md text-label-md text-on-surface-variant mb-2">FROM DATE</label>
-                <input class="w-full bg-surface-container-low border border-border-subtle rounded-xl text-body-md py-2 px-3 focus:ring-1 focus:ring-primary outline-none" type="date">
-            </div>
-            <div>
-                <label class="block font-label-md text-label-md text-on-surface-variant mb-2">TO DATE</label>
-                <input class="w-full bg-surface-container-low border border-border-subtle rounded-xl text-body-md py-2 px-3 focus:ring-1 focus:ring-primary outline-none" type="date">
-            </div>
-        </div>
-        <div class="md:col-span-2 flex items-end gap-2">
-            <button class="flex-1 bg-primary text-on-primary py-2.5 rounded-xl font-body-md text-body-md font-bold hover:opacity-90 transition-all">Apply</button>
-            <button class="p-2.5 bg-surface-container-lowest border border-border-subtle text-on-surface-variant rounded-xl hover:bg-surface-container-high transition-all">
-                <span class="material-symbols-outlined">refresh</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Table Section -->
-    <div class="bg-surface-container-lowest rounded-2xl border border-border-subtle shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-border-subtle bg-surface-container-low/30 flex justify-between items-center">
-            <span class="text-xs font-semibold text-on-surface-variant">Showing {{ $logs->firstItem() ?? 0 }}-{{ $logs->lastItem() ?? 0 }} of {{ $logs->total() }} entries</span>
-            
-            <div class="flex gap-1 items-center">
-                {{ $logs->links('pagination::tailwind') }}
-            </div>
-        </div>
-        <div class="overflow-x-auto custom-scrollbar">
-            <table class="w-full text-left border-collapse min-w-[800px]">
-                <thead>
-                    <tr class="bg-surface-container-low/20 border-b border-border-subtle">
-                        <th class="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">ID</th>
-                        <th class="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Action</th>
-                        <th class="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Actor</th>
-                        <th class="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Lead</th>
-                        <th class="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Before</th>
-                        <th class="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">After</th>
-                        <th class="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant text-right">Timestamp</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-border-subtle">
-                    @forelse($logs as $log)
-                    <tr class="hover:bg-surface-container-lowest transition-colors">
-                        <td class="px-6 py-4 font-body-sm text-body-sm">
-                            <span class="font-mono text-on-surface-variant">#{{ $log->id }}</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-primary text-[18px]">bolt</span>
-                                <span class="font-label-md text-label-md capitalize">{{ str_replace('_', ' ', $log->action) }}</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-[10px] font-bold">
-                                    {{ $log->actor ? strtoupper(substr($log->actor->name, 0, 2)) : 'SY' }}
+        <!-- Audit Table -->
+        <div class="bg-surface rounded-xl border border-border-subtle overflow-hidden shadow-sm shadow-primary/5">
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[800px]">
+                    <thead>
+                        <tr class="bg-surface-container-low/50 border-b border-border-subtle">
+                            <th class="px-6 py-4 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Timestamp</th>
+                            <th class="px-6 py-4 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Actor</th>
+                            <th class="px-6 py-4 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Action</th>
+                            <th class="px-6 py-4 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Lead Reference</th>
+                            <th class="px-6 py-4 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Before (JSON)</th>
+                            <th class="px-6 py-4 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">After (JSON)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border-subtle">
+                        @forelse($logs as $log)
+                        <tr class="hover:bg-surface-container-lowest transition-colors group">
+                            <td class="px-6 py-4 font-body-sm text-body-sm whitespace-nowrap text-on-surface-variant">
+                                {{ $log->created_at->format('Y-m-d H:i:s') }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-secondary-container flex items-center justify-center text-[10px] font-bold text-on-secondary-container">
+                                        {{ $log->actor ? strtoupper(substr($log->actor->name, 0, 2)) : 'SY' }}
+                                    </div>
+                                    <span class="font-body-sm text-body-sm font-medium">{{ $log->actor ? $log->actor->name : 'System' }}</span>
                                 </div>
-                                <span class="font-body-md text-body-md font-semibold">{{ $log->actor ? $log->actor->name : 'System' }}</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            @if($log->engagement_id)
-                                <a href="{{ route('leads.show', $log->engagement_id) }}" class="font-body-md text-body-md text-primary font-medium hover:underline cursor-pointer">
-                                    Lead #{{ $log->engagement_id }}
-                                </a>
-                            @else
-                                <span class="font-body-md text-body-md text-text-muted">-</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">
-                            <div class="max-w-[150px] truncate" title="{{ json_encode($log->before) }}">
-                                {{ $log->before ? json_encode($log->before) : '-' }}
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">
-                            <div class="max-w-[150px] truncate" title="{{ json_encode($log->after) }}">
-                                {{ $log->after ? json_encode($log->after) : '-' }}
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <span class="text-[11px] text-text-muted" title="{{ $log->created_at }}">{{ $log->created_at->format('M d, g:i A') }}</span>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="px-6 py-8 text-center text-on-surface-variant text-body-md">
-                            No audit logs found.
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 bg-surface-container-highest text-on-surface-variant border border-border-subtle rounded font-label-sm text-[10px] uppercase font-bold">{{ str_replace('_', ' ', $log->action) }}</span>
+                            </td>
+                            <td class="px-6 py-4 font-body-sm text-body-sm text-on-surface italic">
+                                @if($log->entity_type == 'lead_engagement')
+                                    <a href="{{ route('leads.show', $log->entity_id) }}" class="text-primary hover:underline">Lead #{{ $log->entity_id }}</a>
+                                @else
+                                    <span class="text-text-muted capitalize">{{ str_replace('_', ' ', $log->entity_type) }} #{{ $log->entity_id }}</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="bg-surface-container-highest rounded p-2 text-[11px] font-mono text-on-surface-variant max-w-[200px] truncate hover:whitespace-normal hover:max-w-none transition-all cursor-default" title="{{ json_encode($log->before_state) }}">
+                                    {{ $log->before_state ? json_encode($log->before_state) : 'NULL' }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="bg-surface-container-highest rounded p-2 text-[11px] font-mono text-on-surface-variant max-w-[200px] truncate hover:whitespace-normal hover:max-w-none transition-all cursor-default" title="{{ json_encode($log->after_state) }}">
+                                    {{ $log->after_state ? json_encode($log->after_state) : 'NULL' }}
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-8 text-center text-on-surface-variant text-body-md">No audit logs found.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination Footer -->
+            <div class="px-6 py-4 bg-surface border-t border-border-subtle flex items-center justify-between">
+                <span class="font-body-sm text-body-sm text-on-surface-variant">Showing {{ $logs->firstItem() ?? 0 }}-{{ $logs->lastItem() ?? 0 }} of {{ $logs->total() }} entries</span>
+                <div class="flex items-center gap-1">
+                    {{ $logs->links('pagination::tailwind') }}
+                </div>
+            </div>
         </div>
-        
-        <!-- Mobile/Simple Pagination for smaller screens if needed -->
-        <div class="md:hidden px-6 py-4 border-t border-border-subtle bg-surface-container-low/30">
-            {{ $logs->links('pagination::simple-tailwind') }}
+
+        <!-- Footer Summary Info -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-secondary-container/30 p-4 rounded-xl border border-secondary-container flex items-start gap-4">
+                <div class="p-2 bg-secondary-container rounded-lg shrink-0">
+                    <span class="material-symbols-outlined text-on-secondary-container">policy</span>
+                </div>
+                <div>
+                    <h4 class="font-label-md text-label-md text-on-surface">Data Governance</h4>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Audit logs are retained for 365 days. Records older than 1 year are archived to cold storage.</p>
+                </div>
+            </div>
+            <div class="bg-surface p-4 rounded-xl border border-border-subtle flex items-start gap-4 shadow-sm shadow-primary/5">
+                <div class="p-2 bg-surface-container rounded-lg shrink-0">
+                    <span class="material-symbols-outlined text-on-surface-variant">visibility_off</span>
+                </div>
+                <div>
+                    <h4 class="font-label-md text-label-md text-on-surface">Masking Rules</h4>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Names, emails, and phone numbers are redacted in accordance with GDPR Level 2 access.</p>
+                </div>
+            </div>
+            <div class="bg-surface p-4 rounded-xl border border-border-subtle flex items-start gap-4 shadow-sm shadow-primary/5">
+                <div class="p-2 bg-surface-container rounded-lg shrink-0">
+                    <span class="material-symbols-outlined text-on-surface-variant">history_edu</span>
+                </div>
+                <div>
+                    <h4 class="font-label-md text-label-md text-on-surface">Compliance Export</h4>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Need full unmasked logs? Contact your System Administrator for an elevated compliance report.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
