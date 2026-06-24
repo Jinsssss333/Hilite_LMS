@@ -73,6 +73,18 @@
                         </button>
                     </form>
                 </div>
+                <!-- Quick Actions (Hover) -->
+                <div class="quick-actions absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-surface-container-lowest pl-4 py-1">
+                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">edit_document</span> Log
+                    </button>
+                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">event</span> Reschedule
+                    </button>
+                    <a href="{{ route('leads.show', $activity->engagement->lead_id ?? $activity->engagement->lead->id) }}" class="px-3 py-1.5 rounded-full font-label-sm text-label-sm bg-primary text-on-primary hover:bg-tertiary transition-colors flex items-center gap-1">
+                        View
+                    </a>
+                </div>
             </x-card>
             @endforeach
         </div>
@@ -118,6 +130,18 @@
                         </button>
                     </form>
                 </div>
+                <!-- Quick Actions (Hover) -->
+                <div class="quick-actions absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-surface-container-lowest pl-4 py-1">
+                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">edit_document</span> Log
+                    </button>
+                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">event</span> Reschedule
+                    </button>
+                    <a href="{{ route('leads.show', $activity->engagement->lead_id ?? $activity->engagement->lead->id) }}" class="px-3 py-1.5 rounded-full font-label-sm text-label-sm bg-primary text-on-primary hover:bg-tertiary transition-colors flex items-center gap-1">
+                        View
+                    </a>
+                </div>
             </x-card>
             @empty
             <div class="py-4 text-text-muted font-body-sm">No follow-ups due today.</div>
@@ -132,10 +156,9 @@
             <span class="material-symbols-outlined" style="font-size: 16px;">update</span>
             Upcoming ({{ $upcoming->count() }})
         </h3>
-        <div class="space-y-2">
+        <div class="space-y-2 opacity-80 hover:opacity-100 transition-opacity">
             @foreach($upcoming as $activity)
             <x-card class="followup-card relative">
-                <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-border-subtle"></div>
                 <div class="flex-1 flex items-center gap-4 pl-3 w-full">
                     <div class="w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center flex-shrink-0 text-text-muted">
                         <span class="material-symbols-outlined" style="font-size: 18px;">{{ $activity->type === 'visit' ? 'directions_car' : ($activity->type === 'email' ? 'mail' : 'call') }}</span>
@@ -164,6 +187,18 @@
                             <span class="material-symbols-outlined" style="font-size: 18px;">check</span>
                         </button>
                     </form>
+                </div>
+                <!-- Quick Actions (Hover) -->
+                <div class="quick-actions absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-surface-container-lowest pl-4 py-1">
+                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">edit_document</span> Log
+                    </button>
+                    <button class="px-3 py-1.5 rounded-full font-label-sm text-label-sm border border-border-subtle text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">event</span> Reschedule
+                    </button>
+                    <a href="{{ route('leads.show', $activity->engagement->lead_id ?? $activity->engagement->lead->id) }}" class="px-3 py-1.5 rounded-full font-label-sm text-label-sm bg-primary text-on-primary hover:bg-tertiary transition-colors flex items-center gap-1">
+                        View
+                    </a>
                 </div>
             </x-card>
             @endforeach
