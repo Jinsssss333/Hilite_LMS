@@ -95,7 +95,7 @@
                 <select name="assign_to_user_id" required class="w-full appearance-none bg-inverse-surface border border-outline/50 rounded-lg py-2 pl-3 pr-8 font-body-sm text-body-sm text-on-primary focus:ring-2 focus:ring-primary-fixed focus:border-primary-fixed outline-none">
                     <option disabled selected value="">Select Rep...</option>
                     @foreach($assignableUsers as $u)
-                        <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->role }})</option>
+                        <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->role }}) - {{ $u->active_leads_count ?? 0 }} Active Leads</option>
                     @endforeach
                 </select>
                 <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-sm">arrow_drop_down</span>

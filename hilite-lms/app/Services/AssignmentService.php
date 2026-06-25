@@ -33,6 +33,10 @@ class AssignmentService
 
         $this->validateAssignmentPermission($actor, $assignTo, $engagement);
 
+        if ($assignTo->isAtLeadCapacity()) {
+            throw new \Exception("User '{$assignTo->name}' is at maximum active lead capacity.");
+        }
+
         $previousOwnerId = $engagement->assigned_user_id;
 
         $engagement->update(['assigned_user_id' => $assignToUserId]);
@@ -64,7 +68,10 @@ class AssignmentService
      */
     public function getAssignableUsers(User $actor): Collection
     {
-        $query = User::where('company_id', $actor->company_id)
+        $query = User::withCount(['engagements as active_leads_count' => function ($q) {
+                $q->where('status', 'active');
+            }])
+            ->where('company_id', $actor->company_id)
             ->where('is_active', true)
             ->where('role', 'salesperson');
 

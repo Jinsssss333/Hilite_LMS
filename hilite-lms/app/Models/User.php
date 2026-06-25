@@ -31,7 +31,7 @@ class User extends Authenticatable
     /**
      * System default cap used when the user has no explicit max_lead_cap set.
      */
-    const SYSTEM_DEFAULT_CAP = 30;
+    const SYSTEM_DEFAULT_CAP = 50;
 
     /**
      * Returns true if the user's current active lead count is at or above their cap.
