@@ -374,11 +374,33 @@
             <h3 class="font-headline-sm text-headline-sm text-primary mb-2">Lead Engagement Heatmap</h3>
             <p class="font-body-sm text-body-sm text-text-muted mb-6">Activity concentration by time and day (real data).</p>
             <div class="w-full overflow-x-auto">
-                <div class="min-w-[800px] h-64 bg-surface-container-lowest rounded-lg border border-border-subtle flex items-center justify-center relative overflow-hidden">
-                    <div class="absolute inset-0 grid grid-cols-7 grid-rows-6 gap-1 p-2">
-                        @foreach($heatmapData as $intensity)
-                            <div class="rounded-sm" style="background-color: rgba(99, 102, 241, {{ $intensity }})" title="Activity Level: {{ $intensity * 10 }}"></div>
+                <div class="min-w-[800px] flex">
+                    <!-- Y Axis Labels -->
+                    <div class="flex flex-col justify-between py-1 pr-4 text-label-sm text-text-muted font-medium w-[80px]">
+                        @foreach(['12am', '4am', '8am', '12pm', '4pm', '8pm'] as $time)
+                            <div class="flex-1 flex items-center justify-end">{{ $time }}</div>
                         @endforeach
+                    </div>
+                    <!-- Heatmap Grid -->
+                    <div class="flex-1">
+                        <div class="grid grid-cols-7 gap-2 h-64">
+                            @foreach(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as $dayIndex => $dayLabel)
+                                <div class="flex flex-col gap-2">
+                                    @for($timeBlock = 0; $timeBlock < 6; $timeBlock++)
+                                        @php
+                                            $intensity = $heatmapData[($dayIndex * 6) + $timeBlock] ?? 0.05;
+                                        @endphp
+                                        <div class="flex-1 rounded-md transition-opacity hover:opacity-80" style="background-color: rgba(99, 102, 241, {{ $intensity }})" title="{{ $dayLabel }} {{ $timeBlock*4 }}:00 - {{ ($timeBlock+1)*4 }}:00 | Intensity: {{ round($intensity * 100) }}%"></div>
+                                    @endfor
+                                </div>
+                            @endforeach
+                        </div>
+                        <!-- X Axis Labels -->
+                        <div class="grid grid-cols-7 gap-2 mt-3">
+                            @foreach(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as $dayLabel)
+                                <div class="text-center text-label-sm text-text-muted font-medium uppercase tracking-wider">{{ $dayLabel }}</div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>

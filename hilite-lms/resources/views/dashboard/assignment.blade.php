@@ -147,13 +147,18 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    function initBulkAction() {
         const selectAll = document.getElementById('selectAll');
+        if (!selectAll) return;
+
         const checkboxes = document.querySelectorAll('.lead-checkbox');
         const actionBar = document.getElementById('bulk-action-bar');
         const countDisplay = document.getElementById('selected-count');
         const clearBtn = document.getElementById('clear-selection');
         const rows = document.querySelectorAll('.lead-row');
+
+        // Remove old listeners if any (by replacing elements with clones, or just use Alpine, but for now we keep it simple)
+        // Since Turbo replaces the body, the elements are fresh, so adding listeners is safe.
 
         function updateActionBar() {
             const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
@@ -191,7 +196,8 @@
             });
         });
 
-        clearBtn.addEventListener('click', () => {
+        clearBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             checkboxes.forEach(cb => cb.checked = false);
             selectAll.checked = false;
             updateActionBar();
@@ -199,12 +205,18 @@
         
         rows.forEach((row, index) => {
             row.addEventListener('click', (e) => {
-                if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'SPAN' && e.target.tagName !== 'SELECT') {
+                if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'SPAN' && e.target.tagName !== 'SELECT' && e.target.closest('button') === null) {
                     checkboxes[index].checked = !checkboxes[index].checked;
                     updateActionBar();
                 }
             });
         });
-    });
+    }
+
+    // Run immediately for normal load or Turbo script evaluation
+    initBulkAction();
+    
+    // Also bind to Turbo events just in case it's loaded via cache
+    document.addEventListener("turbo:load", initBulkAction);
 </script>
 @endsection

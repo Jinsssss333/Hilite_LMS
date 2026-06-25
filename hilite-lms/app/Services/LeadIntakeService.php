@@ -211,8 +211,6 @@ class LeadIntakeService
         });
     }
 
-    private const fallbackMaxLeads = 10;
-
     /**
      * Auto-assign lead using routing policies, falling back to basic capacity check.
      */
@@ -237,9 +235,35 @@ class LeadIntakeService
             }
             $selected = $targets[$cursor];
 
-            $policy->update(['round_robin_cursor' => ($cursor + 1) % count($targets)]);
+            // Enforce cap: skip over users who are at capacity (cycle through the list)
+            $attempts = 0;
+            $total    = count($targets);
+            while ($attempts < $total) {
+                $selected = $targets[$cursor];
+                if ($selected['target_type'] === 'user') {
+                    $targetUser = \App\Models\User::find($selected['target_id']);
+                    if ($targetUser && $targetUser->isAtLeadCapacity()) {
+                        $cursor = ($cursor + 1) % $total;
+                        $attempts++;
+                        continue;
+                    }
+                }
+                break;
+            }
+
+            $policy->update(['round_robin_cursor' => ($cursor + 1) % $total]);
+
+            // If everyone is at capacity, return unassigned
+            if ($attempts >= $total) {
+                return ['user_id' => null, 'team_id' => null, 'branch_id' => null];
+            }
 
             return $this->buildAssignmentArray($selected['target_type'], $selected['target_id']);
+        }
+
+        if ($policy->mode === 'capacity') {
+            $spId = $this->fallbackCapacityAssignment($companyId);
+            return ['user_id' => $spId, 'team_id' => null, 'branch_id' => null];
         }
 
         return ['user_id' => null, 'team_id' => null, 'branch_id' => null];
@@ -253,17 +277,25 @@ class LeadIntakeService
         return ['user_id' => null, 'team_id' => null, 'branch_id' => null];
     }
 
+    /**
+     * Capacity-based fallback: pick the least-loaded salesperson who is NOT at their cap.
+     * Respects per-user max_lead_cap (falls back to User::SYSTEM_DEFAULT_CAP if not set).
+     * Also skips users who are at or above their hard cap.
+     */
     private function fallbackCapacityAssignment(int $companyId): ?int
     {
         $salespersons = \App\Models\User::where('company_id', $companyId)
             ->where('role', 'salesperson')
             ->where('is_active', true)
-            ->pluck('id');
+            ->get(['id', 'max_lead_cap']);
 
         if ($salespersons->isEmpty()) return null;
 
-        $loadCounts = LeadEngagement::where('company_id', $companyId)
-            ->whereIn('assigned_user_id', $salespersons)
+        $salespersonIds = $salespersons->pluck('id');
+
+        $loadCounts = LeadEngagement::withoutGlobalScopes()
+            ->where('company_id', $companyId)
+            ->whereIn('assigned_user_id', $salespersonIds)
             ->where('status', 'active')
             ->select('assigned_user_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
             ->groupBy('assigned_user_id')
@@ -273,18 +305,19 @@ class LeadIntakeService
         $leastLoadedId = null;
         $minLoad       = PHP_INT_MAX;
 
-        foreach ($salespersons as $spId) {
-            $load = $loadCounts[$spId] ?? 0;
+        foreach ($salespersons as $sp) {
+            $load    = $loadCounts[$sp->id] ?? 0;
+            $hardCap = $sp->max_lead_cap ?? \App\Models\User::SYSTEM_DEFAULT_CAP;
+
+            // Skip anyone at or above their hard cap
+            if ($load >= $hardCap) continue;
+
             if ($load < $minLoad) {
                 $minLoad       = $load;
-                $leastLoadedId = $spId;
+                $leastLoadedId = $sp->id;
             }
         }
 
-        if ($minLoad < self::fallbackMaxLeads) {
-            return $leastLoadedId;
-        }
-
-        return null;
+        return $leastLoadedId; // null if everyone is at capacity
     }
 }

@@ -81,7 +81,27 @@ class AssignmentService
     }
 
     /**
+     * Role priority map — higher number = higher authority.
+     * A role can only override an assignment made by a role with equal or lower priority.
+     */
+    private const ROLE_PRIORITY = [
+        'salesperson'  => 0,
+        'team_lead'    => 1,
+        'manager'      => 2,
+        'branch_head'  => 3,
+        'admin'        => 4,
+        'super_admin'  => 5,
+    ];
+
+    /**
      * Throws \Exception if the actor is not allowed to assign to the target.
+     *
+     * Checks:
+     *  1. Salespersons cannot assign at all.
+     *  2. Team leads can only assign within their own team.
+     *  3. Company-wide roles require same company.
+     *  4. Role-priority check: if a previous assignment was made by a
+     *     higher-ranked role, the current actor cannot override it.
      */
     private function validateAssignmentPermission(
         User $actor,
@@ -96,12 +116,37 @@ class AssignmentService
             if ($assignTo->team_id !== $actor->team_id) {
                 throw new \Exception('You can only assign leads within your team.');
             }
-            return;
         }
 
         // manager, branch_head, admin, super_admin — same company required
-        if ($assignTo->company_id !== $actor->company_id) {
+        if ($actor->role !== 'team_lead' && $assignTo->company_id !== $actor->company_id) {
             throw new \Exception('Cannot assign leads to a user from another company.');
+        }
+
+        // --- Role-priority check on reassignments ---
+        // If the lead already has an owner, check who made the last assignment
+        if ($engagement->assigned_user_id) {
+            $lastAssignment = OwnershipAssignment::where('engagement_id', $engagement->id)
+                ->orderByDesc('assigned_at')
+                ->first();
+
+            if ($lastAssignment) {
+                $previousAssigner = User::find($lastAssignment->assigned_by_user_id);
+
+                if ($previousAssigner) {
+                    $actorPriority    = self::ROLE_PRIORITY[$actor->role] ?? 0;
+                    $previousPriority = self::ROLE_PRIORITY[$previousAssigner->role] ?? 0;
+
+                    if ($actorPriority < $previousPriority) {
+                        $previousRoleLabel = ucwords(str_replace('_', ' ', $previousAssigner->role));
+                        throw new \Exception(
+                            "This lead was assigned by a {$previousRoleLabel} ({$previousAssigner->name}). "
+                            . "Your role does not have sufficient priority to override this assignment. "
+                            . "Please contact a {$previousRoleLabel} or higher to reassign."
+                        );
+                    }
+                }
+            }
         }
     }
 }

@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Helpers\AuthHelper;
 use App\Models\User;
+use App\Models\LeadEngagement;
+use App\Models\Activity;
+use App\Models\Disposition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class LeadsController extends Controller
 {
@@ -90,6 +94,26 @@ class LeadsController extends Controller
         $totalLeads  = null; // Cannot use total() with simplePaginate
         $slaBreaches = (clone $query)->where('le.sla_breached', 1)->count();
 
+        // Bento card stats
+        $unassignedCount = DB::table('lead_engagements')
+            ->whereNull('assigned_user_id')
+            ->where('company_id', $companyId)
+            ->where('status', 'active')
+            ->count();
+
+        $followupsToday = DB::table('activities')
+            ->join('lead_engagements', 'activities.engagement_id', '=', 'lead_engagements.id')
+            ->where('lead_engagements.company_id', $companyId)
+            ->whereDate('activities.follow_up_at', now()->toDateString())
+            ->count();
+
+        // Average lead speed (minutes from creation to first activity)
+        $avgMinutes = DB::table('activities')
+            ->join('lead_engagements', 'activities.engagement_id', '=', 'lead_engagements.id')
+            ->where('lead_engagements.company_id', $companyId)
+            ->avg(DB::raw('TIMESTAMPDIFF(MINUTE, lead_engagements.created_at, activities.created_at)'));
+        $avgSpeed = $avgMinutes ? round($avgMinutes) . 'm' : '—';
+
         // For filter dropdowns: only show salespersons the current user can see
         $assignableUsers = match ($role) {
             'admin', 'manager' => User::whereIn('role', ['salesperson', 'team_lead'])->get(['id', 'name', 'team_id']),
@@ -100,15 +124,151 @@ class LeadsController extends Controller
             default            => collect(),
         };
 
-        $stages = DB::table('pipeline_stages')->select('id', 'name', 'color')->get();
+        $stages = DB::table('pipeline_stages')->where('company_id', $companyId)->select('id', 'name', 'color')->get();
         $canEditStatus   = true; // All roles can update stage on leads within their visibility scope
-        $canSeeFullPhone = in_array($role, ['admin', 'manager', 'branch_head', 'team_lead', 'salesperson']);
+        $canSeeFullPhone = in_array($role, ['admin', 'manager', 'branch_head', 'team_lead']);
         $canFlagShared   = in_array($role, ['admin', 'manager', 'branch_head']);
 
         return view('leads.index', compact(
             'leads', 'user', 'role', 'stages', 'assignableUsers',
-            'totalLeads', 'slaBreaches', 'canEditStatus', 'canSeeFullPhone', 'canFlagShared'
+            'totalLeads', 'slaBreaches', 'canEditStatus', 'canSeeFullPhone', 'canFlagShared',
+            'unassignedCount', 'followupsToday', 'avgSpeed'
         ));
+    }
+
+    public function export(Request $request)
+    {
+        $user = AuthHelper::user();
+        if (!$user) return redirect()->route('login');
+        $role = $user->role;
+
+        $companyId = $user->company_id
+            ?? DB::table('branches')->where('id', $user->branch_id)->value('company_id');
+
+        // Same base query as index — full data for CSV (no pagination)
+        $query = DB::table('lead_engagements as le')
+            ->join('leads as l', 'le.lead_id', '=', 'l.id')
+            ->join('pipeline_stages as ps', 'le.stage_id', '=', 'ps.id')
+            ->leftJoin('users as u', 'le.assigned_user_id', '=', 'u.id')
+            ->select(
+                'l.name',
+                'l.phone_e164',
+                'l.email',
+                'ps.name as stage_name',
+                'le.source',
+                'u.name as assigned_to',
+                'le.sla_breached',
+                'le.sla_due_at',
+                'le.last_activity_at',
+                'l.created_at as lead_created_at',
+                'l.status as lead_status'
+            );
+
+        // Role-based scoping (mirrors index)
+        match ($role) {
+            'admin'       => null,
+            'manager'     => $query->where('le.company_id', $companyId),
+            'branch_head' => $query->whereIn(
+                'le.assigned_user_id',
+                DB::table('users')->where('branch_id', $user->branch_id)->pluck('id')->toArray()
+            ),
+            'team_lead'   => $query->whereIn(
+                'le.assigned_user_id',
+                DB::table('users')->where('team_id', $user->team_id)->pluck('id')->toArray()
+            ),
+            'salesperson' => $query->where('le.assigned_user_id', $user->id),
+            default       => $query->whereRaw('1=0'),
+        };
+
+        // Apply same filters from request
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('l.name', 'LIKE', "%{$search}%")
+                  ->orWhere('l.phone_e164', 'LIKE', "%{$search}%");
+            });
+        }
+        if ($region = $request->get('region')) {
+            if ($region === 'india') $query->where('l.phone_e164', 'LIKE', '+91%');
+            elseif ($region === 'uae') $query->where('l.phone_e164', 'LIKE', '+971%');
+            elseif ($region === 'us')  $query->where('l.phone_e164', 'LIKE', '+1%');
+            elseif ($region === 'uk')  $query->where('l.phone_e164', 'LIKE', '+44%');
+        }
+        if ($date = $request->get('date')) {
+            $now = Carbon::now();
+            if ($date === 'today')       $query->whereDate('l.created_at', $now->toDateString());
+            elseif ($date === 'this_week')  $query->whereBetween('l.created_at', [$now->copy()->startOfWeek(), $now->copy()->endOfWeek()]);
+            elseif ($date === 'this_month') $query->whereMonth('l.created_at', $now->month)->whereYear('l.created_at', $now->year);
+        }
+        if (($assignedTo = $request->get('assigned_to')) && in_array($role, ['admin', 'manager', 'branch_head', 'team_lead'])) {
+            $query->where('le.assigned_user_id', $assignedTo);
+        }
+        if ($stageId = $request->get('stage_id')) {
+            $query->where('le.stage_id', $stageId);
+        }
+
+        $filename = 'hilite_leads_' . now()->format('Ymd_His') . '.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires'             => '0',
+        ];
+
+        // Phone formatter for display
+        $canSeeFullPhone = in_array($role, ['admin', 'manager', 'branch_head', 'team_lead']);
+
+        $callback = function () use ($query, $canSeeFullPhone) {
+            $handle = fopen('php://output', 'w');
+
+            // UTF-8 BOM so Excel opens correctly
+            fwrite($handle, "\xEF\xBB\xBF");
+
+            // Header row
+            fputcsv($handle, [
+                'Name',
+                'Phone',
+                'Email',
+                'Stage',
+                'Source',
+                'Assigned To',
+                'SLA Status',
+                'SLA Due',
+                'Last Activity',
+                'Lead Created',
+                'Status',
+            ]);
+
+            // Stream rows in chunks of 200 to avoid memory exhaustion
+            $query->orderByDesc('le.last_activity_at')->chunk(200, function ($rows) use ($handle, $canSeeFullPhone) {
+                foreach ($rows as $row) {
+                    $phone = $canSeeFullPhone
+                        ? $row->phone_e164
+                        : (strlen($row->phone_e164) >= 6
+                            ? substr($row->phone_e164, 0, 4) . '*** **' . substr($row->phone_e164, -3)
+                            : '***');
+
+                    fputcsv($handle, [
+                        $row->name,
+                        $phone,
+                        $row->email ?? '',
+                        $row->stage_name,
+                        ucfirst($row->source ?? ''),
+                        $row->assigned_to ?? 'Unassigned',
+                        $row->sla_breached ? 'SLA Breached' : 'On Track',
+                        $row->sla_due_at  ? Carbon::parse($row->sla_due_at)->format('d M Y H:i')  : '',
+                        $row->last_activity_at ? Carbon::parse($row->last_activity_at)->format('d M Y H:i') : '',
+                        $row->lead_created_at  ? Carbon::parse($row->lead_created_at)->format('d M Y')  : '',
+                        ucfirst($row->lead_status ?? ''),
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function show($id)
@@ -157,8 +317,9 @@ class LeadsController extends Controller
         }
 
         $activities = DB::table('activities as a')
-            ->leftJoin('users as u', 'a.user_id', '=', 'u.id')
-            ->leftJoin('pipeline_stages as ps', 'a.stage_id', '=', 'ps.id')
+            ->leftJoin('users as u', 'a.created_by_user_id', '=', 'u.id')
+            ->leftJoin('lead_engagements as eng', 'a.engagement_id', '=', 'eng.id')
+            ->leftJoin('pipeline_stages as ps', 'eng.stage_id', '=', 'ps.id')
             ->where('a.engagement_id', $id)
             ->select('a.*', 'u.name as user_name', 'ps.name as stage_name', 'ps.color as stage_color')
             ->orderByDesc('a.created_at')
@@ -176,6 +337,60 @@ class LeadsController extends Controller
         $canSeeFullPhone = in_array($role, ['admin', 'manager', 'branch_head', 'team_lead']);
 
         return view('leads.show', compact('engagement', 'activities', 'stages', 'assignableUsers', 'canSeeFullPhone'));
+    }
+    public function update(Request $request, $id)
+    {
+        $user = AuthHelper::user();
+        if (!$user) return redirect()->route('login');
+
+        // Find the engagement securely without relying on global scope
+        $engagement = LeadEngagement::withoutGlobalScopes()
+            ->with('lead')
+            ->where('id', $id)
+            ->where('company_id', $user->company_id)
+            ->firstOrFail();
+
+        // Ownership check
+        if ($user->role === 'salesperson' && $engagement->assigned_user_id !== $user->id) {
+            abort(403, 'You can only edit leads assigned to you.');
+        }
+        if ($user->role === 'team_lead') {
+            $teamUserIds = DB::table('users')->where('team_id', $user->team_id)->pluck('id')->toArray();
+            if ($engagement->assigned_user_id && !in_array($engagement->assigned_user_id, $teamUserIds)) {
+                abort(403, 'You can only edit leads within your team.');
+            }
+        }
+
+        $request->validate([
+            'name'       => 'required|string|max:255',
+            'email'      => 'nullable|email|max:255',
+            'phone'      => 'required|string|max:30',
+        ]);
+
+        // Normalize the phone number to E.164 before saving
+        try {
+            $normalizer   = app(\App\Services\PhoneNormalizationService::class);
+            $phoneE164    = $normalizer->normalize($request->phone);
+        } catch (\Exception $e) {
+            return back()->withErrors(['phone' => 'Invalid phone number format. Please enter a valid number with country code (e.g. +91 98765 43210).'])->withInput();
+        }
+
+        // Check uniqueness — allow the current lead's own number
+        $exists = DB::table('leads')
+            ->where('phone_e164', $phoneE164)
+            ->where('id', '!=', $engagement->lead_id)
+            ->exists();
+        if ($exists) {
+            return back()->withErrors(['phone' => 'This phone number is already registered to another lead.'])->withInput();
+        }
+
+        $engagement->lead->update([
+            'name'       => $request->name,
+            'email'      => $request->email,
+            'phone_e164' => $phoneE164,
+        ]);
+
+        return back()->with('success', 'Lead details updated successfully.');
     }
 
     public function updateStage(Request $request, $id)
@@ -249,11 +464,14 @@ class LeadsController extends Controller
         $success = 0;
         $duplicates = 0;
         $failed = 0;
+        $firstError = null;
 
         foreach ($data as $row) {
-            if (count($row) !== count($headers)) {
-                $failed++;
-                continue;
+            // Ensure the row has the exact same number of columns as the headers
+            if (count($row) < count($headers)) {
+                $row = array_pad($row, count($headers), '');
+            } elseif (count($row) > count($headers)) {
+                $row = array_slice($row, 0, count($headers));
             }
 
             $input = [
@@ -266,6 +484,7 @@ class LeadsController extends Controller
 
             if (empty($input['name']) || empty($input['phone'])) {
                 $failed++;
+                if (!$firstError) $firstError = "Row missing required name or phone column.";
                 continue;
             }
 
@@ -287,10 +506,16 @@ class LeadsController extends Controller
                 }
             } catch (\Exception $e) {
                 $failed++;
+                if (!$firstError) $firstError = "Failed on '" . $input['name'] . "': " . $e->getMessage();
             }
         }
 
-        return back()->with('success', "Import complete: $success created, $duplicates duplicates, $failed failed.");
+        $msg = "Import complete: $success created, $duplicates duplicates, $failed failed.";
+        if ($firstError) {
+            $msg .= " (Example error: $firstError)";
+        }
+
+        return back()->with($failed > 0 ? 'error' : 'success', $msg);
     }
 
     public function processManual(Request $request, \App\Services\LeadIntakeService $intakeService)
@@ -326,7 +551,13 @@ class LeadsController extends Controller
             ], $companyId, $user->id);
 
             if ($result['is_duplicate']) {
-                return back()->with('error', 'Lead with this phone number already exists.');
+                $dupEngagement = $result['engagement'];
+                return back()
+                    ->with('duplicate_engagement_id', $dupEngagement->id)
+                    ->with('duplicate_lead_name', $dupEngagement->lead->name ?? 'Unknown')
+                    ->with('duplicate_owner_name', $dupEngagement->assignedTo?->name ?? 'Unassigned')
+                    ->with('duplicate_owner_team_id', $dupEngagement->assignedTo?->team_id)
+                    ->withInput();
             }
 
             if ($request->filled('notes')) {
@@ -398,20 +629,21 @@ class LeadsController extends Controller
         $user = AuthHelper::user();
         
         $request->validate([
-            'disposition_id' => 'required', // could be string if dummy
-            'notes' => 'nullable|string',
-            'follow_up_at' => 'nullable|date',
+            'disposition_id' => 'nullable', // optional — not always available from quick-log
+            'type'           => 'nullable|string|in:call,note,followup,visit',
+            'notes'          => 'nullable|string',
+            'follow_up_at'   => 'nullable|date',
         ]);
 
         $engagement = \App\Models\LeadEngagement::findOrFail($id);
 
         $activity = \App\Models\Activity::create([
-            'engagement_id' => $engagement->id,
+            'engagement_id'      => $engagement->id,
             'created_by_user_id' => $user->id,
-            'disposition_id' => is_numeric($request->disposition_id) ? $request->disposition_id : null,
-            'type' => 'call',
-            'notes' => $request->notes,
-            'follow_up_at' => $request->follow_up_at,
+            'disposition_id'     => $request->filled('disposition_id') && is_numeric($request->disposition_id) ? $request->disposition_id : null,
+            'type'               => $request->filled('type') ? $request->type : 'call',
+            'notes'              => $request->notes,
+            'follow_up_at'       => $request->follow_up_at,
         ]);
 
         // If follow_up_at is provided, engagement needs last_activity_at updated

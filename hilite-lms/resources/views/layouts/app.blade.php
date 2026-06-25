@@ -16,6 +16,7 @@
     <script type="module" src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2017-esm.js"></script>
     
     <!-- Alpine.js for lightweight UI interactions -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -24,9 +25,19 @@
     
     <!-- SideNavBar (Stitch Design) -->
     <aside class="fixed left-0 top-0 h-full w-[240px] flex flex-col p-4 border-r border-outline-variant z-50 bg-surface hidden md:flex">
-        <div class="mb-10 px-4">
-            <h1 class="font-headline-sm text-headline-sm font-extrabold text-primary">HiLITE LMS</h1>
-            <p class="font-label-sm text-label-sm text-text-muted mt-1">Real Estate Lead Mgmt</p>
+        <div class="mb-8 px-4 flex flex-col items-center md:items-start">
+            <div class="flex flex-col w-[96px] h-[96px] text-white text-center leading-none select-none shadow-sm mb-1.5 font-sans">
+                <!-- Top Half (Gold) -->
+                <div class="bg-[#B59644] w-full h-1/2 flex items-end justify-center pb-0.5">
+                    <span class="text-[40px] font-medium tracking-tight leading-none">Hi</span>
+                </div>
+                <!-- Bottom Half (Navy) -->
+                <div class="bg-[#1C2646] w-full h-1/2 flex items-start justify-center pt-1.5">
+                    <span class="text-[26px] font-normal uppercase tracking-[0.05em] leading-none ml-1">LITE</span>
+                </div>
+            </div>
+            <div class="text-[11.5px] text-[#1C2646] font-semibold tracking-wide w-[110px] text-center -ml-[7px] leading-tight">Lead Management System</div>
+            <p class="font-label-sm text-label-sm text-text-muted mt-2 hidden">Lead Management System</p>
         </div>
         
         @php $navRole = \App\Http\Helpers\AuthHelper::user()?->role ?? ''; @endphp

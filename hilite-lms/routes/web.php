@@ -33,7 +33,7 @@ Route::post('/login', function (\Illuminate\Http\Request $request) {
 
 // ─── Protected routes (require session auth) ─────────────────────────────────
 
-Route::middleware('auth.lms')->group(function () {
+Route::middleware(['auth.lms', 'company.scope'])->group(function () {
 
     Route::post('/logout', function () {
         session()->flush();
@@ -59,6 +59,7 @@ Route::middleware('auth.lms')->group(function () {
     Route::patch('/leads/followups/{id}/complete', [\App\Http\Controllers\FollowupsController::class, 'complete'])->name('leads.followup.complete');
 
     Route::get('/leads/calendar', [\App\Http\Controllers\CalendarController::class, 'index'])->name('leads.calendar');
+    Route::post('/leads/calendar/schedule', [\App\Http\Controllers\CalendarController::class, 'schedule'])->name('leads.calendar.schedule');
     Route::get('/leads/dispositions', [\App\Http\Controllers\LeadsController::class, 'dispositions'])->name('leads.dispositions');
 
     // Import — only managers and above can bulk import leads
@@ -71,12 +72,19 @@ Route::middleware('auth.lms')->group(function () {
     })->name('leads.import');
     Route::post('/leads/import', [\App\Http\Controllers\LeadsController::class, 'processImport'])->name('leads.import.post');
     Route::post('/leads/manual', [\App\Http\Controllers\LeadsController::class, 'processManual'])->name('leads.manual.post');
+    Route::get('/leads/export', [\App\Http\Controllers\LeadsController::class, 'export'])->name('leads.export');
 
     // These {id} routes must be at the bottom of the /leads prefix
     Route::get('/leads/{id}', [\App\Http\Controllers\LeadsController::class, 'show'])->name('leads.show');
     Route::patch('/leads/{id}/stage', [\App\Http\Controllers\LeadsController::class, 'updateStage'])->name('leads.update-stage');
+    Route::patch('/leads/{id}', [\App\Http\Controllers\LeadsController::class, 'update'])->name('leads.update');
     Route::post('/leads/{id}/log-activity', [\App\Http\Controllers\LeadsController::class, 'logActivity'])->name('leads.log-activity');
     Route::patch('/leads/{id}/flag-shared', [\App\Http\Controllers\LeadsController::class, 'flagShared'])->name('leads.flag-shared');
+
+    // Reassignment requests
+    Route::post('/leads/reassign-request', [\App\Http\Controllers\ReassignmentRequestController::class, 'store'])->name('leads.reassign-request');
+    Route::post('/leads/reassign-request/{id}/review', [\App\Http\Controllers\ReassignmentRequestController::class, 'review'])->name('leads.reassign-request.review');
+    Route::post('/leads/reassign-request/{id}/branch-review', [\App\Http\Controllers\ReassignmentRequestController::class, 'branchReview'])->name('leads.reassign-request.branch-review');
 
     // Reports (heatmap merged inside)
     Route::get('/reports', [\App\Http\Controllers\ReportsController::class, 'index'])->name('reports.index');

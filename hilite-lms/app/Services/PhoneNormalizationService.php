@@ -157,4 +157,37 @@ class PhoneNormalizationService
             return null;
         }
     }
+
+    /**
+     * Returns a masked version of the national-format string, e.g. "0987** **210".
+     */
+    public function toMaskedFormat(string $raw): ?string
+    {
+        $national = $this->toNationalFormat($raw) ?: $raw;
+        $e164 = $this->normalize($raw) ?: $raw;
+        
+        // Count how many actual digits there are
+        $digitCount = preg_match_all('/\d/', $national, $matches);
+        if ($digitCount <= 6) return '***'; // Too short to mask nicely
+        
+        // We want to preserve the first 3 digits and the last 3 digits, replacing middle digits with '*'
+        $digitsSeen = 0;
+        $masked = '';
+        for ($i = 0; $i < strlen($national); $i++) {
+            $char = $national[$i];
+            if (ctype_digit($char)) {
+                $digitsSeen++;
+                if ($digitsSeen <= 3 || $digitsSeen > $digitCount - 3) {
+                    $masked .= $char;
+                } else {
+                    $masked .= '*';
+                }
+            } else {
+                // Keep spaces, hyphens, etc as is
+                $masked .= $char;
+            }
+        }
+        
+        return $masked;
+    }
 }

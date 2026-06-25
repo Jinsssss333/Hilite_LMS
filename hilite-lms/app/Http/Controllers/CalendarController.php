@@ -74,4 +74,38 @@ class CalendarController extends Controller
             'unscheduledEngagements', 'visitsToday', 'pendingScheduling', 'weeklyCompletion'
         ));
     }
+
+    public function schedule(\Illuminate\Http\Request $request)
+    {
+        $user = AuthHelper::user();
+        if (!$user) return redirect()->route('login');
+
+        $request->validate([
+            'engagement_id' => 'required|integer|exists:lead_engagements,id',
+            'scheduled_at'  => 'required|date|after:now',
+            'label'         => 'required|string|max:100',
+            'type'          => 'nullable|string|in:call,followup,visit,note',
+        ]);
+
+        // Security: ensure the engagement belongs to this user's scope
+        $engagement = \App\Models\LeadEngagement::withoutGlobalScopes()
+            ->where('id', $request->engagement_id)
+            ->where('company_id', $user->company_id)
+            ->firstOrFail();
+
+        \App\Models\Activity::create([
+            'engagement_id'      => $engagement->id,
+            'created_by_user_id' => $user->id,
+            'type'               => $request->type ?? 'followup',
+            'notes'              => $request->label,
+            'follow_up_at'       => $request->scheduled_at,
+        ]);
+
+        // Update engagement's last_activity_at
+        $engagement->update(['last_activity_at' => now()]);
+
+        $month = Carbon::parse($request->scheduled_at)->format('Y-m');
+        return redirect()->route('leads.calendar', ['month' => $month])
+            ->with('success', 'Scheduled: "' . $request->label . '" on ' . Carbon::parse($request->scheduled_at)->format('d M Y, g:i A'));
+    }
 }

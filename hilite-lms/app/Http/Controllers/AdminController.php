@@ -21,7 +21,7 @@ class AdminController extends Controller
 
     public function index()
     {
-        return view('admin.index');
+        return redirect()->route('admin.users');
     }
 
     public function users()
@@ -95,13 +95,14 @@ class AdminController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->chunk(100, function ($logs) use ($file) {
                     foreach ($logs as $log) {
+                        $after = is_array($log->after) ? $log->after : [];
                         fputcsv($file, [
                             $log->created_at->format('Y-m-d H:i:s'),
                             $log->user->name ?? 'System',
                             $log->action,
-                            $log->entity_type,
-                            $log->entity_id,
-                            json_encode($log->after_state)
+                            $after['entity_type'] ?? '',
+                            $after['entity_id'] ?? '',
+                            $after['description'] ?? json_encode($log->after)
                         ]);
                     }
                 });
@@ -147,15 +148,19 @@ class AdminController extends Controller
         $user = User::where('company_id', $companyId)->findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'role' => 'required|in:super_admin,admin,manager,branch_head,team_lead,salesperson',
+            'name'           => 'required|string|max:255',
+            'email'          => 'required|email|unique:users,email,' . $user->id,
+            'role'           => 'required|in:super_admin,admin,manager,branch_head,team_lead,salesperson',
+            'max_lead_cap'   => 'nullable|integer|min:1|max:9999',
+            'min_lead_floor' => 'nullable|integer|min:0|max:9999',
         ]);
 
         $user->update([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'role' => $validated['role'],
+            'name'           => $validated['name'],
+            'email'          => $validated['email'],
+            'role'           => $validated['role'],
+            'max_lead_cap'   => $validated['max_lead_cap'] ?? null,
+            'min_lead_floor' => $validated['min_lead_floor'] ?? null,
         ]);
 
         AuditLog::log($companyId, AuthHelper::user()->id ?? 0, 'user', $user->id, 'updated', 'Updated user ' . $user->name);

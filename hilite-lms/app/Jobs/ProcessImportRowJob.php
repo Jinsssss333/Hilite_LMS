@@ -39,6 +39,9 @@ class ProcessImportRowJob implements ShouldQueue
         foreach ($rows as $row) {
             $row->update(['status' => 'processing']);
             try {
+                // Bind current_company_id for this job's company so LeadEngagement global scope works
+                app()->instance('current_company_id', $row->company_id);
+
                 $result = $intakeService->intake([
                     'name'  => $row->raw_name,
                     'phone' => $row->raw_phone,

@@ -7,6 +7,7 @@ use App\Models\LeadEngagement;
 use App\Models\Activity;
 use App\Models\PipelineStage;
 use App\Models\Team;
+use App\Models\ReassignmentRequest;
 use App\Http\Helpers\AuthHelper;
 
 class DashboardController extends Controller
@@ -32,7 +33,7 @@ class DashboardController extends Controller
             ->where('status', 'active')
             ->where('sla_breached', true)->count();
             
-        $stages = PipelineStage::orderBy('order')->take(5)->get();
+        $stages = PipelineStage::where('company_id', $user->company_id)->orderBy('order')->take(5)->get();
         
         // Group leads by stage for the kanban/accordion
         $leadsByStage = LeadEngagement::with(['lead', 'activities' => function($q) {
@@ -55,9 +56,9 @@ class DashboardController extends Controller
         $startOfQuarter = now()->startOfQuarter();
         $assignedThisQuarter = LeadEngagement::where('assigned_user_id', $user->id)
             ->where('created_at', '>=', $startOfQuarter)->count();
-        $closedStages = PipelineStage::where('is_closed', true)->pluck('id')->toArray();
+        $closedStages = PipelineStage::where('company_id', $user->company_id)->where('is_closed', true)->pluck('id')->toArray();
         if(empty($closedStages)) {
-             $lastStage = PipelineStage::orderByDesc('order')->first();
+             $lastStage = PipelineStage::where('company_id', $user->company_id)->orderByDesc('order')->first();
              $closedStages = $lastStage ? [$lastStage->id] : [];
         }
         $closedThisQuarter = LeadEngagement::where('assigned_user_id', $user->id)
@@ -76,20 +77,33 @@ class DashboardController extends Controller
         }
         $avgCloseTime = $closedEngagements->count() > 0 ? round($totalDays / $closedEngagements->count()) : 0;
 
-        // 4. Activity Trends (7 Days)
+        // 4. Recent Activities (real data — last 15 logged by this user)
+        $recentActivities = Activity::with(['engagement.lead', 'engagement.stage'])
+            ->where('created_by_user_id', $user->id)
+            ->latest()
+            ->take(15)
+            ->get();
+
+        // Also keep a 7-day bar-chart array for the mini spark (uses real counts)
         $activityTrends = [];
         $maxActivity = 0;
         for ($i = 6; $i >= 0; $i--) {
-            $date = now()->subDays($i)->format('Y-m-d');
-            $count = Activity::whereHas('engagement', function($q) use ($user) {
-                $q->where('assigned_user_id', $user->id);
-            })->whereDate('created_at', $date)->count();
-            $activityTrends[] = ['day' => now()->subDays($i)->format('D'), 'count' => $count];
+            $date  = now()->subDays($i)->format('Y-m-d');
+            $count = Activity::where('created_by_user_id', $user->id)
+                ->whereDate('created_at', $date)
+                ->count();
+            $activityTrends[] = [
+                'day'      => now()->subDays($i)->format('D'),
+                'date'     => now()->subDays($i)->format('d M'),
+                'count'    => $count,
+                'is_today' => $i === 0,
+            ];
             if ($count > $maxActivity) $maxActivity = $count;
         }
-        foreach($activityTrends as &$trend) {
-            $trend['percent'] = $maxActivity > 0 ? round(($trend['count'] / $maxActivity) * 100) : 5; // min 5% for visual
+        foreach ($activityTrends as &$trend) {
+            $trend['percent'] = $maxActivity > 0 ? max(8, round(($trend['count'] / $maxActivity) * 100)) : 8;
         }
+        unset($trend);
 
         // 5. Lead Distribution
         $leadDistribution = [];
@@ -124,10 +138,17 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Reassignment requests for this salesperson (their own requests)
+        $myRequests = ReassignmentRequest::with(['engagement.lead', 'currentOwner'])
+            ->where('requester_id', $user->id)
+            ->orderByDesc('created_at')
+            ->take(10)
+            ->get();
+
         return view('dashboard.salesperson', compact(
             'activeLeads', 'pendingFollowups', 'slaBreaches', 'stages', 'leadsByStage',
             'conversionRate', 'totalLeads', 'totalLeadsTrend', 'avgCloseTime',
-            'activityTrends', 'leadDistribution', 'priorityEngagements'
+            'activityTrends', 'recentActivities', 'leadDistribution', 'priorityEngagements', 'myRequests'
         ));
     }
 
@@ -147,7 +168,7 @@ class DashboardController extends Controller
         
         $totalActive = (clone $query)->where('status', 'active')->count();
         
-        $closedStages = PipelineStage::where('is_closed', true)->pluck('id');
+        $closedStages = PipelineStage::where('company_id', $user->company_id)->where('is_closed', true)->pluck('id');
         $totalClosed = (clone $query)->whereIn('stage_id', $closedStages)->count();
         $winRate = $totalActive + $totalClosed > 0 ? round(($totalClosed / ($totalActive + $totalClosed)) * 100, 1) : 0;
         
@@ -178,7 +199,7 @@ class DashboardController extends Controller
         $topBranchAttainment = 118;
 
         // Macro Pipeline Volume
-        $pipelineStages = PipelineStage::orderBy('order')->get();
+        $pipelineStages = PipelineStage::where('company_id', $user->company_id)->orderBy('order')->get();
         $pipelineVolumes = [];
         foreach ($pipelineStages as $stage) {
             $count = (clone $query)->where('stage_id', $stage->id)->where('status', 'active')->count();
@@ -194,11 +215,81 @@ class DashboardController extends Controller
             ];
         }
 
+        // --- NEW QUERIES FOR STITCH REDESIGN ---
+
+        // 1. Follow-ups Today: activities across all company leads with follow_up_at = today
+        $followupsToday = Activity::whereHas('engagement', function ($q) use ($user) {
+                if ($user->role === 'branch_head') {
+                    $q->where('assigned_branch_id', $user->branch_id);
+                }
+            })
+            ->whereDate('follow_up_at', today())
+            ->count();
+
+        // 2. Recent Activities: last 5 company-wide, with user, engagement, and lead names
+        $recentActivities = Activity::with([
+                'createdBy',
+                'engagement.lead',
+            ])
+            ->whereHas('engagement', function ($q) use ($user) {
+                if ($user->role === 'branch_head') {
+                    $q->where('assigned_branch_id', $user->branch_id);
+                }
+            })
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // 3. Priority Engagements: top 5 SLA-breached or overdue leads
+        $priorityEngagements = LeadEngagement::with([
+                'lead',
+                'stage',
+                'assignedTo',
+            ])
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->where('sla_breached', true)
+                  ->orWhereHas('activities', function ($sq) {
+                      $sq->where('type', 'followup')->where('follow_up_at', '<', now());
+                  });
+            })
+            ->when($user->role === 'branch_head', function ($q) use ($user) {
+                $q->where('assigned_branch_id', $user->branch_id);
+            })
+            ->orderByDesc('sla_breached')
+            ->orderBy('last_activity_at')
+            ->take(5)
+            ->get();
+
+        // Reassignment requests — for team leads: pending requests they need to review
+        $pendingReassignments = collect();
+        $escalatedReassignments = collect();
+        if ($user->role === 'team_lead') {
+            $pendingReassignments = ReassignmentRequest::with([
+                    'engagement.lead', 'requester', 'currentOwner'
+                ])
+                ->forReviewer($user->id)
+                ->pending()
+                ->orderByDesc('created_at')
+                ->get();
+        }
+        // For branch heads: escalated requests routed to them
+        if (in_array($user->role, ['branch_head', 'manager', 'admin'])) {
+            $escalatedReassignments = ReassignmentRequest::with([
+                    'engagement.lead', 'requester', 'currentOwner', 'reviewer'
+                ])
+                ->forBranchReviewer($user->id)
+                ->escalated()
+                ->orderByDesc('created_at')
+                ->get();
+        }
+
         return view('dashboard.manager', compact(
             'totalActive', 'winRate', 'slaBreaches', 'teams',
             'projectedRevenue', 'revenueGrowth', 'globalConversion',
             'avgCycle', 'velocity', 'topBranchName', 'topBranchAttainment',
-            'pipelineVolumes'
+            'pipelineVolumes', 'followupsToday', 'recentActivities', 'priorityEngagements',
+            'pendingReassignments', 'escalatedReassignments'
         ));
     }
 }

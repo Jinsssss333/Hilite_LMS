@@ -46,6 +46,7 @@ class AssignmentHubController extends Controller
         ]);
 
         $successCount = 0;
+        $errors = [];
         foreach ($request->engagement_ids as $engagementId) {
             $engagement = LeadEngagement::findOrFail($engagementId);
             try {
@@ -57,11 +58,20 @@ class AssignmentHubController extends Controller
                 );
                 $successCount++;
             } catch (\Exception $e) {
-                // Ignore failures to allow partial success, or log them
-                // You could flash an error array if needed
+                $errors[] = "Lead #{$engagementId}: " . $e->getMessage();
             }
         }
 
-        return redirect()->back()->with('success', "Successfully assigned {$successCount} lead(s).");
+        $redirect = redirect()->back();
+
+        if ($successCount > 0) {
+            $redirect->with('success', "Successfully assigned {$successCount} lead(s).");
+        }
+
+        if (!empty($errors)) {
+            $redirect->with('assignment_errors', $errors);
+        }
+
+        return $redirect;
     }
 }

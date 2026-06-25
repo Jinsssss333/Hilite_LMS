@@ -1,8 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
+<div x-data="{ showScheduleModal: false, scheduleData: { engagementId: '', leadName: '' } }">
 <!-- Header & Summary Strip -->
 <div class="mb-8">
+    @if(session('success'))
+        <div class="mb-4 p-4 bg-[#E8F5E9] text-[#2E7D32] border border-[#C8E6C9] rounded-lg font-body-sm flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">check_circle</span>
+            {{ session('success') }}
+        </div>
+    @endif
+    @if($errors->any())
+        <div class="mb-4 p-4 bg-error-container text-on-error-container border border-error/20 rounded-lg font-body-sm flex items-start gap-2">
+            <span class="material-symbols-outlined text-[18px] mt-0.5">error</span>
+            <ul class="list-disc pl-5">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
         <div>
             <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Site Visits</h2>
@@ -108,9 +125,9 @@
                         
                         <div class="flex flex-col gap-1.5">
                             @foreach($activities as $activity)
-                                <div class="bg-stage-site-visit/10 border border-stage-site-visit/30 rounded-lg p-1.5 px-2 cursor-pointer hover:bg-stage-site-visit/20 transition-colors" title="{{ $activity->notes }}">
-                                    <p class="font-label-sm text-label-sm text-stage-site-visit truncate">{{ \Carbon\Carbon::parse($activity->follow_up_at)->format('g:i A') }}</p>
-                                    <p class="font-body-sm text-body-sm text-on-surface truncate font-medium">{{ $activity->engagement->lead->name }}</p>
+                                <div class="bg-stage-site-visit/10 border border-stage-site-visit/30 rounded-lg p-1.5 px-2 cursor-pointer hover:bg-stage-site-visit/20 transition-colors" title="Lead: {{ $activity->engagement->lead->name }}">
+                                    <p class="font-label-sm text-label-sm text-stage-site-visit truncate">{{ \Carbon\Carbon::parse($activity->follow_up_at)->format('g:i A') }} - {{ $activity->notes ?: ucfirst($activity->type) }}</p>
+                                    <p class="font-body-sm text-[11px] text-on-surface truncate opacity-80">{{ $activity->engagement->lead->name }}</p>
                                 </div>
                             @endforeach
                         </div>
@@ -142,7 +159,11 @@
                         </span>
                     </div>
                     <p class="font-label-sm text-label-sm text-text-muted mb-3">{{ $engagement->lead->phone_e164 }}</p>
-                    <button class="w-full py-1.5 border border-border-subtle rounded-lg text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high transition-colors flex justify-center items-center gap-1 group-hover:border-primary/50" onclick="window.location.href='{{ route('leads.index') }}'">
+                    <button type="button" 
+                            class="w-full py-1.5 border border-border-subtle rounded-lg text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high transition-colors flex justify-center items-center gap-1 group-hover:border-primary/50" 
+                            data-engagement-id="{{ $engagement->id }}"
+                            data-lead-name="{{ $engagement->lead->name }}"
+                            @click="scheduleData.engagementId = $el.dataset.engagementId; scheduleData.leadName = $el.dataset.leadName; showScheduleModal = true">
                         <span class="material-symbols-outlined text-[16px]">calendar_month</span>
                         Schedule
                     </button>
@@ -153,6 +174,53 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- Schedule Modal -->
+<div x-show="showScheduleModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div @click.away="showScheduleModal = false" class="bg-surface rounded-[24px] p-6 w-full max-w-md shadow-lg border border-border-subtle" x-transition>
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="font-headline-sm text-headline-sm text-primary font-bold">Schedule Activity</h3>
+            <button @click="showScheduleModal = false" class="text-on-surface-variant hover:text-primary p-1 rounded-full hover:bg-surface-container-high transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form action="{{ route('leads.calendar.schedule') }}" method="POST" class="space-y-4">
+            @csrf
+            <input type="hidden" name="engagement_id" x-model="scheduleData.engagementId">
+            
+            <div>
+                <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Lead</label>
+                <input type="text" x-model="scheduleData.leadName" disabled class="w-full bg-surface-container-low border border-border-subtle rounded-xl px-3 py-2 text-on-surface font-body-sm opacity-70">
+            </div>
+
+            <div>
+                <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Activity Type</label>
+                <select name="type" required class="w-full bg-surface-container-low border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:border-outline focus:ring-1 focus:ring-outline outline-none transition-shadow appearance-none font-body-sm">
+                    <option value="visit">Site Visit</option>
+                    <option value="call">Call</option>
+                    <option value="followup">Follow-up</option>
+                    <option value="note">Note / Other</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Date & Time</label>
+                <input type="datetime-local" name="scheduled_at" required class="w-full bg-surface-container-low border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:border-outline focus:ring-1 focus:ring-outline outline-none transition-shadow font-body-sm">
+            </div>
+
+            <div>
+                <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Label / Notes</label>
+                <input type="text" name="label" placeholder="e.g. Site Visit Scheduled" required class="w-full bg-surface-container-low border border-border-subtle rounded-xl px-3 py-2 text-on-surface focus:border-outline focus:ring-1 focus:ring-outline outline-none transition-shadow font-body-sm">
+            </div>
+
+            <div class="flex justify-end gap-2 pt-4 border-t border-border-subtle mt-6">
+                <button type="button" @click="showScheduleModal = false" class="px-4 py-2 text-on-surface-variant hover:text-primary font-label-md rounded-xl hover:bg-surface-container-high transition-colors">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-primary text-on-primary rounded-xl font-label-md hover:opacity-90 transition-opacity">Schedule</button>
+            </div>
+        </form>
+    </div>
+</div>
 </div>
 
 <style>

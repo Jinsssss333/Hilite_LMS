@@ -72,6 +72,7 @@
                                 <th class="py-4 px-6 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Role & Branch</th>
                                 <th class="py-4 px-6 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Team</th>
                                 <th class="py-4 px-6 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold text-center">Status</th>
+                                <th class="py-4 px-4 font-label-md text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold text-center">Lead Load</th>
                                 <th class="py-4 px-4 w-12"></th>
                             </tr>
                         </thead>
@@ -111,9 +112,36 @@
                                     </span>
                                     @endif
                                 </td>
+                                @if(in_array($u->role, ['salesperson', 'team_lead']))
+                                @php
+                                    $activeCnt = $u->activeLeadCount();
+                                    $cap       = $u->max_lead_cap ?? \App\Models\User::SYSTEM_DEFAULT_CAP;
+                                    $floor     = $u->min_lead_floor;
+                                    $pct       = $cap > 0 ? round(($activeCnt / $cap) * 100) : 0;
+                                    $capColor  = $pct >= 100 ? 'text-red-700 bg-red-50 border-red-200'
+                                               : ($pct >= 80  ? 'text-amber-700 bg-amber-50 border-amber-200'
+                                               : 'text-green-700 bg-green-50 border-green-200');
+                                    $underFloor = $floor !== null && $activeCnt < $floor;
+                                @endphp
+                                <td class="py-4 px-4 text-center">
+                                    <div class="flex flex-col items-center gap-1">
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold border {{ $capColor }}">
+                                            {{ $activeCnt }} / {{ $cap }}
+                                        </span>
+                                        @if($underFloor)
+                                        <span class="text-[9px] text-blue-600 font-semibold flex items-center gap-0.5">
+                                            <span class="material-symbols-outlined text-[10px]">arrow_downward</span>
+                                            Under floor ({{ $floor }})
+                                        </span>
+                                        @endif
+                                    </div>
+                                </td>
+                                @else
+                                <td class="py-4 px-4 text-center text-on-surface-variant text-xs">—</td>
+                                @endif
                                 <td class="py-4 px-4 text-right">
                                     <div class="flex gap-2 justify-end opacity-0 group-hover:opacity-100 transition-all">
-                                        <button @click="$dispatch('open-edit-user-modal', { id: '{{ $u->id }}', name: '{{ addslashes($u->name) }}', email: '{{ addslashes($u->email) }}', role: '{{ $u->role }}' })" class="text-on-surface-variant hover:text-primary p-1 rounded hover:bg-surface-container-high transition-all" title="Edit">
+                                        <button @click="$dispatch('open-edit-user-modal', { id: '{{ $u->id }}', name: '{{ addslashes($u->name) }}', email: '{{ addslashes($u->email) }}', role: '{{ $u->role }}', max_lead_cap: '{{ $u->max_lead_cap ?? '' }}', min_lead_floor: '{{ $u->min_lead_floor ?? '' }}' })" class="text-on-surface-variant hover:text-primary p-1 rounded hover:bg-surface-container-high transition-all" title="Edit">
                                             <span class="material-symbols-outlined text-[20px]">edit</span>
                                         </button>
                                         <form action="{{ route('admin.users.toggle', $u->id) }}" method="POST" class="inline">
@@ -209,6 +237,29 @@
                             <option value="manager">Manager</option>
                             <option value="admin">Admin</option>
                         </select>
+                    </div>
+                    {{-- Lead Cap fields — only meaningful for salespersons --}}
+                    <div class="grid grid-cols-2 gap-3 p-3 bg-amber-50 rounded-xl border border-amber-100">
+                        <div>
+                            <label class="block font-label-md text-label-md text-amber-800 mb-1">
+                                Max Lead Cap
+                                <span class="font-normal text-amber-600 text-[10px] ml-1">(hard ceiling)</span>
+                            </label>
+                            <input type="number" name="max_lead_cap" x-model="editUser.max_lead_cap"
+                                min="1" max="9999" placeholder="Default: 30"
+                                class="w-full bg-white border border-amber-200 rounded-xl px-3 py-2 text-on-surface focus:border-amber-400 focus:ring-1 focus:ring-amber-200 outline-none transition-shadow font-body-sm">
+                            <p class="text-[10px] text-amber-600 mt-1">Auto-assign skips users at this limit</p>
+                        </div>
+                        <div>
+                            <label class="block font-label-md text-label-md text-amber-800 mb-1">
+                                Min Floor
+                                <span class="font-normal text-amber-600 text-[10px] ml-1">(soft warning)</span>
+                            </label>
+                            <input type="number" name="min_lead_floor" x-model="editUser.min_lead_floor"
+                                min="0" max="9999" placeholder="e.g. 5"
+                                class="w-full bg-white border border-amber-200 rounded-xl px-3 py-2 text-on-surface focus:border-amber-400 focus:ring-1 focus:ring-amber-200 outline-none transition-shadow font-body-sm">
+                            <p class="text-[10px] text-amber-600 mt-1">Highlights under-loaded users</p>
+                        </div>
                     </div>
                     <div class="flex justify-end gap-2 pt-4 border-t border-border-subtle mt-6">
                         <button type="button" @click="editModalOpen = false" class="px-4 py-2 text-on-surface-variant hover:text-primary font-label-md rounded-xl hover:bg-surface-container-high transition-colors">Cancel</button>
