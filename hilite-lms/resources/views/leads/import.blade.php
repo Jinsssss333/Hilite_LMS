@@ -41,6 +41,45 @@
             @endforeach
         </div>
     @endif
+    @if(session('duplicate_engagement_id'))
+        <div class="mb-8 p-4 rounded-xl border border-[#FBC02D]/40 bg-[#FFF9C4]/50 text-[#F57F17] font-medium flex flex-col gap-3" x-data="{ showReassignModal: false }">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined">warning</span>
+                <span>This lead already exists in your company!</span>
+            </div>
+            <div class="text-body-sm text-on-surface ml-8">
+                <strong>{{ session('duplicate_lead_name') }}</strong> is currently assigned to <strong>{{ session('duplicate_owner_name') }}</strong>.
+                <div class="mt-3 flex gap-4 items-center">
+                    <a href="{{ route('leads.show', session('duplicate_engagement_id')) }}" class="text-primary hover:underline font-bold">View Lead →</a>
+                    <button @click="showReassignModal = true" type="button" class="px-4 py-1.5 bg-white border border-[#FBC02D] text-[#F57F17] hover:bg-[#FFF9C4] rounded-lg text-sm font-bold transition-colors shadow-sm">Request Reassignment</button>
+                </div>
+            </div>
+
+            <!-- Reassignment Modal -->
+            <div x-show="showReassignModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" style="display: none;">
+                <div @click.away="showReassignModal = false" class="bg-surface w-full max-w-md rounded-2xl shadow-xl overflow-hidden animate-fade-in-up">
+                    <div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+                        <h3 class="text-headline-sm font-headline-sm text-on-surface">Request Reassignment</h3>
+                        <button @click="showReassignModal = false" type="button" class="text-on-surface-variant hover:text-on-surface transition-colors">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('leads.reassign-request') }}" method="POST" class="p-6">
+                        @csrf
+                        <input type="hidden" name="engagement_id" value="{{ session('duplicate_engagement_id') }}">
+                        <label class="flex flex-col gap-2">
+                            <span class="text-label-md text-on-surface">Reason for Reassignment</span>
+                            <textarea name="reason" rows="3" class="form-input w-full rounded-xl border border-border-subtle bg-surface-container-lowest p-3 text-body-md placeholder:text-text-muted focus:ring-2 focus:ring-primary outline-none" placeholder="Explain why you should handle this lead (min 10 chars)..." required minlength="10"></textarea>
+                        </label>
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button @click="showReassignModal = false" type="button" class="px-5 py-2 rounded-full font-label-md text-on-surface-variant hover:bg-surface-container-low transition-colors border border-transparent">Cancel</button>
+                            <button type="submit" class="px-5 py-2 bg-primary text-on-primary rounded-full font-label-md hover:opacity-90 transition-opacity">Submit Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <!-- Content Panel -->
     <div class="bg-surface-container-lowest border border-border-subtle rounded-[20px] shadow-sm overflow-hidden" x-data="{ tab: 'manual' }">

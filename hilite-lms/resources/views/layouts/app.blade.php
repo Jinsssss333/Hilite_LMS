@@ -93,12 +93,12 @@
             </button>
             
             <!-- Search -->
-            <div class="flex items-center gap-4 flex-1 max-w-xl hidden sm:flex ml-4 md:ml-0">
+            <form action="{{ route('leads.index') }}" method="GET" class="flex items-center gap-4 flex-1 max-w-xl hidden sm:flex ml-4 md:ml-0">
                 <div class="relative w-full focus-within:ring-2 focus-within:ring-primary rounded-xl">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-                    <input class="w-full bg-surface-container-low border-none rounded-xl py-2 pl-10 pr-4 font-body-md text-body-md focus:ring-0" placeholder="Search leads, tasks, or properties..." type="text">
+                    <input name="search" value="{{ request('search') }}" class="w-full bg-surface-container-low border-none rounded-xl py-2 pl-10 pr-4 font-body-md text-body-md focus:ring-0" placeholder="Search leads by name, phone or email..." type="search">
                 </div>
-            </div>
+            </form>
             
             <!-- Actions & Profile -->
             <div class="flex items-center gap-6 ml-auto pl-4">

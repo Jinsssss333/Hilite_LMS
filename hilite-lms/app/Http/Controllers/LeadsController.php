@@ -57,7 +57,8 @@ class LeadsController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function($q) use ($search) {
                 $q->where('l.name', 'LIKE', "%{$search}%")
-                  ->orWhere('l.phone_e164', 'LIKE', "%{$search}%");
+                  ->orWhere('l.phone_e164', 'LIKE', "%{$search}%")
+                  ->orWhere('l.email', 'LIKE', "%{$search}%");
             });
         }
 
@@ -184,7 +185,8 @@ class LeadsController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('l.name', 'LIKE', "%{$search}%")
-                  ->orWhere('l.phone_e164', 'LIKE', "%{$search}%");
+                  ->orWhere('l.phone_e164', 'LIKE', "%{$search}%")
+                  ->orWhere('l.email', 'LIKE', "%{$search}%");
             });
         }
         if ($region = $request->get('region')) {
@@ -437,6 +439,7 @@ class LeadsController extends Controller
 
         $user = AuthHelper::user();
         if (!$user) return redirect()->route('login');
+        
         $companyId = $user->company_id ?? DB::table('branches')->where('id', $user->branch_id)->value('company_id');
 
         $file = $request->file('csv_file');

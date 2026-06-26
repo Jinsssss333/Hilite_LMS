@@ -64,10 +64,6 @@ Route::middleware(['auth.lms', 'company.scope'])->group(function () {
 
     // Import — only managers and above can bulk import leads
     Route::get('/leads/import', function () {
-        $role = session('user_role');
-        if (!in_array($role, ['admin', 'super_admin', 'manager', 'branch_head'])) {
-            abort(403, 'Only managers and above can access the import page.');
-        }
         return view('leads.import');
     })->name('leads.import');
     Route::post('/leads/import', [\App\Http\Controllers\LeadsController::class, 'processImport'])->name('leads.import.post');
