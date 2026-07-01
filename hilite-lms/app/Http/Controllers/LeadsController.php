@@ -281,13 +281,17 @@ class LeadsController extends Controller
         }
         $role = $user->role;
 
+        // Resolve company_id — branch_head/team_lead may not have it directly on user
+        $companyId = $user->company_id
+            ?? DB::table('branches')->where('id', $user->branch_id)->value('company_id');
+
         // Fetch engagement with lead, stage, and assigned user
         $engagement = DB::table('lead_engagements as le')
             ->join('leads as l', 'le.lead_id', '=', 'l.id')
             ->join('pipeline_stages as ps', 'le.stage_id', '=', 'ps.id')
             ->leftJoin('users as u', 'le.assigned_user_id', '=', 'u.id')
             ->where('le.id', $id)
-            ->where('le.company_id', $user->company_id)
+            ->where('le.company_id', $companyId)
             ->select(
                 'l.id as lead_id', 'l.name', 'l.phone_e164', 'l.email', 'l.status', 'l.is_shared_number',
                 'l.created_at',
@@ -422,8 +426,30 @@ class LeadsController extends Controller
             }
         }
 
+        // IDOR fix: ensure the engagement belongs to the user's company
+        $companyId = $user->company_id
+            ?? DB::table('branches')->where('id', $user->branch_id)->value('company_id');
+        if ($engagement->company_id !== $companyId) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
+        }
+
         $engagement->stage_id = $request->stage_id;
+        $engagement->last_activity_at = now();
         $engagement->save();
+
+        // Recalculate SLA for the new stage
+        try {
+            $slaPolicy = \App\Models\SlaPolicy::where('company_id', $companyId)
+                ->where('stage_id', $request->stage_id)
+                ->first();
+            if ($slaPolicy) {
+                $engagement->sla_due_at = now()->addHours($slaPolicy->hours ?? 24);
+                $engagement->sla_breached = false;
+                $engagement->save();
+            }
+        } catch (\Exception $e) {
+            // Non-critical — don't block stage update if SLA calc fails
+        }
 
         if ($request->wantsJson()) {
             return response()->json(['success' => true, 'message' => 'Status updated successfully']);
