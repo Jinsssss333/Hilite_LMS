@@ -18,7 +18,12 @@ class AssignmentHubController extends Controller
             return redirect()->route('leads.index');
         }
         
-        $query = LeadEngagement::whereNull('assigned_user_id')->with(['lead', 'stage']);
+        $companyId = $user->company_id 
+            ?? \Illuminate\Support\Facades\DB::table('branches')->where('id', $user->branch_id)->value('company_id');
+
+        $query = LeadEngagement::whereNull('assigned_user_id')
+            ->where('company_id', $companyId)
+            ->with(['lead', 'stage']);
         
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
