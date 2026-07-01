@@ -8,7 +8,7 @@ class Activity extends Model
 {
     protected $fillable = [
         'engagement_id', 'created_by_user_id', 'disposition_id',
-        'type', 'notes', 'follow_up_at'
+        'type', 'notes', 'follow_up_at', 'occurred_at'
     ];
 
     protected $casts = ['follow_up_at' => 'datetime'];
