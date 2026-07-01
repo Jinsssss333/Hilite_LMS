@@ -21,7 +21,7 @@ Route::post('/login', function (\Illuminate\Http\Request $request) {
             'user_role' => $user->role,
             'user_name' => $user->name,
         ]);
-        if (in_array($user->role, ['admin', 'super_admin', 'manager', 'branch_head'])) {
+        if (in_array($user->role, ['admin', 'super_admin', 'manager', 'branch_head', 'team_lead'])) {
             return redirect()->route('dashboard.manager');
         }
         return redirect()->route('dashboard.salesperson');
