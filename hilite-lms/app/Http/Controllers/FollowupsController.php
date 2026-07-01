@@ -43,7 +43,15 @@ class FollowupsController extends Controller
 
     public function complete($id)
     {
-        $activity = Activity::findOrFail($id);
+        $user = AuthHelper::user();
+        if (!$user) return redirect()->route('login');
+
+        $activity = Activity::with('engagement')->findOrFail($id);
+        
+        // Ownership check: salespersons can only complete their own activities
+        if ($user->role === 'salesperson' && $activity->engagement?->assigned_user_id !== $user->id) {
+            abort(403, 'You do not have permission to modify this activity.');
+        }
         
         // "Complete" by clearing the scheduled follow-up
         $activity->update(['follow_up_at' => null]);
