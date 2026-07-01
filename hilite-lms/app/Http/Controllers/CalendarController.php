@@ -41,7 +41,9 @@ class CalendarController extends Controller
                     $branchUserIds = \App\Models\User::where('branch_id', $user->branch_id)->pluck('id');
                     $q->whereIn('assigned_user_id', $branchUserIds);
                 } else {
-                    $q->where('company_id', $user->company_id);
+                    $companyId = $user->company_id
+                        ?? \Illuminate\Support\Facades\DB::table('branches')->where('id', $user->branch_id)->value('company_id');
+                    $q->where('company_id', $companyId);
                 }
             })
             ->get();
