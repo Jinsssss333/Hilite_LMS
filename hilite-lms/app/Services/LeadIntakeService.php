@@ -126,6 +126,12 @@ class LeadIntakeService
                 ->orderBy('order')
                 ->first();
 
+            if (!$defaultStage) {
+                throw new \RuntimeException(
+                    'No pipeline stages are configured for this company. Please ask your admin to set up the pipeline before adding leads.'
+                );
+            }
+
             $assignment = $this->autoAssign($companyId, clone $lead);
             $assignedUserId   = $data['assigned_user_id']   ?? $assignment['user_id']   ?? null;
             $assignedTeamId   = $data['assigned_team_id']   ?? $assignment['team_id']   ?? null;
